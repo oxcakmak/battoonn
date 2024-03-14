@@ -1,4 +1,5 @@
 const { SlashCommandBuilder } = require("discord.js");
+const { _ } = require("../../utils/localization");
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -21,7 +22,9 @@ module.exports = {
       title: "",
       description: "",
       color: 0x00ffff,
-      title: `${member.user.username}'s avatar`,
+      title: _("user_avatar_named", {
+        user: member.user.username,
+      }),
       image: {
         url: member.user.displayAvatarURL(),
         height: 0,
