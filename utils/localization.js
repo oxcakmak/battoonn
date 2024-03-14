@@ -37,39 +37,4 @@ function _(data, props) {
   }
 }
 
-/*
-async function _(data, props) {
-  const filePath = `locales/${language}.yaml`;
-  let langData;
-
-  if (!data || typeof data !== "string") {
-    return data; // Handle non-string data
-  }
-
-  try {
-    const fileData = await fs.readFileSync(filePath, "utf8");
-    langData = YAML.load(fileData); // Load YAML data
-
-    // Regular expression to match key-value pairs within curly braces
-    const regex = /\{\{([^\}]+)\}\}/g;
-
-    // Apply replacement
-    langData[data].replace(regex, (match, key) => {
-      const value = props[key] || match; // Use value from props or fallback to match
-    });
-    return value;
-  } catch (error) {
-    console.error(
-      `Error loading translations for language ${language}:`,
-      error
-    );
-    return {}; // Handle missing file (return empty object)
-  }
-}
-
-*/
-
-// (Optional - for PO files)
-// If using PO files, you'll need to set up Gettext context and potentially pluralization rules.
-// Refer to Gettext documentation for details.
 module.exports = { _ };
