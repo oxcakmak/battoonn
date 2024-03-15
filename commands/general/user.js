@@ -3,9 +3,9 @@ const { SlashCommandBuilder } = require("discord.js");
 module.exports = {
   data: new SlashCommandBuilder()
     .setName("user")
-    .setDescription("Get User Info!")
+    .setDescription(_("shows_user_information"))
     .addUserOption((option) =>
-      option.setName("user").setDescription("The user to show info about")
+      option.setName("user").setDescription(_("user"))
     ),
   async execute(interaction) {
     if (interaction.bot) return;
@@ -27,27 +27,27 @@ module.exports = {
         // { name: `id`, value: member.user.id, },
 
         {
-          name: `Username`,
+          name: _("username"),
           value: member.user.username,
         },
         {
-          name: `Globalname`,
+          name: _("global_name"),
           value: member.user.globalName,
         },
         {
-          name: `Discriminator`,
+          name: _("discriminator"),
           value: member.user.discriminator,
         },
         {
-          name: `Tag`,
+          name: _("tag"),
           value: member.user.tag,
         },
         {
-          name: `Tag Alternative`,
+          name: _("alternative_tag"),
           value: member.user.username + "#" + member.user.discriminator,
         },
         {
-          name: `Avatar`,
+          name: _("avatar"),
           value: " ",
         },
       ],
@@ -57,7 +57,7 @@ module.exports = {
         width: 0,
       },
       author: {
-        name: `${member.user.tag} Information`,
+        name: _("user_information_variable", { variable: member.user.tag }),
       },
     };
 

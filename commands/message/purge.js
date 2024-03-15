@@ -3,21 +3,19 @@ const { PermissionsBitField, SlashCommandBuilder } = require("discord.js");
 module.exports = {
   data: new SlashCommandBuilder()
     .setName("purge")
-    .setDescription("Delete messages")
+    .setDescription(_("delete_messages"))
     .addIntegerOption((option) =>
       option
         .setName("amount")
-        .setDescription("Number of messages to delete (up to 50)")
+        .setDescription(_("number_messages_to_delete_count_maximum_default"))
         .setMinValue(1)
         .setMaxValue(50)
     )
     .addUserOption((option) =>
-      option
-        .setName("user")
-        .setDescription("Filter messages by a specific user")
+      option.setName("user").setDescription(_("filter_by_user"))
     )
     .addChannelOption((option) =>
-      option.setName("channel").setDescription("Filter by specific channel")
+      option.setName("channel").setDescription(_("filter_by_channel"))
     ),
   async execute(interaction) {
     // Check if the user has permission to manage messages
@@ -27,7 +25,7 @@ module.exports = {
       )
     ) {
       return await interaction.reply({
-        content: "You do not have permission to use this command.",
+        content: _("you_do_not_have_permission_command"),
         ephemeral: true,
       });
     }
@@ -42,8 +40,10 @@ module.exports = {
 
     if (deleteAmount > 50 || deleteAmount < 1)
       return await interaction.reply({
-        content:
-          "Please specify an amount between 1 and 50 before deleting messages.",
+        content: _("number_messages_to_delete_between_numbers", {
+          min: 1,
+          max: 50,
+        }),
         ephemeral: true,
       });
 
@@ -53,7 +53,7 @@ module.exports = {
 
       if (messages.size === 0)
         return await interaction.reply({
-          content: "No messages found to delete.",
+          content: _("message_not_found_to_delete"),
           ephemeral: true,
         });
 
@@ -77,14 +77,14 @@ module.exports = {
       if (messagesToDelete.length > 0) {
         await targetChannel.bulkDelete(messagesToDelete, true);
         await interaction.reply({
-          content: "Message deleted successfully!",
+          content: _("message_deleted_successfully"),
           ephemeral: true,
         });
       }
     } catch (error) {
       console.error(error);
       await interaction.reply({
-        content: "Failed to delete messages.",
+        content: _("failed_to_delete_messages"),
         ephemeral: true,
       });
     }

@@ -6,7 +6,7 @@ module.exports = {
     .setName("avatar")
     .setDescription("Get user avatar!")
     .addUserOption((option) =>
-      option.setName("user").setDescription("The user to show avatar")
+      option.setName("user").setDescription(_("show_user_information"))
     ),
   async execute(interaction) {
     if (interaction.bot) return;
@@ -22,8 +22,8 @@ module.exports = {
       title: "",
       description: "",
       color: 0x00ffff,
-      title: _("user_avatar_named", {
-        user: member.user.username,
+      title: _("user_avatar_variable", {
+        variable: member.user.username,
       }),
       image: {
         url: member.user.displayAvatarURL(),

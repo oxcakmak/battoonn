@@ -9,7 +9,9 @@ const {
 const { botColor } = require("../../config.json");
 
 module.exports = {
-  data: new SlashCommandBuilder().setName("speed").setDescription("Speed test"),
+  data: new SlashCommandBuilder()
+    .setName("speed")
+    .setDescription(_("speed_test")),
   async execute(interaction, client) {
     const embed = new EmbedBuilder()
       .setColor(botColor)
