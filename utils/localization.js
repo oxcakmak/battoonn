@@ -21,13 +21,12 @@ function _(data, props) {
     const regex = /\{\{([^\}]+)\}\}/g;
 
     // Check if data contains placeholders and replace them with values
-    if (langData[data]) {
+    if (langData[data])
       return langData[data].replace(regex, (match, key) => {
         return props[key] !== undefined ? props[key] : match; // Replace with value or fallback
       });
-    } else {
-      return data; // Return original data if key not found in YAML
-    }
+
+    return data; // Return original data if key not found in YAML
   } catch (error) {
     console.error(
       `Error loading translations for language ${language}:`,

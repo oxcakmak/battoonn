@@ -17,9 +17,7 @@ module.exports = {
         .setDescription("Filter messages by a specific user")
     )
     .addChannelOption((option) =>
-      option
-        .setName("channel")
-        .setDescription("Filter messages by a specific channel")
+      option.setName("channel").setDescription("Filter by specific channel")
     ),
   async execute(interaction) {
     // Check if the user has permission to manage messages
