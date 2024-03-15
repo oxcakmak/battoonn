@@ -5,6 +5,7 @@ const {
   ActionRowBuilder,
   ButtonBuilder,
 } = require("discord.js");
+const { _ } = require("../../utils/localization");
 
 const { botColor } = require("../../config.json");
 

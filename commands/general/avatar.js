@@ -4,7 +4,7 @@ const { _ } = require("../../utils/localization");
 module.exports = {
   data: new SlashCommandBuilder()
     .setName("avatar")
-    .setDescription("Get user avatar!")
+    .setDescription(_("show_users_avatar"))
     .addUserOption((option) =>
       option.setName("user").setDescription(_("show_user_information"))
     ),
