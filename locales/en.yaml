@@ -1,3 +1,2 @@
-test: "test"
-user_avatar: "Kullanıcı Avatarı"
-user_avatar_named: "{{user}} adlı kullanıcının avatarı"
+user_avatar_named: "{{user}}'s avatar"
+user_avatar: "User Avatar"
