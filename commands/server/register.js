@@ -41,10 +41,8 @@ module.exports = {
       });
 
     return await interaction.reply({
-      content: _("sever_register_success"),
+      content: _("server_register_success"),
       ephemeral: true,
     });
-    server_register_failed;
-    sever_register_success;
   },
 };
