@@ -5,7 +5,7 @@ const fs = require("fs");
 let language = "en";
 
 function _(data, props) {
-  const filePath = `locales/${language}.yaml`;
+  const filePath = `locales/${language}.yml`;
 
   // Ensure data is a string and language is defined
   if (!data || typeof data !== "string") {
