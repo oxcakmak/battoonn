@@ -1,5 +1,6 @@
 const { PermissionsBitField, SlashCommandBuilder } = require("discord.js");
 const { Explorer } = require("../../database/schemas/schema-explorer");
+const { Configs } = require("../../database/schemas/schema-config");
 const { _ } = require("../../utils/localization");
 
 module.exports = {
@@ -19,25 +20,25 @@ module.exports = {
     .addStringOption((option) =>
       option
         .setName("module")
-        .setDescription(_("module"))
+        .setDescription(_("explorer_module_related_to_members"))
         .addChoices(
           { name: _("enable"), value: "true" },
           { name: _("disable"), value: "false" }
         )
     )
     .addStringOption((option) =>
-      option.setName("message").setDescription(_("message"))
+      option.setName("message").setDescription(_("joining_or_leaving_mesage"))
     )
     .addRoleOption((option) =>
       option
         .setName("role")
-        .setDescription(_("given_role_joining_or_leaving_mesage"))
+        .setDescription(_("given_role_joining_or_leaving_message"))
     )
     .addChannelOption((option) =>
       option
         .setName("channel")
         .setDescription(
-          _("chanel_notifications_send_to_joining_or_leaving_mesage")
+          _("chanel_notifications_send_to_joining_or_leaving_message")
         )
     ),
   async execute(interaction) {
@@ -53,45 +54,28 @@ module.exports = {
       });
 
     const serverId = interaction.guild.id;
-    const explorer = await Explorer.findOne({ server: serverId });
+    const explorerQuery = await Explorer.findOne({ server: serverId });
     const explorerType = interaction.options.getString("type");
     const moduleEnabled = interaction.options.getString("module");
     const message = interaction.options.getString("message");
     const givenRole = interaction.options.getRole("role");
     const notifyChannel = interaction.options.getChannel("channel");
 
-    if (explorer) {
-      if (!explorer.moduleEnabled) {
-        return await interaction.reply({
-          content: _("activate_module_first"),
-          ephemeral: true,
-        });
-      } else {
-        console.log(moduleEnabled);
-        /*
-        if (moduleEnabled) explorer.moduleEnabled = moduleEnabled;
+    const checkRegisteredServer = await Configs.findOne({ server: serverId });
 
-        if (givenRole) explorer.givenRole = givenRole;
-        if (notifyChannel) explorer.notifyChannel = notifyChannel;
+    if (!checkRegisteredServer)
+      return await interaction.reply({
+        content: _("register_the_server_first"),
+      });
 
-        if (explorerType == "join" && message) explorer.joinMessage = message;
-        if (explorerType == "leave" && message) explorer.leaveMessage = message;
-
-        const explorerUpdate = await explorer.save();
-        if (!explorerUpdate)
-          return await interaction.reply({
-            content: _("server_already_saved"),
-            ephemeral: true,
-          });
-*/
-        return await interaction.reply({
-          content: _("server_already_saved"),
-          ephemeral: true,
-        });
-      }
-    } else {
+    if (!explorerQuery) {
       const newExplorer = new Explorer({
         server: serverId,
+        moduleEnabled: false,
+        givenRole: null,
+        notifyChannel: null,
+        joinMessage: null,
+        leaveMessage: null,
       });
 
       const savedExplorer = await newExplorer.save();
@@ -107,5 +91,35 @@ module.exports = {
         ephemeral: true,
       });
     }
+
+    if (!moduleEnabled && !explorerQuery.moduleEnabled)
+      return await interaction.reply({
+        content: _("activate_module_first"),
+        ephemeral: true,
+      });
+
+    if (moduleEnabled) explorerQuery.moduleEnabled = moduleEnabled;
+    if (givenRole) explorerQuery.givenRole = givenRole.id;
+    if (notifyChannel) explorerQuery.notifyChannel = notifyChannel.id;
+    if (explorerType && message)
+      switch (explorerType) {
+        case "join":
+          explorerQuery.joinMessage = message;
+          break;
+        case "leave":
+          explorerQuery.leaveMessage = message;
+          break;
+      }
+
+    const explorerUpdate = await explorerQuery.save();
+    if (!explorerUpdate)
+      return await interaction.reply({
+        content: _("explorer_settings_updated_failed"),
+        ephemeral: true,
+      });
+
+    return await interaction.reply({
+      content: _("explorer_settings_updated_success"),
+    });
   },
 };

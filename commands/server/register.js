@@ -42,7 +42,6 @@ module.exports = {
 
     return await interaction.reply({
       content: _("server_register_success"),
-      ephemeral: true,
     });
   },
 };
