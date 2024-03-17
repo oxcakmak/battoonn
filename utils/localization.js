@@ -1,7 +1,6 @@
 const YAML = require("js-yaml");
 const fs = require("fs");
 
-// Function to load translations for a specific language
 let language = "en";
 
 function _(data, props) {

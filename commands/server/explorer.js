@@ -1,4 +1,8 @@
-const { PermissionsBitField, SlashCommandBuilder } = require("discord.js");
+const {
+  PermissionsBitField,
+  SlashCommandBuilder,
+  ChannelType,
+} = require("discord.js");
 const { Explorer } = require("../../database/schemas/explorer");
 const { Configs } = require("../../database/schemas/config");
 const { _ } = require("../../utils/localization");
@@ -37,6 +41,7 @@ module.exports = {
         .setDescription(
           _("chanel_notifications_send_to_joining_or_leaving_message")
         )
+        .addChannelTypes(ChannelType.GuildText)
     ),
   async execute(interaction) {
     // Check if the user has permission to manage messages
@@ -51,7 +56,7 @@ module.exports = {
       });
 
     const serverId = interaction.guild.id;
-    const explorerQuery = await Explorer.findOne({ server: serverId });
+
     const explorerType = interaction.options.getString("type");
     const moduleEnabled = interaction.options.getString("module");
     const message = interaction.options.getString("message");
@@ -59,6 +64,7 @@ module.exports = {
     const notifyChannel = interaction.options.getChannel("channel");
 
     const checkRegisteredServer = await Configs.findOne({ server: serverId });
+    const explorerQuery = await Explorer.findOne({ server: serverId });
 
     if (!checkRegisteredServer)
       return await interaction.reply({
@@ -95,15 +101,12 @@ module.exports = {
         ephemeral: true,
       });
 
-    if (moduleEnabled) {
-      explorerQuery.moduleEnabled = moduleEnabled;
-    }
-    if (givenRole) {
-      explorerQuery.givenRole = givenRole.id;
-    }
-    if (notifyChannel) {
-      explorerQuery.notifyChannel = notifyChannel.id;
-    }
+    if (moduleEnabled) explorerQuery.moduleEnabled = moduleEnabled;
+
+    if (givenRole) explorerQuery.givenRole = givenRole.id;
+
+    if (notifyChannel) explorerQuery.notifyChannel = notifyChannel.id;
+
     if (explorerType && message)
       switch (explorerType) {
         case "join":

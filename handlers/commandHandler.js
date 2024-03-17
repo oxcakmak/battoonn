@@ -25,11 +25,9 @@ function loadCommands(client) {
 
       const properties = { folder, ...commandFile };
 
-      console.log(commandFile.data.name);
+      client.commands.set(commandFile.data.name, properties);
 
-      // client.commands.set(commandFile.data.name, properties);
-
-      // commandsArray.push(commandFile.data.toJSON());
+      commandsArray.push(commandFile.data.toJSON());
 
       table.addRow(`commands/${folder}/${file}`, "OK");
       continue;
