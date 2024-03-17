@@ -1,9 +1,8 @@
 const { PermissionsBitField, SlashCommandBuilder } = require("discord.js");
-const { Configs } = require("../../database/schemas/schema-config");
+const { Configs } = require("../../database/schemas/config");
 const { _ } = require("../../utils/localization");
 
 module.exports = {
-  cooldowns: 5,
   data: new SlashCommandBuilder()
     .setName("register")
     .setDescription(_("register_server")),

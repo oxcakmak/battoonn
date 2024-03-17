@@ -1,10 +1,9 @@
 const { PermissionsBitField, SlashCommandBuilder } = require("discord.js");
-const { Explorer } = require("../../database/schemas/schema-explorer");
-const { Configs } = require("../../database/schemas/schema-config");
+const { Explorer } = require("../../database/schemas/explorer");
+const { Configs } = require("../../database/schemas/config");
 const { _ } = require("../../utils/localization");
 
 module.exports = {
-  cooldowns: 5,
   data: new SlashCommandBuilder()
     .setName("explorer")
     .setDescription(_("server_join_and_leave_member_transactions"))
@@ -30,9 +29,7 @@ module.exports = {
       option.setName("message").setDescription(_("joining_or_leaving_mesage"))
     )
     .addRoleOption((option) =>
-      option
-        .setName("role")
-        .setDescription(_("given_role_joining_or_leaving_message"))
+      option.setName("role").setDescription(_("server_given_joining_role"))
     )
     .addChannelOption((option) =>
       option
@@ -98,9 +95,15 @@ module.exports = {
         ephemeral: true,
       });
 
-    if (moduleEnabled) explorerQuery.moduleEnabled = moduleEnabled;
-    if (givenRole) explorerQuery.givenRole = givenRole.id;
-    if (notifyChannel) explorerQuery.notifyChannel = notifyChannel.id;
+    if (moduleEnabled) {
+      explorerQuery.moduleEnabled = moduleEnabled;
+    }
+    if (givenRole) {
+      explorerQuery.givenRole = givenRole.id;
+    }
+    if (notifyChannel) {
+      explorerQuery.notifyChannel = notifyChannel.id;
+    }
     if (explorerType && message)
       switch (explorerType) {
         case "join":

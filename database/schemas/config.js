@@ -7,7 +7,6 @@ const ConfigsSchema = new mongoose.Schema({
   premiumEnabled: { type: Boolean, default: false },
   commandChannel: { type: String, max: 20, default: null },
   responseChannel: { type: String, max: 20, default: null },
-  cooldownTime: { type: Number, min: 1, max: 10, default: 5 },
   displayLanguage: { type: String, min: 2, max: 2, default: "en" },
 });
 
