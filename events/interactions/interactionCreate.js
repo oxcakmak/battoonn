@@ -10,9 +10,6 @@ module.exports = {
 
     if (interaction.isChatInputCommand()) {
       const command = client.commands.get(interaction.commandName);
-      const responseChannel = await client.channels.cache.get(
-        server.responseChannel
-      );
 
       if (!command)
         return await interaction.reply({ content: _("outdated_command") });
@@ -21,6 +18,15 @@ module.exports = {
         server.commandChannel &&
         interaction.channelId !== server.commandChannel
       ) {
+        const responseChannel = await client.channels.cache.get(
+          server.responseChannel
+        );
+        /*
+        // Attempt to delete the initial reply message (optional)
+        await interaction.deferReply();
+        // Delete the original slash command reply
+        await interaction.deleteReply();
+        */
         if (responseChannel)
           return await responseChannel.send({
             content: _("commands_only_run_channel_variable_mention_user", {
@@ -34,7 +40,6 @@ module.exports = {
           ephemeral: true,
         });
       }
-    } else {
       await command.execute(interaction, client);
     }
   },

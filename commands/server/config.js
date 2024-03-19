@@ -71,6 +71,11 @@ module.exports = {
           break;
       }
 
+    if (channelType && channelType === "command" && !channel)
+      configsQuery.commandChannel = null;
+    if (channelType && channelType === "response" && !channel)
+      configsQuery.responseChannel = null;
+
     const configsUpdate = await configsQuery.save();
     if (!configsUpdate)
       return await interaction.reply({
