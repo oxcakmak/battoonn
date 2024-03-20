@@ -4,11 +4,11 @@ const fs = require("fs");
 const { mongoose } = require("../database/connect");
 
 function _(data, props, serverId = null) {
+  const language = "en";
+  const filePath = "./locales/en.yml";
+  /*
   // Access the model associated with the 'configs' collection
   const Config = mongoose.model("configs");
-  let language;
-  let filePath = `./locales/${language}.yml`;
-
   // Perform the query and handle the promise
   if (serverId) {
     Config.findOne({ server: serverId }).then((document) => {
@@ -21,9 +21,10 @@ function _(data, props, serverId = null) {
     language = "en";
     filePath = "./locales/en.yml";
   }
-  console.log(language);
+  console.log(language, " / ", filePath);
 
   // const filePath = `./locales/${language}.yml`;
+  */
 
   // Ensure data is a string and language is defined
   if (!data || typeof data !== "string") return data;
