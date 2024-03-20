@@ -3,8 +3,7 @@ const {
   SlashCommandBuilder,
   ChannelType,
 } = require("discord.js");
-const { Explorer } = require("../../database/schemas/explorer");
-const { Configs } = require("../../database/schemas/config");
+const { Configs, Explorer } = require("../../database/schemas");
 const { _ } = require("../../utils/localization");
 
 module.exports = {

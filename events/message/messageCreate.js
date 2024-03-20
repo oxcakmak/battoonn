@@ -12,7 +12,7 @@ const {
   botColor,
 } = require("../../config.json");
 
-const { Configs } = require("../../database/schemas/config");
+const { Configs } = require("../../database/schemas");
 const { _ } = require("../../utils/localization");
 
 module.exports = {

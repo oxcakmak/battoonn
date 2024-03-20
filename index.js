@@ -11,7 +11,7 @@ const { User, Message, GuildMember, ThreadMember } = Partials;
 //events and commands
 const { loadEvents } = require("./handlers/eventHandler");
 const { loadCommands } = require("./handlers/commandHandler");
-const { loadDatabase } = require("./handlers/databaseHandler");
+// const { loadDatabase } = require("./handlers/databaseHandler");
 const { loadUtils } = require("./handlers/utilsHandler");
 
 //get token
@@ -25,9 +25,9 @@ const client = new Client({
 client.commands = new Collection();
 
 //login
-client.login(token).then(() => {
+client.login(token).then(async () => {
   loadEvents(client);
   loadCommands(client);
-  loadDatabase();
-  loadUtils();
+  // loadDatabase();
+  loadUtils(client.guilds.cache.first()?.id);
 });

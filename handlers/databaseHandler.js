@@ -21,7 +21,7 @@ function loadDatabase() {
       .filter((file) => file.endsWith(".js"));
 
     for (const file of databaseFiles) {
-      const databaseNeccesaryFile = require(`../database/${folder}/${file}`);
+      // require(`../database/${folder}/${file}`);
 
       table.addRow(`database/${folder}/${file}`, "OK");
       continue;

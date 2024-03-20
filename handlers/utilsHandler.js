@@ -7,7 +7,7 @@ const time = new Date().toLocaleString("en-US", {
   minute: "2-digit",
 });
 
-function loadUtils() {
+function loadUtils(serverId) {
   const ascii = require("ascii-table");
   const fs = require("fs");
   const table = new ascii().setHeading("Utils", "Status");
@@ -17,7 +17,7 @@ function loadUtils() {
     .filter((file) => file.endsWith(".js"));
 
   for (const file of utilsFolder) {
-    const utilsFile = require(`../utils/${file}`);
+    const utilsFile = require(`../utils/${file}`)._("", "", serverId);
 
     table.addRow(`utils/${file}`, "OK");
     continue;

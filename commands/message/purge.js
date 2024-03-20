@@ -55,7 +55,6 @@ module.exports = {
       if (messages.size === 0)
         return await interaction.reply({
           content: _("message_not_found_to_delete"),
-          ephemeral: true,
         });
 
       let messagesToDelete = [];
@@ -79,7 +78,6 @@ module.exports = {
         await targetChannel.bulkDelete(messagesToDelete, true);
         await interaction.reply({
           content: _("message_deleted_successfully"),
-          ephemeral: true,
         });
       }
     } catch (error) {
