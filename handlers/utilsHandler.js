@@ -17,7 +17,7 @@ function loadUtils(serverId) {
     .filter((file) => file.endsWith(".js"));
 
   for (const file of utilsFolder) {
-    const utilsFile = require(`../utils/${file}`)._("", "", serverId);
+    const utilsFile = require(`../utils/${file}`);
 
     table.addRow(`utils/${file}`, "OK");
     continue;

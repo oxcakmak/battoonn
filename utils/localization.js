@@ -1,30 +1,9 @@
 const YAML = require("js-yaml");
 const fs = require("fs");
 
-const { mongoose } = require("../database/connect");
-
-function _(data, props, serverId = null) {
-  const language = "en";
-  const filePath = "./locales/en.yml";
-  /*
-  // Access the model associated with the 'configs' collection
-  const Config = mongoose.model("configs");
-  // Perform the query and handle the promise
-  if (serverId) {
-    Config.findOne({ server: serverId }).then((document) => {
-      if (document) {
-        language = document.displayLanguage;
-        filePath = "./locales/" + document.displayLanguage + ".yml";
-      }
-    });
-  } else {
-    language = "en";
-    filePath = "./locales/en.yml";
-  }
-  console.log(language, " / ", filePath);
-
-  // const filePath = `./locales/${language}.yml`;
-  */
+let language = "en";
+function _(data, props) {
+  const filePath = `./locales/${language}.yml`;
 
   // Ensure data is a string and language is defined
   if (!data || typeof data !== "string") return data;

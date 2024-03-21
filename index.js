@@ -11,10 +11,10 @@ const { User, Message, GuildMember, ThreadMember } = Partials;
 //events and commands
 const { loadEvents } = require("./handlers/eventHandler");
 const { loadCommands } = require("./handlers/commandHandler");
-// const { loadDatabase } = require("./handlers/databaseHandler");
+const { loadDatabase } = require("./handlers/databaseHandler");
 const { loadUtils } = require("./handlers/utilsHandler");
 
-//get token
+// get token
 const { token } = require("./config.json");
 
 const client = new Client({
@@ -28,6 +28,6 @@ client.commands = new Collection();
 client.login(token).then(async () => {
   loadEvents(client);
   loadCommands(client);
-  // loadDatabase();
-  loadUtils(client.guilds.cache.first()?.id);
+  loadDatabase();
+  loadUtils();
 });
