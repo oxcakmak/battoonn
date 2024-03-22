@@ -3,7 +3,7 @@ const {
   SlashCommandBuilder,
   ChannelType,
 } = require("discord.js");
-const { Configs, Explorer } = require("../../database/schemas");
+const { Configs, Explorers } = require("../../database/schemas");
 const { _ } = require("../../utils/localization");
 
 module.exports = {
@@ -63,7 +63,7 @@ module.exports = {
     const notifyChannel = interaction.options.getChannel("channel");
 
     const checkRegisteredServer = await Configs.findOne({ server: serverId });
-    const explorerQuery = await Explorer.findOne({ server: serverId });
+    const explorerQuery = await Explorers.findOne({ server: serverId });
 
     if (!checkRegisteredServer)
       return await interaction.reply({
@@ -71,7 +71,7 @@ module.exports = {
       });
 
     if (!explorerQuery) {
-      const newExplorer = new Explorer({
+      const newExplorer = new Explorers({
         server: serverId,
         moduleEnabled: false,
         givenRole: null,

@@ -7,7 +7,7 @@ const time = new Date().toLocaleString("en-US", {
   minute: "2-digit",
 });
 
-function loadUtils(serverId) {
+function loadUtils() {
   const ascii = require("ascii-table");
   const fs = require("fs");
   const table = new ascii().setHeading("Utils", "Status");

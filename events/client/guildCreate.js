@@ -28,14 +28,16 @@ module.exports = {
     });
     if (!channelToSend) return;
 
-    const embed = new EmbedBuilder().setColor(botColor).setAuthor({
-      name: `${botName}`,
-      iconURL: `${botAvatar}`,
-      url: `${botWebsite}`,
-    }).setDescription(`
-                Thanks for using me 🤍 Have a nice day
-                /help | show all commands
-            `);
+    const embed = new EmbedBuilder()
+      .setColor(botColor)
+      .setAuthor({
+        name: `${botName}`,
+        iconURL: `${botAvatar}`,
+        url: `${botWebsite}`,
+      })
+      .setDescription(
+        `Thanks for using me 🤍 Have a nice day \n /help | show all commands`
+      );
 
     const row = new ActionRowBuilder().addComponents(
       new ButtonBuilder()

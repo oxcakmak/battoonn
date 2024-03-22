@@ -23,6 +23,6 @@ const ExplorerSchema = new mongoose.Schema({
   leaveMessage: { type: String, max: 200, default: null },
 });
 
-const Explorer = mongoose.model("explorer", ExplorerSchema);
+const Explorers = mongoose.model("explorers", ExplorerSchema);
 
-module.exports = { Configs, Explorer };
+module.exports = { Configs, Explorers };

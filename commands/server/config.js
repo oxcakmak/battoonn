@@ -64,10 +64,10 @@ module.exports = {
     if (channelType && channel)
       switch (channelType) {
         case "command":
-          configsQuery.commandChannel = channel.id;
+          configsQuery.commandChannel = channelType.id;
           break;
         case "response":
-          configsQuery.responseChannel = channel.id;
+          configsQuery.responseChannel = channelType.id;
           break;
       }
 
