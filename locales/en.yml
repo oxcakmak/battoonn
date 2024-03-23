@@ -101,3 +101,6 @@ you_do_not_have_permission_command: "You do not have permission to use this comm
 you_do_not_have_permission: "You do not have permission"
 member_join_message_default_variable: "Welcome <@{{user}}>."
 member_leave_message_default_variable: "Goodbye <@{{user}}>."
+generates_qr_code: "Generates QR Code"
+qr_code_data: "QR Code Data"
+qr_code: "QR Code"
