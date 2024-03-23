@@ -1,4 +1,4 @@
-const { MessageAttachment, SlashCommandBuilder } = require("discord.js");
+const { SlashCommandBuilder } = require("discord.js");
 const fs = require("fs");
 const qr = require("qrcode");
 const { v4: uuidv4 } = require("uuid");
