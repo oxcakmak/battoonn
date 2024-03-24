@@ -26,7 +26,11 @@ module.exports = {
     const qrFileName = `qr-${interaction.user.id}-${randomIdv4}.png`;
     const qrCodeFilePath = `qr/${qrFileName}`;
 
-    await qr.toFile(qrCodeFilePath, data);
+    const qrCodeOptions = {
+      scale: 10, // Adjust the value for desired size (larger value = larger image)
+    };
+
+    await qr.toFile(qrCodeFilePath, data, qrCodeOptions);
 
     await interaction.reply({
       type: 4,
