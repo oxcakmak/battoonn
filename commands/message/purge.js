@@ -19,6 +19,41 @@ module.exports = {
       option.setName("channel").setDescription(_("filter_by_channel"))
     ),
   async execute(interaction) {
+    if (interaction.bot) return;
+
+    // Command description
+    if (interaction.options.data.length === 0)
+      return await interaction.reply({
+        embeds: [
+          {
+            type: "rich",
+            title: _("config_command"),
+            description: _("delete_messages"),
+            color: 0xffffff,
+            fields: [
+              {
+                name: _("use_of"),
+                value: `**channel**: ${_("filter_by_channel")} \n **user**: ${_(
+                  "filter_by_user"
+                )} \n **amount**: ${_(
+                  "number_messages_to_delete_count_maximum_default"
+                )}`,
+              },
+              {
+                name: _("example"),
+                value: `**/purge #general** \n **/purge battoonn** \n **/purge 25** \n **/purge #general 25 ** \n **/purge #general battoonn** \n **/purge #general battoonn 25** \n **/purge battoonn 25**`,
+              },
+              {
+                name: _("attention"),
+                value: `${_("not_entered_channel_operate_in_channel")} \n ${_(
+                  "number_messages_to_delete_count_maximum_default"
+                )}`,
+              },
+            ],
+          },
+        ],
+      });
+
     // Check if the user has permission to manage messages
     if (
       !interaction.member.permissions.has(

@@ -14,6 +14,7 @@ module.exports = {
     .setName("speed")
     .setDescription(_("speed_test")),
   async execute(interaction, client) {
+    if (interaction.bot) return;
     const embed = new EmbedBuilder()
       .setColor(botColor)
       .setDescription(`${client.ws.ping}ms`);

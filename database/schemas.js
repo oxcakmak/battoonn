@@ -25,4 +25,33 @@ const ExplorerSchema = new mongoose.Schema({
 
 const Explorers = mongoose.model("explorers", ExplorerSchema);
 
-module.exports = { Configs, Explorers };
+// Ticket Configs
+const TicketConfigsSchema = new mongoose.Schema({
+  server: String,
+  moduleEnabled: { type: Boolean, default: false },
+  category: String,
+  templateChannel: String,
+  templateTitle: String,
+  templateDescription: String,
+  templateButtonText: String,
+  role: String,
+});
+
+const TicketConfigs = mongoose.model("ticketConfigs", TicketConfigsSchema);
+
+// Tickets
+const TicketsSchema = new mongoose.Schema({
+  server: String,
+  parent: { type: String, default: "-" },
+  ticket: String,
+  isPost: { type: Boolean, default: false },
+  title: String,
+  createById: String,
+  createByUserTitle: String,
+  createByUsername: String,
+  createDate: String,
+});
+
+const Tickets = mongoose.model("tickets", TicketsSchema);
+
+module.exports = { Configs, Explorers, Tickets, TicketConfigs };

@@ -7,6 +7,8 @@ module.exports = {
     .setName("register")
     .setDescription(_("register_server")),
   async execute(interaction) {
+    if (interaction.bot) return;
+
     // Check if the user has permission to manage messages
     if (
       !interaction.member.permissions.has(

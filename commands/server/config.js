@@ -22,7 +22,7 @@ module.exports = {
     .addStringOption((option) =>
       option
         .setName("language")
-        .setDescription(_("explorer_module_related_to_members"))
+        .setDescription(_("bots_language"))
         .addChoices(
           { name: _("english_with_code"), value: "en" },
           { name: _("turkish_with_code"), value: "tr" }
@@ -35,6 +35,39 @@ module.exports = {
         .addChannelTypes(ChannelType.GuildText)
     ),
   async execute(interaction) {
+    if (interaction.bot) return;
+
+    // Command description
+    if (interaction.options.data.length === 0)
+      return await interaction.reply({
+        embeds: [
+          {
+            type: "rich",
+            title: _("config_command"),
+            description: _("command_to_update_server"),
+            color: 0xffffff,
+            fields: [
+              {
+                name: _("use_of"),
+                value: `**type (command/response)**: ${_(
+                  "channel_type"
+                )} \n **language**: ${_("bots_language")} \n **channel**: ${_(
+                  "command_response_channel"
+                )}`,
+              },
+              {
+                name: _("example"),
+                value: `**/config language [tr/en]** \n **/config command #bot-command** \n **/config response #bot-command**`,
+              },
+              {
+                name: _("attention"),
+                value: `${_("channel_required_section")}`,
+              },
+            ],
+          },
+        ],
+      });
+
     // Check if the user has permission to manage messages
     if (
       !interaction.member.permissions.has(

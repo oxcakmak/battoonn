@@ -11,10 +11,31 @@ module.exports = {
   async execute(interaction) {
     if (interaction.bot) return;
 
+    // Command description
+    if (interaction.options.data.length === 0)
+      return await interaction.reply({
+        embeds: [
+          {
+            type: "rich",
+            title: _("avatar_command"),
+            description: _("show_users_avatar"),
+            color: 0xffffff,
+            fields: [
+              {
+                name: _("use_of"),
+                value: `/avatar {user}`,
+              },
+              {
+                name: _("example"),
+                value: `/avatar battoonn`,
+              },
+            ],
+          },
+        ],
+      });
+
     let target = interaction.options.get("user");
-
     if (!target) target = interaction.user;
-
     const member = await interaction.guild.members.fetch(target);
 
     const embed = {

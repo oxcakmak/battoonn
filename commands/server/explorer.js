@@ -43,6 +43,45 @@ module.exports = {
         .addChannelTypes(ChannelType.GuildText)
     ),
   async execute(interaction) {
+    if (interaction.bot) return;
+
+    // Command description
+    if (interaction.options.data.length === 0)
+      return await interaction.reply({
+        embeds: [
+          {
+            type: "rich",
+            title: _("explorer_command"),
+            description: _("server_join_and_leave_member_transactions"),
+            color: 0xffffff,
+            fields: [
+              {
+                name: _("use_of"),
+                value: `**module (enable/disable)**: ${_(
+                  "explorer_module_related_to_members"
+                )} \n **type (join/leave)**: ${_(
+                  "process_type"
+                )} \n **message**: ${_(
+                  "joining_or_leaving_mesage"
+                )} \n **role**: ${_(
+                  "server_given_joining_role"
+                )} \n **channel**: ${_(
+                  "chanel_notifications_send_to_joining_or_leaving_message"
+                )}`,
+              },
+              {
+                name: _("example"),
+                value: `**/explorer module [enable/disable]** \n **/explorer role member** \n **/explorer join #visitors** \n **/explorer join Welcome %user%!** \n **/explorer leave #visitors** \n **/explorer leave Good bye %user%!**`,
+              },
+              {
+                name: _("example"),
+                value: _("user_code_tags"),
+              },
+            ],
+          },
+        ],
+      });
+
     // Check if the user has permission to manage messages
     if (
       !interaction.member.permissions.has(

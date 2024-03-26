@@ -11,6 +11,29 @@ module.exports = {
   async execute(interaction) {
     if (interaction.bot) return;
 
+    // Command description
+    if (interaction.options.data.length === 0)
+      return await interaction.reply({
+        embeds: [
+          {
+            type: "rich",
+            title: _("user_command"),
+            description: _("shows_user_information"),
+            color: 0xffffff,
+            fields: [
+              {
+                name: _("use_of"),
+                value: `/user {user}`,
+              },
+              {
+                name: _("example"),
+                value: `/user battoonn`,
+              },
+            ],
+          },
+        ],
+      });
+
     let target = interaction.options.get("user");
 
     // If no user is mentioned, default to the message sender
@@ -19,50 +42,35 @@ module.exports = {
     // Fetch the corresponding member from the guild
     const member = await interaction.guild.members.fetch(target);
 
-    const embed = {
-      type: "rich",
-      title: "",
-      description: "",
-      color: 0x00ffff,
-      fields: [
-        // { name: `id`, value: member.user.id, },
-
+    /* { name: `id`, value: member.user.id, }, */
+    // Display user information
+    return await interaction.reply({
+      embeds: [
         {
-          name: _("username"),
-          value: member.user.username,
-        },
-        {
-          name: _("global_name"),
-          value: member.user.globalName,
-        },
-        {
-          name: _("discriminator"),
-          value: member.user.discriminator,
-        },
-        {
-          name: _("tag"),
-          value: member.user.tag,
-        },
-        {
-          name: _("alternative_tag"),
-          value: member.user.username + "#" + member.user.discriminator,
-        },
-        {
-          name: _("avatar"),
-          value: " ",
+          type: "rich",
+          title: "",
+          description: "",
+          color: 0xffffff,
+          fields: [
+            {
+              name: _("username"),
+              value: member.user.username,
+            },
+            {
+              name: _("global_name"),
+              value: member.user.globalName,
+            },
+          ],
+          image: {
+            url: member.user.displayAvatarURL(),
+            height: 250,
+            width: 250,
+          },
+          author: {
+            name: _("user_information_variable", { variable: member.user.tag }),
+          },
         },
       ],
-      image: {
-        url: member.user.displayAvatarURL(),
-        height: 0,
-        width: 0,
-      },
-      author: {
-        name: _("user_information_variable", { variable: member.user.tag }),
-      },
-    };
-
-    // Display user information
-    await interaction.reply({ embeds: [embed] });
+    });
   },
 };

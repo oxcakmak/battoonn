@@ -6,8 +6,6 @@ const { _ } = require("../../utils/localization");
 
 const randomIdv4 = uuidv4();
 
-async function generateQRCode(text, filePath) {}
-
 module.exports = {
   data: new SlashCommandBuilder()
     .setName("qr")
@@ -17,6 +15,29 @@ module.exports = {
     ),
   async execute(interaction) {
     if (interaction.bot) return;
+
+    // Command description
+    if (interaction.options.data.length === 0)
+      return await interaction.reply({
+        embeds: [
+          {
+            type: "rich",
+            title: _("qr_code"),
+            description: _("generates_qr_code"),
+            color: 0xffffff,
+            fields: [
+              {
+                name: _("use_of"),
+                value: `/qr {data}`,
+              },
+              {
+                name: _("example"),
+                value: `/qr battoonn bot`,
+              },
+            ],
+          },
+        ],
+      });
 
     const data = interaction.options.getString("data");
 

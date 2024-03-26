@@ -6,7 +6,7 @@ module.exports = {
     .setName("meme")
     .setDescription(_("random_show_meme")),
   async execute(interaction) {
-    const memeUrl = `https://www.reddit.com/r/memes/.json?limit=100`;
+    const memeUrl = `https://www.reddit.com/r/memes/hot.json?limit=100`;
 
     try {
       const response = await fetch(memeUrl);

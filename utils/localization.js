@@ -2,6 +2,7 @@ const YAML = require("js-yaml");
 const fs = require("fs");
 
 let language = "en";
+
 function _(data, props) {
   const filePath = `./locales/${language}.yml`;
 

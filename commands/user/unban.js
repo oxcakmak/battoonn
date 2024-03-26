@@ -9,6 +9,27 @@ module.exports = {
       option.setName("user").setDescription(_("filter_by_user"))
     ),
   async execute(interaction) {
+    if (interaction.bot) return;
+
+    // Command description
+    if (interaction.options.data.length === 0)
+      return await interaction.reply({
+        embeds: [
+          {
+            type: "rich",
+            title: _("unban_command"),
+            description: _("unban_a_user"),
+            color: 0xffffff,
+            fields: [
+              {
+                name: _("use_of"),
+                value: `/unban {userId}`,
+              },
+            ],
+          },
+        ],
+      });
+
     // Check if the user has permission to ban members
     if (
       !interaction.member.permissions.has(PermissionsBitField.Flags.BanMembers)

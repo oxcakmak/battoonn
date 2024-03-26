@@ -12,6 +12,27 @@ module.exports = {
       option.setName("reason").setDescription(_("reason_for_ban"))
     ),
   async execute(interaction) {
+    if (interaction.bot) return;
+
+    // Command description
+    if (interaction.options.data.length === 0)
+      return await interaction.reply({
+        embeds: [
+          {
+            type: "rich",
+            title: _("ban_command"),
+            description: _("bans_a_user"),
+            color: 0xffffff,
+            fields: [
+              {
+                name: _("use_of"),
+                value: `/ban {user} {reason}`,
+              },
+            ],
+          },
+        ],
+      });
+
     // Check if the user has permission to ban members
     if (
       !interaction.member.permissions.has(PermissionsBitField.Flags.BanMembers)
