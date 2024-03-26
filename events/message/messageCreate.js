@@ -12,15 +12,11 @@ const {
   botColor,
 } = require("../../config.json");
 
-const { Configs } = require("../../database/schemas");
 const { _ } = require("../../utils/localization");
 
 module.exports = {
   name: "messageCreate",
   async execute(message) {
-    const serverId = message.channel.id;
-    const server = await Configs.findOne({ server: serverId });
-
     if (!message.mentions.users.first()) return;
     if (message.mentions.users.first().id == `${botId}`) {
       const embed = new EmbedBuilder().setColor(botColor).setAuthor({

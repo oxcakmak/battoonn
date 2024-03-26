@@ -45,11 +45,10 @@ const TicketsSchema = new mongoose.Schema({
   parent: { type: String, default: "-" },
   ticket: String,
   isPost: { type: Boolean, default: false },
-  title: String,
-  createById: String,
-  createByUserTitle: String,
-  createByUsername: String,
-  createDate: String,
+  content: String,
+  createdBy: String,
+  createdAt: String,
+  closedAt: String,
 });
 
 const Tickets = mongoose.model("tickets", TicketsSchema);
