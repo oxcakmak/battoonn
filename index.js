@@ -5,7 +5,8 @@ const {
   Partials,
 } = require("discord.js");
 
-const { Guilds, GuildMembers, GuildMessages } = GatewayIntentBits;
+const { Guilds, GuildMembers, GuildMessages, MessageContent } =
+  GatewayIntentBits;
 const { User, Message, GuildMember, ThreadMember } = Partials;
 
 //events and commands
@@ -18,7 +19,7 @@ const { loadUtils } = require("./handlers/utilsHandler");
 const { token } = require("./config.json");
 
 const client = new Client({
-  intents: [Guilds, GuildMembers, GuildMessages],
+  intents: [Guilds, GuildMembers, GuildMessages, MessageContent],
   partials: [User, Message, GuildMember, ThreadMember],
 });
 
