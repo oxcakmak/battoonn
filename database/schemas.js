@@ -36,7 +36,6 @@ const TicketsSchema = new mongoose.Schema({
     unique: true, // Optional if you don't want duplicate IDs
   },
   server: String,
-  parent: { type: String, default: "-" },
   ticketId: String,
   ticket: String,
   content: String,
