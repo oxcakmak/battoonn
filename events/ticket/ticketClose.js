@@ -9,20 +9,23 @@ const randomIdv4 = uuidv4();
 module.exports = {
   name: "interactionCreate",
   async execute(interaction) {
-    const { customId, guild, user, message } = await interaction;
+    const { customId, guild, message, channel } = await interaction;
 
     const serverId = guild.id;
 
-    let conversationsHtml;
-    let conversationsUsers = [];
-
     if (interaction.isButton() && customId === "btnCloseTicket") {
       const channelId = message.channelId;
-      const member = await message.guild.members.fetch(user.id); // Fetch member object
 
       const { role } = await TicketConfigs.findOne({ server: serverId });
       if (role) {
-        const ticketRole = member.roles.cache.has(role); // Check for specific role ID
+        // Check for specific role ID
+        const ticketRole = interaction.member.roles.cache.has(role);
+
+        if (!ticketRole)
+          return await interaction.reply({
+            content: _("you_do_not_have_permission_command"),
+            ephemeral: true,
+          });
 
         let transcriptFile;
         transcriptFile = await fs.readFileSync(
@@ -30,16 +33,11 @@ module.exports = {
           "utf-8"
         );
 
-        if (
-          !ticketRole ||
-          !interaction.member.permissions.has(
-            PermissionsBitField.Flags.Administrator
-          )
-        )
-          return await interaction.reply({
-            content: _("you_do_not_have_permission_command"),
-            ephemeral: true,
-          });
+        // Replace variables in transcript file
+        transcriptFile = transcriptFile
+          .replace("{{langTicketNumber}}", _("ticket_number"))
+          .replace("{{langCreatedBy}}", _("created_by_user"))
+          .replace("{{langCreationDate}}", _("creation_date"));
 
         // Get ticket
         const ticket = await Tickets.findOne({
@@ -47,6 +45,11 @@ module.exports = {
           ticketId: channelId,
           isPost: false,
         });
+
+        transcriptFile = transcriptFile
+          .replace("{{ticket}}", ticket.ticket)
+          .replace("{{ticketName}}", ticket.ticket)
+          .replace("{{number}}", ticket.ticket.split("-")[1]);
 
         // Find ticket messages
         const ticketConversations = await Tickets.find({
@@ -59,58 +62,62 @@ module.exports = {
           ticket.createdBy
         );
 
+        transcriptFile = transcriptFile
+          .replace("{{displayName}}", ticketOwner.globalName)
+          .replace("{{username}}", ticketOwner.username)
+          .replace("{{userId}}", ticketOwner.id)
+          .replace("{{createAt}}", ticket.createdAt);
+
         async function fetchUser(user) {
           return await interaction.client.users.fetch(user);
         }
+
+        let conversationsHtml = "";
+        let conversationsUsers = [];
 
         (async () => {
           for (const data of ticketConversations) {
             const sender = await fetchUser(data.createdBy);
             conversationsUsers.push(data.createdBy);
-            conversationsHtml += `<div class="message-content">
-            <div class="message-user"><span style="font-weight:bold;color: #d0d0d0;">{{${sender.globalName}}}</span>&nbsp;<small style="font-size:10px;color:#999;">${data.createdAt}</small></div>
+            conversationsHtml += `<div class="message-content mb5">
+            <div class="message-user"><span style="font-weight:bold;color: #d0d0d0;">${sender.globalName}</span>&nbsp;<small style="font-size:10px;color:#999;">${data.createdAt}</small></div>
             <div class="message-text" style="color: #efefef;">${data.content}</div>
           </div>`;
           }
-        })();
 
-        // To delete repeated items in an array
-        conversationsUsers = [...new Set(conversationsUsers)];
+          transcriptFile = transcriptFile.replace(
+            "{{conversations}}",
+            conversationsHtml
+          );
 
-        // Replace variables in transcript file
-        transcriptFile = transcriptFile
-          .replace("{{ticket}}", ticket.ticket)
-          .replace("{{ticketName}}", ticket.ticket)
-          .replace("{{langTicketNumber}}", _("ticket_number"))
-          .replace("{{langCreatedBy}}", _("created_by_user"))
-          .replace("{{langCreationDate}}", _("creation_date"))
-          .replace("{{number}}", ticket.ticket.split("-")[1])
-          .replace("{{displayName}}", ticketOwner.globalName)
-          .replace("{{username}}", ticketOwner.username)
-          .replace("{{userId}}", ticketOwner.id)
-          .replace("{{createAt}}", ticket.createdAt)
-          .replace("{{conversations}}", conversationsHtml);
+          // To delete repeated items in an array
+          conversationsUsers = [...new Set(conversationsUsers)];
 
-        const transcriptTempFileName = `ticket-${randomIdv4}.html`;
-        const transcriptTempFilePath = `transcript/${transcriptTempFileName}`;
+          const transcriptTempFileName = `ticket-${randomIdv4}.html`;
+          const transcriptTempFilePath = `transcript/${transcriptTempFileName}`;
 
-        await fs.writeFileSync(transcriptTempFilePath, transcriptFile);
+          await fs.writeFileSync(transcriptTempFilePath, transcriptFile);
 
-        async function sendDM(userId) {
-          try {
+          async function sendDM(userId) {
             const user = await interaction.client.users.fetch(userId);
             await user.send({ type: 4, files: [transcriptTempFilePath] });
-            console.log(`Sent DM to user: ${user.username}`);
-          } catch (error) {
-            console.error(`Failed to send DM to user ${userId}:`, error);
           }
-        }
 
-        (async () => {
+          // Send transcripts to users direct message
           for (const userId of conversationsUsers) {
-            await sendDM(userId, transcriptTempFileName);
+            await sendDM(userId);
           }
+
+          // Delete transcripts send users after
           await fs.unlinkSync(transcriptTempFilePath);
+
+          // Delete ticket from database
+          const deletedTicket = await Tickets.deleteMany({
+            server: serverId,
+            ticketId: channelId,
+          });
+
+          if (deletedTicket) await channel.delete();
         })();
       }
     }

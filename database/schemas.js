@@ -1,7 +1,4 @@
 const { mongoose } = require("./connect");
-const autoIncrement = require("mongoose-auto-increment");
-
-autoIncrement.initialize(mongoose);
 
 // Configs
 const ConfigsSchema = new mongoose.Schema({
@@ -45,13 +42,12 @@ const TicketsSchema = new mongoose.Schema({
 });
 
 TicketsSchema.pre("save", async function (next) {
-  if (!this.isNew) {
-    // Only increment on new documents
-    return next();
-  }
-
-  const docCount = await Tickets.countDocuments({}); // Get existing document count
-  this.id = docCount + 1; // Assign ID as count + 1
+  // Only increment on new documents
+  if (!this.isNew) return next();
+  // Get existing document count
+  const docCount = await Tickets.countDocuments({});
+  // Assign ID as count + 1
+  this.id = docCount + 1;
   next();
 });
 

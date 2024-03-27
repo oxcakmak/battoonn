@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{{ticket}}</title>
-  <style>.container,body{background-color:#36393f}.header,.message-list{padding:10px}body{font-family:Arial,sans-serif;margin:0;padding:0}.container{max-width:600px;margin:20px auto;color:#fff;border-radius:5px;overflow:hidden;border:1px solid #fff}.dark-mode .header{background-color:#2c2f33}.header{display:flex;justify-content:space-between;align-items:center}.message{display:flex;align-items:center;margin-bottom:10px}.message-avatar{width:40px;height:40px;border-radius:50%;margin-right:10px}.message-content{flex:1}.message-time{color:#999}.mb5{margin-bottom:5px}</style>
+  <style>.container,body{background-color:#36393f}.header,.message-list{padding:10px}body{font-family:Arial,sans-serif;margin:0;padding:0}.container{max-width:600px;margin:20px auto;color:#fff;border-radius:5px;overflow:hidden;border:1px solid #fff}.dark-mode .header{background-color:#2c2f33}.header{display:flex;justify-content:space-between;align-items:center}.message{display:block;}.message-avatar{width:40px;height:40px;border-radius:50%;margin-right:10px}.message-content{flex:1}.message-time{color:#999;}.mb5{margin-bottom:5px}</style>
 </head>
 <body>
   <div class="container dark-mode">
@@ -13,7 +13,7 @@
       <dl>
         <dt class="mb5"><span style="font-weight: bold;">{{langTicketNumber}}</span><br /><span>{{number}}</span></dt>
         <dt class="mb5"><span style="font-weight: bold;">{{langCreatedBy}}</span><br /><span>{{displayName}}<br /><small style="font-size: 12px;">({{username}})</small><br /><small style="font-size: 12px;">({{userId}})</small></span></dt>
-        <dt class="mb5"><span style="font-weight: bold;">{{langCreationDate}}</span><br /><span>{{createAt}}</span></dt>
+        <dt class="mb5"><span style="font-weight: bold;">{{langCreationDate}}</span><br /><span><small>{{createAt}}</small></span></dt>
       </dl>
     </div>
     <div class="message-list">
