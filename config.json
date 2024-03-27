@@ -4,6 +4,8 @@
   "botAvatar": "https://i.imgur.com/g2R1uQt.gif",
   "botWebsite": "https://oxcakmak.com/",
   "botId": "1216097591582789713",
-  "botColor": "0xeff5f5",
-  "idHelp": ""
+  "botColor": "0xffffff",
+  "idHelp": "",
+  "twitchApiClient": "424284ai68cd2w2p8hnjs4rnsened8",
+  "twitchApiSecret": "fsduplan40pam8nsjlhm6po91and04"
 }
