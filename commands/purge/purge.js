@@ -27,12 +27,11 @@ module.exports = {
         embeds: [
           {
             type: "rich",
-            title: _("config_command"),
+            title: _("purge_command"),
             description: _("delete_messages"),
-            color: 0xffffff,
             fields: [
               {
-                name: _("use_of"),
+                name: _("fields"),
                 value: `**channel**: ${_("filter_by_channel")} \n **user**: ${_(
                   "filter_by_user"
                 )} \n **amount**: ${_(
@@ -41,7 +40,8 @@ module.exports = {
               },
               {
                 name: _("example"),
-                value: `**/purge #general** \n **/purge battoonn** \n **/purge 25** \n **/purge #general 25 ** \n **/purge #general battoonn** \n **/purge #general battoonn 25** \n **/purge battoonn 25**`,
+                value:
+                  "/purge `#general` \n /purge `battoonn` \n /purge `25` \n /purge `#general` `25`  \n /purge `#general` `battoonn` \n /purge `#general` `battoonn` `25` \n /purge `battoonn` `25`",
               },
               {
                 name: _("attention"),
@@ -113,6 +113,7 @@ module.exports = {
         await targetChannel.bulkDelete(messagesToDelete, true);
         await interaction.reply({
           content: _("message_deleted_successfully"),
+          ephemeral: true,
         });
       }
     } catch (error) {

@@ -1,4 +1,4 @@
-const { Configs, Tickets } = require("../../database/schemas");
+const { Tickets, TicketsConfigs } = require("../../database/schemas");
 const { _ } = require("../../utils/localization");
 
 const time = new Date().toLocaleString("en-US", {
@@ -17,6 +17,17 @@ module.exports = {
 
     const channelId = message.channel.id;
     const serverId = message.guild.id;
+
+    const TicketsConfigsQuery = await TicketsConfigs({
+      server: serverId,
+    });
+    const { moduleEnabled } = TicketsConfigsQuery;
+
+    if (TicketsConfigsQuery && moduleEnabled)
+      return await interaction.reply({
+        content: _("activate_module_first"),
+        ephemeral: true,
+      });
 
     const TicketsQuery = await Tickets({
       server: serverId,

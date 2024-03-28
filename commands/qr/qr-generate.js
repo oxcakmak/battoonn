@@ -8,36 +8,18 @@ const randomIdv4 = uuidv4();
 
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName("qr")
+
+    .setName("qr-generate")
     .setDescription(_("generates_qr_code"))
     .addStringOption((option) =>
-      option.setName("data").setDescription(_("qr_code_data")).setMaxLength(50)
+      option
+        .setName("data")
+        .setDescription(_("qr_code_data"))
+        .setMaxLength(50)
+        .setRequired(true)
     ),
   async execute(interaction) {
     if (interaction.bot) return;
-
-    // Command description
-    if (interaction.options.data.length === 0)
-      return await interaction.reply({
-        embeds: [
-          {
-            type: "rich",
-            title: _("qr_code"),
-            description: _("generates_qr_code"),
-            color: 0xffffff,
-            fields: [
-              {
-                name: _("use_of"),
-                value: `/qr {data}`,
-              },
-              {
-                name: _("example"),
-                value: `/qr battoonn bot`,
-              },
-            ],
-          },
-        ],
-      });
 
     const data = interaction.options.getString("data");
 

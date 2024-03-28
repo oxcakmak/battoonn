@@ -3,13 +3,13 @@ const { _ } = require("../../utils/localization");
 
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName("ban")
-    .setDescription(_("bans_a_user"))
+    .setName("user-unban")
+    .setDescription(_("unban_a_user"))
     .addUserOption((option) =>
-      option.setName("user").setDescription(_("filter_by_user"))
-    )
-    .addStringOption((option) =>
-      option.setName("reason").setDescription(_("reason_for_ban"))
+      option
+        .setName("user")
+        .setDescription(_("filter_by_user"))
+        .setRequired(true)
     ),
   async execute(interaction) {
     if (interaction.bot) return;
@@ -20,13 +20,13 @@ module.exports = {
         embeds: [
           {
             type: "rich",
-            title: _("ban_command"),
-            description: _("bans_a_user"),
+            title: _("usage"),
+            description: _("unban_a_user"),
             color: 0xffffff,
             fields: [
               {
                 name: _("use_of"),
-                value: `/ban {user} {reason}`,
+                value: "/unban `userId`",
               },
             ],
           },
@@ -44,19 +44,17 @@ module.exports = {
     }
 
     const user = interaction.options.getUser("user").id;
-    const reason =
-      interaction.options.getString("reason") || _("no_reason_provided");
 
     try {
-      await interaction.guild.members.ban(user, { reason });
+      await interaction.guild.members.unban(user);
       await interaction.reply({
-        content: _("user_banned"),
+        content: _("user_ban_removed"),
         ephemeral: true,
       });
     } catch (error) {
       console.error(error);
       await interaction.reply({
-        content: _("user_not_banned"),
+        content: _("user_ban_not_removed"),
         ephemeral: true,
       });
     }

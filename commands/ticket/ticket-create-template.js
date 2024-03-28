@@ -10,7 +10,7 @@ const { _ } = require("../../utils/localization");
 
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName("ticket-create")
+    .setName("ticket-create-template")
     .setDescription(_("ticket_create_template")),
   async execute(interaction) {
     if (interaction.bot) return;

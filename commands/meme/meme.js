@@ -6,7 +6,7 @@ module.exports = {
     .setName("meme")
     .setDescription(_("random_show_meme")),
   async execute(interaction) {
-    const memeUrl = `https://www.reddit.com/r/memes/hot.json?limit=100`;
+    const memeUrl = `https://www.reddit.com/r/memes/.json`;
 
     try {
       const response = await fetch(memeUrl);
@@ -26,7 +26,6 @@ module.exports = {
         embeds: [{ image: memePost.url }],
       });
     } catch (error) {
-      console.error("Error fetching meme:", error);
       await interaction.reply({
         content: _("failed_retrieve_meme"),
         ephemeral: true,

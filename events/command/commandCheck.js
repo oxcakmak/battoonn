@@ -21,12 +21,12 @@ module.exports = {
         const responseChannel = await client.channels.cache.get(
           server.responseChannel
         );
-        /*
+
         // Attempt to delete the initial reply message (optional)
         await interaction.deferReply();
         // Delete the original slash command reply
         await interaction.deleteReply();
-        */
+
         if (responseChannel)
           return await responseChannel.send({
             content: _("commands_only_run_channel_variable_mention_user", {
@@ -40,6 +40,7 @@ module.exports = {
           ephemeral: true,
         });
       }
+
       await command.execute(interaction, client);
     }
   },

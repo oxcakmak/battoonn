@@ -33,7 +33,14 @@ module.exports = {
       });
 
       if (TicketConfigsQuery) {
-        const { category, role } = TicketConfigsQuery;
+        const { category, moduleEnabled, role } = TicketConfigsQuery;
+
+        if (!moduleEnabled)
+          return await interaction.reply({
+            content: _("activate_module_first"),
+            ephemeral: true,
+          });
+
         const ticketCategory = guild.channels.cache.get(category)?.guild;
 
         if (!category || !ticketCategory)
