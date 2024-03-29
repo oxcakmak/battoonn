@@ -3,8 +3,14 @@ const { _ } = require("../../utils/localization");
 
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName("purge")
+    .setName("purge-channel")
     .setDescription(_("delete_messages"))
+    .addChannelOption((option) =>
+      option
+        .setName("channel")
+        .setDescription(_("filter_by_channel"))
+        .setRequired(true)
+    )
     .addIntegerOption((option) =>
       option
         .setName("amount")
@@ -14,43 +20,6 @@ module.exports = {
     ),
   async execute(interaction) {
     if (interaction.bot) return;
-
-    if (interaction.options.data.length === 0)
-      return await interaction.reply({
-        embeds: [
-          {
-            type: "rich",
-            title: _("purge_command"),
-            description: _("delete_messages"),
-            fields: [
-              {
-                name: _("fields"),
-                value: `**limit**: ${_(
-                  "number_messages_to_delete_count_maximum_default"
-                )}`,
-              },
-              {
-                name: _("example"),
-                value:
-                  "/purge `limit` - " +
-                  _("command_use_purge_channel") +
-                  " \n /purge-channel `Channel` `limit` - " +
-                  _("command_use_purge_channel_amount") +
-                  "  \n /purge-user `UsernameOrId` `limit` - " +
-                  _("command_use_purge_channel_user_amount") +
-                  " \n /purge-channel-in-user `Channel` `UsernameOrId` `limit` - " +
-                  _("command_use_purge_channel_user"),
-              },
-              {
-                name: _("attention"),
-                value: `${_("not_entered_channel_operate_in_channel")} \n ${_(
-                  "number_messages_to_delete_count_maximum_default"
-                )}`,
-              },
-            ],
-          },
-        ],
-      });
 
     // Check if the user has permission to manage messages
     if (
@@ -65,9 +34,10 @@ module.exports = {
     }
 
     const amount = interaction.options.getInteger("amount");
+    const channel = interaction.options.getChannel("channel");
 
     // Determine the channel to delete messages from
-    const targetChannel = interaction.channel;
+    const targetChannel = channel ? channel : interaction.channel;
     const deleteAmount = amount ? amount : 50;
 
     if (deleteAmount > 50 || deleteAmount < 1)
@@ -86,7 +56,6 @@ module.exports = {
       if (messages.size === 0)
         return await interaction.reply({
           content: _("message_not_found_to_delete"),
-          ephemeral: true,
         });
 
       let messagesToDelete = [];
