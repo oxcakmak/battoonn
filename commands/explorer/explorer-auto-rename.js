@@ -1,20 +1,31 @@
-const { PermissionsBitField, SlashCommandBuilder } = require("discord.js");
+const {
+  PermissionsBitField,
+  SlashCommandBuilder,
+  ChannelType,
+} = require("discord.js");
 const { Configs, Explorers } = require("../../database/schemas");
 const { _ } = require("../../utils/localization");
 
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName("explorer-module")
-    .setDescription(_("explorer_module_related_to_members"))
+    .setName("explorer-auto-rename")
+    .setDescription(_("adds_tags_the_beginning_end_of_username"))
     .addStringOption((option) =>
       option
-        .setName("module")
-        .setDescription(_("explorer_module_related_to_members"))
+        .setName("position")
+        .setDescription(_("where_to_add_tags"))
         .addChoices(
-          { name: _("enable"), value: "true" },
-          { name: _("disable"), value: "false" }
+          { name: _("beginning_of_username"), value: "per" },
+          { name: _("end_of_username"), value: "end" }
         )
         .setRequired(true)
+    )
+    .addStringOption((option) =>
+      option
+        .setName("tag")
+        .setDescription(_("what_tag_should_you_add"))
+        .setRequired(true)
+        .setMaxLength(25)
     ),
   async execute(interaction) {
     if (interaction.bot) return;
@@ -32,7 +43,8 @@ module.exports = {
 
     const serverId = interaction.guild.id;
 
-    const moduleEnabled = interaction.options.getString("module");
+    const position = interaction.options.getString("position");
+    const tag = interaction.options.getString("tag");
 
     const checkRegisteredServer = await Configs.findOne({ server: serverId });
     const explorerQuery = await Explorers.findOne({ server: serverId });
@@ -48,23 +60,20 @@ module.exports = {
         ephemeral: true,
       });
 
-    if (!explorerQuery.moduleEnabled)
-      return await interaction.reply({
-        content: _("activate_module_first"),
-        ephemeral: true,
-      });
+    explorerQuery.autoTag = tag;
+    explorerQuery.autoTagPosition = position;
 
-    explorerQuery.moduleEnabled = moduleEnabled;
+    const savedExplorer = await newExplorer.save();
 
-    const explorerUpdate = await explorerQuery.save();
-    if (!explorerUpdate)
+    if (!savedExplorer)
       return await interaction.reply({
-        content: _("explorer_settings_updated_failed"),
+        content: _("explorer_registration_failed"),
         ephemeral: true,
       });
 
     return await interaction.reply({
-      content: _("explorer_settings_updated_success"),
+      content: _("explorer_registration_successful"),
+      ephemeral: true,
     });
   },
 };

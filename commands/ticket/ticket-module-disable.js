@@ -5,7 +5,7 @@ const { _ } = require("../../utils/localization");
 module.exports = {
   data: new SlashCommandBuilder()
     .setName("ticket-module-disable")
-    .setDescription(_("ticket_module_disable")),
+    .setDescription(_("close_ticket_module")),
   async execute(interaction) {
     if (interaction.bot) return;
 

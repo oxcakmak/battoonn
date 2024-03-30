@@ -21,6 +21,12 @@ const ExplorerSchema = new mongoose.Schema({
   notifyChannel: { type: String, max: 20, default: null },
   joinMessage: { type: String, max: 200, default: null },
   leaveMessage: { type: String, max: 200, default: null },
+  autoTag: { type: String, max: 20, default: null },
+  autoTagPosition: {
+    type: String,
+    enum: ["per", "end"],
+    default: null,
+  },
 });
 
 const Explorers = mongoose.model("explorers", ExplorerSchema);

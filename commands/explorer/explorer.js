@@ -22,22 +22,9 @@ module.exports = {
           color: 0xffffff,
           fields: [
             {
-              name: _("use_of"),
-              value: `**module (enable/disable)**: ${_(
-                "explorer_module_related_to_members"
-              )} \n **type (join/leave)**: ${_(
-                "process_type"
-              )} \n **message**: ${_(
-                "joining_or_leaving_mesage"
-              )} \n **role**: ${_(
-                "server_given_joining_role"
-              )} \n **channel**: ${_(
-                "chanel_notifications_send_to_joining_or_leaving_message"
-              )}`,
-            },
-            {
-              name: _("example"),
-              value: `**/explorer module [enable/disable]** \n **/explorer role member** \n **/explorer join #visitors** \n **/explorer join Welcome %user%!** \n **/explorer leave #visitors** \n **/explorer leave Good bye %user%!**`,
+              name: _("commands"),
+              value:
+                "/explorer-module-enable \n /explorer-module-disable \n /explorer-channel `channel_or_channelId` \n /explorer-role `roleName_or_RoleId` \n /explorer-join-message `message` \n /explorer-leave-message `message`",
             },
             {
               name: _("example"),
