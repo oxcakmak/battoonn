@@ -63,17 +63,15 @@ module.exports = {
     explorerQuery.autoTag = tag;
     explorerQuery.autoTagPosition = position;
 
-    const savedExplorer = await newExplorer.save();
+    const savedExplorer = await explorerQuery.save();
 
     if (!savedExplorer)
       return await interaction.reply({
-        content: _("explorer_registration_failed"),
-        ephemeral: true,
+        content: _("explorer_settings_updated_failed"),
       });
 
     return await interaction.reply({
-      content: _("explorer_registration_successful"),
-      ephemeral: true,
+      content: _("explorer_settings_updated_success"),
     });
   },
 };
