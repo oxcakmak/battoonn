@@ -13,10 +13,15 @@ module.exports = {
       const role = await guild.roles.cache.get(givenRole);
       const channel = await guild.channels.cache.get(notifyChannel);
 
+      let message = joinMessage
+        ? joinMessage.replace("%user%", `<@${member.id}>`)
+        : _("member_join_message_default_variable", {
+            user: `<@${member.id}>`,
+          });
+
       if (givenRole && role) await member.roles.add(givenRole);
 
-      if (channel && notifyChannel)
-        await channel.send(joinMessage.replace("%user%", `<@${member.id}>`));
+      if (channel && notifyChannel) await channel.send(message);
     }
   },
 };

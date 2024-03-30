@@ -12,8 +12,13 @@ module.exports = {
     if (explorer && moduleEnabled) {
       const channel = await guild.channels.cache.get(notifyChannel);
 
-      if (channel && notifyChannel)
-        await channel.send(leaveMessage.replace("%user%", `<@${member.id}>`));
+      let message = leaveMessage
+        ? leaveMessage.replace("%user%", `<@${member.id}>`)
+        : _("member_leave_message_default_variable", {
+            user: `<@${member.id}>`,
+          });
+
+      if (channel && notifyChannel) await channel.send(message);
     }
   },
 };

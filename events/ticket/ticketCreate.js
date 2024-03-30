@@ -55,13 +55,13 @@ module.exports = {
             ephemeral: true,
           });
 
-        const TicketsQuery = await Tickets({
+        const TicketsQuery = await Tickets.findOne({
           server: serverId,
+          createdBy: user.id,
+          isPost: false,
         });
 
-        const { createdBy } = TicketsQuery;
-
-        if (createdBy)
+        if (TicketsQuery)
           return await interaction.reply({
             content: _("you_have_an_active_ticket"),
             ephemeral: true,

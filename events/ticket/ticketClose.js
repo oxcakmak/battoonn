@@ -100,7 +100,16 @@ module.exports = {
 
           async function sendDM(userId) {
             const user = await interaction.client.users.fetch(userId);
-            await user.send({ type: 4, files: [transcriptTempFilePath] });
+            try {
+              await user.send({ type: 4, files: [transcriptTempFilePath] });
+            } catch (error) {
+              // console.error("Error sending DM:", error);
+              // Handle the error gracefully
+              // Here, you can choose to:
+              // - Inform the user that the DM couldn't be sent (e.g., with interaction.reply)
+              // - Log the error for debugging
+              // - Continue execution without affecting other functionalities
+            }
           }
 
           // Send transcripts to users direct message
