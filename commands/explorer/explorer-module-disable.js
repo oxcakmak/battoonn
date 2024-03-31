@@ -36,12 +36,6 @@ module.exports = {
         ephemeral: true,
       });
 
-    if (!explorerQuery.moduleEnabled)
-      return await interaction.reply({
-        content: _("activate_module_first"),
-        ephemeral: true,
-      });
-
     explorerQuery.moduleEnabled = false;
 
     const explorerUpdate = await explorerQuery.save();

@@ -4,8 +4,8 @@ const { _ } = require("../../utils/localization");
 
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName("explorer-module-enable")
-    .setDescription(_("open_explorer_module")),
+    .setName("explorer-reset")
+    .setDescription(_("reset_explorer_module")),
   async execute(interaction) {
     if (interaction.bot) return;
 
@@ -36,13 +36,19 @@ module.exports = {
         ephemeral: true,
       });
 
-    explorerQuery.moduleEnabled = true;
+    (explorerQuery.moduleEnabled = false),
+      (explorerQuery.givenRole = null),
+      (explorerQuery.notifyChannel = null),
+      (explorerQuery.joinMessage = null),
+      (explorerQuery.leaveMessage = null),
+      (explorerQuery.autoTag = null),
+      (explorerQuery.autoTagPosition = null);
 
-    const explorerUpdate = await explorerQuery.save();
-    if (!explorerUpdate)
+    const savedExplorer = await explorerQuery.save();
+
+    if (!savedExplorer)
       return await interaction.reply({
         content: _("explorer_settings_updated_failed"),
-        ephemeral: true,
       });
 
     return await interaction.reply({

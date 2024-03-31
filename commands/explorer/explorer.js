@@ -1,9 +1,4 @@
-const {
-  PermissionsBitField,
-  SlashCommandBuilder,
-  ChannelType,
-} = require("discord.js");
-const { Configs, Explorers } = require("../../database/schemas");
+const { SlashCommandBuilder } = require("discord.js");
 const { _ } = require("../../utils/localization");
 
 module.exports = {
@@ -19,12 +14,11 @@ module.exports = {
           type: "rich",
           title: _("explorer_command"),
           description: _("server_join_and_leave_member_transactions"),
-          color: 0xffffff,
           fields: [
             {
               name: _("commands"),
               value:
-                "/explorer-module-enable \n /explorer-module-disable \n /explorer-channel `channel_or_channelId` \n /explorer-role `roleName_or_RoleId` \n /explorer-join-message `message` \n /explorer-leave-message `message`",
+                "/explorer-module-enable \n /explorer-module-disable \n /explorer-channel `channel_or_channelId` \n /explorer-role `roleName_or_RoleId` \n /explorer-join-message `message` \n /explorer-leave-message `message` \n /explorer-auto-rename `poisition {per|end}` `tag` \n /explorer-reset",
             },
             {
               name: _("example"),

@@ -50,7 +50,7 @@ module.exports = {
         ephemeral: true,
       });
 
-    explorerQuery.joinMessage = message;
+    explorerQuery.leaveMessage = message;
 
     const explorerUpdate = await explorerQuery.save();
     if (!explorerUpdate)

@@ -1,8 +1,4 @@
-const {
-  PermissionsBitField,
-  SlashCommandBuilder,
-  ChannelType,
-} = require("discord.js");
+const { PermissionsBitField, SlashCommandBuilder } = require("discord.js");
 const { Configs, Explorers } = require("../../database/schemas");
 const { _ } = require("../../utils/localization");
 
