@@ -91,7 +91,6 @@ module.exports = {
             type: "rich",
             title: templateTitle,
             description: templateDescription,
-            color: 0xffffff,
           },
         ],
       });

@@ -15,22 +15,29 @@ module.exports = {
     if (interaction.bot) return;
 
     const target = interaction.options.get("user");
-    const member = await interaction.guild.members.fetch(target);
 
-    const embed = {
-      type: "rich",
-      title: "",
-      description: "",
-      title: _("user_avatar_variable", {
-        variable: member.user.username,
-      }),
-      image: {
-        url: member.user.displayAvatarURL(),
-        height: 0,
-        width: 0,
-      },
-    };
+    try {
+      const member = await interaction.guild.members?.fetch(target.id);
 
-    await interaction.reply({ embeds: [embed] });
+      const embed = {
+        type: "rich",
+        title: "",
+        description: "",
+        title: _("user_avatar_variable", {
+          variable: member.user.username,
+        }),
+        image: {
+          url: member.user.displayAvatarURL(),
+          height: 0,
+          width: 0,
+        },
+      };
+
+      await interaction.reply({ embeds: [embed] });
+    } catch (error) {
+      return await interaction.reply({
+        content: _("an_unknown_error_occurred"),
+      });
+    }
   },
 };

@@ -8,7 +8,7 @@ const ConfigsSchema = new mongoose.Schema({
   premiumEnabled: { type: Boolean, default: false },
   commandChannel: { type: String, max: 20, default: null },
   responseChannel: { type: String, max: 20, default: null },
-  displayLanguage: { type: String, min: 2, max: 2, default: "en" },
+  allowedChannels: [String],
 });
 
 const Configs = mongoose.model("configs", ConfigsSchema);
@@ -73,4 +73,13 @@ const TicketConfigsSchema = new mongoose.Schema({
 
 const TicketConfigs = mongoose.model("ticketConfigs", TicketConfigsSchema);
 
-module.exports = { Configs, Explorers, Tickets, TicketConfigs };
+// Ticket Configs
+const ForumsSchema = new mongoose.Schema({
+  server: String,
+  solvedText: String,
+  allowedRole: String,
+});
+
+const Forums = mongoose.model("forums", ForumsSchema);
+
+module.exports = { Configs, Explorers, Tickets, TicketConfigs, Forums };

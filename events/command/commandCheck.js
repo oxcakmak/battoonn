@@ -4,7 +4,6 @@ const { _ } = require("../../utils/localization");
 module.exports = {
   name: "interactionCreate",
   async execute(interaction, client) {
-    const { customId } = interaction;
     const serverId = interaction.guild.id;
     const server = await Configs.findOne({ server: serverId });
 
@@ -14,10 +13,16 @@ module.exports = {
       if (!command)
         return await interaction.reply({ content: _("outdated_command") });
 
+      const currentThread = await client.channels.cache.get(
+        interaction.channelId
+      );
+
       if (
+        !server.allowedChannels.includes(currentThread.parentId) &&
         server.commandChannel &&
         interaction.channelId !== server.commandChannel
       ) {
+        //
         const responseChannel = await client.channels.cache.get(
           server.responseChannel
         );

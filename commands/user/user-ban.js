@@ -39,12 +39,11 @@ module.exports = {
     // Check if the user has permission to ban members
     if (
       !interaction.member.permissions.has(PermissionsBitField.Flags.BanMembers)
-    ) {
+    )
       return await interaction.reply({
         content: _("you_do_not_have_permission_command"),
         ephemeral: true,
       });
-    }
 
     const user = interaction.options.getUser("user").id;
     const reason =

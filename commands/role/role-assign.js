@@ -32,32 +32,28 @@ module.exports = {
 
     const role = interaction.options.getRole("role").id;
     const user = interaction.options.getUser("user").id;
-    const serverRole = await interaction.guild.roles.cache.get(role);
-    const serverUser = await interaction.guild.members.cache.get(user);
-
-    if (!serverRole)
-      return await interaction.reply({
-        content: _("role_not_found"),
-      });
-
-    if (!serverUser)
-      return await interaction.reply({
-        content: _("user_not_found"),
-      });
-
-    if (serverUser.roles.cache.has(role))
-      return await interaction.reply({
-        content: _("user_has_role_selected"),
-      });
 
     try {
+      const serverRole = await interaction.guild.roles.cache.get(role);
+      const serverUser = await interaction.guild.members.cache.get(user);
+
+      if (!serverRole)
+        return await interaction.reply({
+          content: _("role_not_found"),
+        });
+
+      if (serverUser.roles.cache.has(role))
+        return await interaction.reply({
+          content: _("user_has_role_selected"),
+        });
+
       await serverUser.roles.add(role);
       return await interaction.reply({
         content: _("role_assigned"),
       });
     } catch (error) {
       return await interaction.reply({
-        content: _("role_not_assigned"),
+        content: _("an_unknown_error_occurred"),
       });
     }
   },
