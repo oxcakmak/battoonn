@@ -273,3 +273,4 @@ you_do_not_have_permission_command: "You do not have permission to use this comm
 you_do_not_have_permission_create_channel: "You do not have permission to create a channel"
 you_do_not_have_permission: "You do not have permission"
 you_have_an_active_ticket: "You have an active ticket"
+register_to_use_forum_commands: "Register to use forum commands"

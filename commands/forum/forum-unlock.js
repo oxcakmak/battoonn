@@ -1,5 +1,7 @@
-const { PermissionsBitField, SlashCommandBuilder } = require("discord.js");
+const { SlashCommandBuilder } = require("discord.js");
 const { _ } = require("../../utils/localization");
+const { containsMultipleData } = require("../../utils/arrayFunctions");
+const { Forums } = require("../../database/schemas");
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -8,11 +10,19 @@ module.exports = {
   async execute(interaction) {
     if (interaction.bot) return;
 
-    if (
-      !interaction.member.permissions.has(
-        PermissionsBitField.Flags.ManageThreads
-      )
-    )
+    const forums = await Forums.findOne({
+      server: interaction.guild.id,
+    });
+
+    if (!forums)
+      return await interaction.reply({
+        content: _("register_to_use_forum_commands"),
+        ephemeral: true,
+      });
+
+    const roleIds = interaction.member.roles.cache.map((role) => role.id);
+
+    if (!containsMultipleData(roleIds, [forums.allowedRole]))
       return await interaction.reply({
         content: _("you_do_not_have_permission_command"),
         ephemeral: true,
@@ -23,7 +33,8 @@ module.exports = {
         interaction.channel.id
       );
 
-      const unlockThread = await channel.setLocked(false);
+      const unlockThread =
+        channel.isThread() && (await channel.setLocked(false));
 
       if (!unlockThread)
         return await interaction.reply({

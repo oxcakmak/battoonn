@@ -18,7 +18,7 @@ module.exports = {
   async execute(interaction) {
     if (interaction.bot) return;
 
-    if (interaction.options.data.length === 0)
+    if (interaction.options.data.length === 0) {
       return await interaction.reply({
         embeds: [
           {
@@ -29,25 +29,13 @@ module.exports = {
               {
                 name: _("example"),
                 value:
-                  "/purge `limit` - " +
-                  _("command_use_purge_channel") +
-                  " \n /purge-channel `Channel` `limit` - " +
-                  _("command_use_purge_channel_amount") +
-                  "  \n /purge-user `UsernameOrId` `limit` - " +
-                  _("command_use_purge_channel_user_amount") +
-                  " \n /purge-channel-in-user `Channel` `UsernameOrId` `limit` - " +
-                  _("command_use_purge_channel_user"),
-              },
-              {
-                name: _("attention"),
-                value: `${_("not_entered_channel_operate_in_channel")} \n ${_(
-                  "number_messages_to_delete_count_maximum_default"
-                )}`,
+                  "/forum `channel` `role` \n /forum-lock \n /forum-unlock \n /forum-solved",
               },
             ],
           },
         ],
       });
+    }
 
     // Check if the user has permission to ban members
     if (
@@ -66,7 +54,7 @@ module.exports = {
 
       const checkRole = await interaction.guild.roles.cache.get(role);
 
-      if (role && !checkRole)
+      if (!checkRole)
         return await interaction.reply({
           content: _("role_not_found"),
         });
