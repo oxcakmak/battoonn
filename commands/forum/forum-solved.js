@@ -1,5 +1,6 @@
 const { PermissionsBitField, SlashCommandBuilder } = require("discord.js");
 const { _ } = require("../../utils/localization");
+const { Forums } = require("../../database/schemas");
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -8,22 +9,30 @@ module.exports = {
   async execute(interaction) {
     if (interaction.bot) return;
 
-    if (
-      !interaction.member.permissions.has(
-        PermissionsBitField.Flags.ManageThreads
-      )
-    )
-      return await interaction.reply({
-        content: _("you_do_not_have_permission_command"),
-        ephemeral: true,
+    try {
+      const forums = await Forums.findOne({
+        server: interaction.guild.id,
       });
 
-    try {
+      const user = await interaction.guild.members.cache.get(
+        interaction.user.id
+      );
+
+      if (!user.permissions.has(forums.allowedRole))
+        return await interaction.reply({
+          content: _("you_do_not_have_permission_command"),
+          ephemeral: true,
+        });
+
       const channel = await interaction.guild.channels.fetch(
         interaction.channel.id
       );
 
-      const solveThread = await channel.setName("SOLVED - " + channel.name);
+      const solvedText = forums ? forums.solvedText : _("solved_uppercase");
+
+      const solveThread = await channel.setName(
+        solvedText + " - " + channel.name.replace(forums.solvedText, "")
+      );
 
       if (!solveThread)
         return await interaction.reply({
