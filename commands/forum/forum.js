@@ -29,7 +29,7 @@ module.exports = {
               {
                 name: _("example"),
                 value:
-                  "/forum `channel` `role` \n /forum-lock \n /forum-unlock \n /forum-solved",
+                  "/forum `asd` \n /forum-lock \n /forum-unlock \n /forum-solved",
               },
             ],
           },

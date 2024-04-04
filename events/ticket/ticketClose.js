@@ -1,7 +1,7 @@
 const fs = require("fs");
-const { MessageAttachment, PermissionsBitField } = require("discord.js");
 const { _ } = require("../../utils/localization");
 const { Tickets, TicketConfigs } = require("../../database/schemas");
+const { containsMultipleData } = require("../../utils/arrayFunctions");
 
 const { v4: uuidv4 } = require("uuid");
 const randomIdv4 = uuidv4();
@@ -16,8 +16,10 @@ module.exports = {
     if (interaction.isButton() && customId === "btnCloseTicket") {
       const channelId = message.channelId;
 
-      const TicketConfigs = await TicketConfigs.findOne({ server: serverId });
-      if (!TicketConfigs)
+      const TicketConfigsQuery = await TicketConfigs.findOne({
+        server: serverId,
+      });
+      if (!TicketConfigsQuery)
         return await interaction.reply({
           content: _("ticket_configuration_not_found"),
           ephemeral: true,
@@ -25,14 +27,16 @@ module.exports = {
 
       const roleIds = interaction.member.roles.cache.map((role) => role.id);
 
-      if (!containsMultipleData(roleIds, [TicketConfigs.role]))
+      if (!containsMultipleData(roleIds, [TicketConfigsQuery.role]))
         return await interaction.reply({
           content: _("you_do_not_have_permission_command"),
           ephemeral: true,
         });
 
       // Check for specific role ID
-      const ticketRole = interaction.member.roles.cache.has(role);
+      const ticketRole = interaction.member.roles.cache.has(
+        TicketConfigsQuery.role
+      );
 
       if (!ticketRole)
         return await interaction.reply({
