@@ -6,9 +6,20 @@ const { Forums } = require("../../database/schemas");
 module.exports = {
   data: new SlashCommandBuilder()
     .setName("forum-unlock")
-    .setDescription(_("unlock_thread")),
+    .setDescription(_("unlock_thread"))
+    .addStringOption((option) =>
+      option
+        .setName("title")
+        .setDescription(_("if_resolved_title_exists_should_it_remove"))
+        .addChoices(
+          { name: _("option_yes"), value: "yes" },
+          { name: _("option_no"), value: "no" }
+        )
+    ),
   async execute(interaction) {
     if (interaction.bot) return;
+
+    const replaceTitle = interaction.options.getString("title") || "no";
 
     const forums = await Forums.findOne({
       server: interaction.guild.id,
@@ -32,6 +43,12 @@ module.exports = {
       const channel = await interaction.guild.channels.fetch(
         interaction.channel.id
       );
+
+      if (replaceTitle === "yes" && channel.name.includes(forums.solvedText))
+        channel.isThread() &&
+          (await channel.setName(
+            channel.name.replace(forums.solvedText + " - ", "")
+          ));
 
       const unlockThread =
         channel.isThread() && (await channel.setLocked(false));

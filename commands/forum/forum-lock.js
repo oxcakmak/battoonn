@@ -6,9 +6,15 @@ const { Forums } = require("../../database/schemas");
 module.exports = {
   data: new SlashCommandBuilder()
     .setName("forum-lock")
-    .setDescription(_("lock_the_thread")),
+    .setDescription(_("lock_the_thread"))
+    .addStringOption((option) =>
+      option.setName("reason").setDescription(_("why_are_you_closing_ticket"))
+    ),
   async execute(interaction) {
     if (interaction.bot) return;
+
+    const reason =
+      interaction.options.getString("reason") || _("no_reason_provided");
 
     const forums = await Forums.findOne({
       server: interaction.guild.id,
@@ -33,6 +39,12 @@ module.exports = {
         interaction.channel.id
       );
 
+      if (channel.locked)
+        return await interaction.reply({
+          content: _("thread_already_locked"),
+          ephemeral: true,
+        });
+
       const lockThread = channel.isThread() && (await channel.setLocked(true));
 
       if (!lockThread)
@@ -42,8 +54,10 @@ module.exports = {
         });
 
       return await interaction.reply({
-        content: _("thread_locked"),
-        ephemeral: true,
+        content: reason
+          ? _("reason_with_variable", { reason: reason })
+          : _("thread_locked"),
+        ephemeral: reason ? false : true,
       });
     } catch (error) {
       console.log(error);

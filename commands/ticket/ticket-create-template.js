@@ -1,10 +1,4 @@
-const {
-  ChannelType,
-  InteractionType,
-  MessageButtonInteraction,
-  PermissionsBitField,
-  SlashCommandBuilder,
-} = require("discord.js");
+const { PermissionsBitField, SlashCommandBuilder } = require("discord.js");
 const { Configs, TicketConfigs } = require("../../database/schemas");
 const { _ } = require("../../utils/localization");
 

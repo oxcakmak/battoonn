@@ -1,5 +1,4 @@
 const {
-  MessageActionRow,
   PermissionsBitField,
   SlashCommandBuilder,
   ChannelType,
