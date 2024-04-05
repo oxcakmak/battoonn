@@ -1,7 +1,7 @@
 const { SlashCommandBuilder } = require("discord.js");
 const { _ } = require("../../utils/localization");
 const { containsMultipleData } = require("../../utils/arrayFunctions");
-const { Forums } = require("../../database/schemas");
+const { Configs } = require("../../database/schemas");
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -21,7 +21,7 @@ module.exports = {
 
     const replaceTitle = interaction.options.getString("title") || "no";
 
-    const forums = await Forums.findOne({
+    const forums = await Configs.findOne({
       server: interaction.guild.id,
     });
 
@@ -33,7 +33,7 @@ module.exports = {
 
     const roleIds = interaction.member.roles.cache.map((role) => role.id);
 
-    if (!containsMultipleData(roleIds, [forums.allowedRole]))
+    if (!containsMultipleData(roleIds, [forums.forumAllowedRole]))
       return await interaction.reply({
         content: _("you_do_not_have_permission_command"),
         ephemeral: true,
@@ -44,10 +44,13 @@ module.exports = {
         interaction.channel.id
       );
 
-      if (replaceTitle === "yes" && channel.name.includes(forums.solvedText))
+      if (
+        replaceTitle === "yes" &&
+        channel.name.includes(forums.forumSolvedText)
+      )
         channel.isThread() &&
           (await channel.setName(
-            channel.name.replace(forums.solvedText + " - ", "")
+            channel.name.replace(forums.forumSolvedText + " - ", "")
           ));
 
       const unlockThread =

@@ -3,12 +3,14 @@ const { mongoose } = require("./connect");
 // Configs
 const ConfigsSchema = new mongoose.Schema({
   server: String,
-  premiumStart: { type: String, max: 20, default: null },
-  premiumEnd: { type: String, max: 20, default: null },
+  premiumLeft: { type: Number, default: 0 },
   premiumEnabled: { type: Boolean, default: false },
-  commandChannel: { type: String, max: 20, default: null },
-  responseChannel: { type: String, max: 20, default: null },
+  commandChannel: { type: String, default: null },
+  responseChannel: { type: String, default: null },
+  announcementChannel: { type: String, default: null },
   allowedChannels: [String],
+  forumSolvedText: { type: String, default: null },
+  forumAllowedRole: { type: String, default: null },
 });
 
 const Configs = mongoose.model("configs", ConfigsSchema);
@@ -73,13 +75,4 @@ const TicketConfigsSchema = new mongoose.Schema({
 
 const TicketConfigs = mongoose.model("ticketConfigs", TicketConfigsSchema);
 
-// Ticket Configs
-const ForumsSchema = new mongoose.Schema({
-  server: String,
-  solvedText: String,
-  allowedRole: String,
-});
-
-const Forums = mongoose.model("forums", ForumsSchema);
-
-module.exports = { Configs, Explorers, Tickets, TicketConfigs, Forums };
+module.exports = { Configs, Explorers, Tickets, TicketConfigs };

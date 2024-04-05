@@ -1,10 +1,10 @@
 const { PermissionsBitField, SlashCommandBuilder } = require("discord.js");
 const { _ } = require("../../utils/localization");
-const { Forums } = require("../../database/schemas");
+const { Configs } = require("../../database/schemas");
 
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName("forum-set-role")
+    .setName("config-forum-role")
     .setDescription(_("forum_role"))
     .addRoleOption((option) =>
       option
@@ -34,39 +34,18 @@ module.exports = {
           content: _("role_not_selected"),
         });
 
-      const checkRole = await interaction.guild.roles.cache.get(role);
+      const checkRole = await interaction.guild.roles.cache.get(role.id);
 
       if (!checkRole)
         return await interaction.reply({
           content: _("role_not_found"),
         });
 
-      const forumsQuery = await Forums.findOne({
+      const forumsQuery = await Configs.findOne({
         server: interaction.guild.id,
       });
 
-      if (!forumsQuery) {
-        const newForums = new Forums({
-          server: interaction.guild.id,
-          solvedText: null,
-          allowedRole: role.id,
-        });
-
-        const savedForums = await newForums.save();
-
-        if (!savedForums)
-          return await interaction.reply({
-            content: _("forum_not_registered"),
-            ephemeral: true,
-          });
-
-        return await interaction.reply({
-          content: _("forum_registered"),
-          ephemeral: true,
-        });
-      }
-
-      if (role) forumsQuery.allowedRole = role.id;
+      if (role) forumsQuery.forumAllowedRole = checkRole.id;
 
       const updatedForums = await forumsQuery.save();
 
@@ -78,7 +57,6 @@ module.exports = {
 
       return await interaction.reply({
         content: _("forum_updated"),
-        ephemeral: true,
       });
     } catch (error) {
       return await interaction.reply({

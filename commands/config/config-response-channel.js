@@ -42,9 +42,7 @@ module.exports = {
         content: _("register_the_server_first"),
       });
 
-    if (!channel) configsQuery.responseChannelChannel = null;
-
-    configsQuery.responseChannelChannel = channel.id;
+    configsQuery.responseChannel = channel ? channel.id : null;
 
     const configsUpdate = await configsQuery.save();
     if (!configsUpdate)

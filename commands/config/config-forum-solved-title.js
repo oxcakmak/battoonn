@@ -1,10 +1,10 @@
 const { PermissionsBitField, SlashCommandBuilder } = require("discord.js");
 const { _ } = require("../../utils/localization");
-const { Forums } = require("../../database/schemas");
+const { Configs } = require("../../database/schemas");
 
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName("forum-set-solved-title")
+    .setName("config-forum-solved-title")
     .setDescription(_("forum_configuration_role_and_resolved_title"))
     .addStringOption((option) =>
       option
@@ -31,32 +31,11 @@ module.exports = {
       const title =
         (await interaction.options.getString("title")) || _("solved_uppercase");
 
-      const forumsQuery = await Forums.findOne({
+      const forumsQuery = await Configs.findOne({
         server: interaction.guild.id,
       });
 
-      if (!forumsQuery) {
-        const newForums = new Forums({
-          server: interaction.guild.id,
-          solvedText: title,
-          allowedRole: null,
-        });
-
-        const savedForums = await newForums.save();
-
-        if (!savedForums)
-          return await interaction.reply({
-            content: _("forum_not_registered"),
-            ephemeral: true,
-          });
-
-        return await interaction.reply({
-          content: _("forum_registered"),
-          ephemeral: true,
-        });
-      }
-
-      if (title) forumsQuery.solvedText = title;
+      if (title) forumsQuery.forumSolvedText = title;
 
       const updatedForums = await forumsQuery.save();
 
@@ -68,7 +47,6 @@ module.exports = {
 
       return await interaction.reply({
         content: _("forum_updated"),
-        ephemeral: true,
       });
     } catch (error) {
       return await interaction.reply({

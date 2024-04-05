@@ -1,7 +1,7 @@
 const { SlashCommandBuilder } = require("discord.js");
 const { _ } = require("../../utils/localization");
 const { containsMultipleData } = require("../../utils/arrayFunctions");
-const { Forums } = require("../../database/schemas");
+const { Configs } = require("../../database/schemas");
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -16,7 +16,7 @@ module.exports = {
     const reason =
       interaction.options.getString("reason") || _("no_reason_provided");
 
-    const forums = await Forums.findOne({
+    const forums = await Configs.findOne({
       server: interaction.guild.id,
     });
 
@@ -28,7 +28,7 @@ module.exports = {
 
     const roleIds = interaction.member.roles.cache.map((role) => role.id);
 
-    if (!containsMultipleData(roleIds, [forums.allowedRole]))
+    if (!containsMultipleData(roleIds, [forums.forumAllowedRole]))
       return await interaction.reply({
         content: _("you_do_not_have_permission_command"),
         ephemeral: true,

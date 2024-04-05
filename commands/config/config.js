@@ -16,9 +16,9 @@ module.exports = {
           description: _("command_to_update_server"),
           fields: [
             {
-              name: _("usage"),
+              name: _("commands"),
               value:
-                "/config-language `en` \n /config-command `#bot-command` \n /config-response `#bot-command`",
+                "/config-language `language` \n /config-command-channel `channel` \n /config-response-channel `channel` \n /config-announcement-channel `channel` \n /config-allow-channel `channel` \n /config-forum-role `role` \n /config-forum-solved-title `title`",
             },
           ],
         },

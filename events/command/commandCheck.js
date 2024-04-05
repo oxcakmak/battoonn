@@ -18,6 +18,7 @@ module.exports = {
       );
 
       if (
+        server &&
         !server.allowedChannels.includes(currentThread.parentId) &&
         server.commandChannel &&
         interaction.channelId !== server.commandChannel

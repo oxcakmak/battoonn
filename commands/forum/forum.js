@@ -18,7 +18,7 @@ module.exports = {
             {
               name: _("example"),
               value:
-                "/forum-lock `reason` \n /forum-unlock removeSolvedTitle?`yes|no` \n /forum-solved lock?`yes|no` \n /forum-set-role `role` \n /forum-set-solved-title `title`",
+                "/forum-lock `reason` \n /forum-unlock removeSolvedTitle?`yes|no` \n /forum-solved lock?`yes|no`",
             },
           ],
         },

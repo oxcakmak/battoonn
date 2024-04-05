@@ -1,6 +1,6 @@
 const { SlashCommandBuilder } = require("discord.js");
 const { _ } = require("../../utils/localization");
-const { Forums } = require("../../database/schemas");
+const { Configs } = require("../../database/schemas");
 const { containsMultipleData } = require("../../utils/arrayFunctions");
 
 module.exports = {
@@ -23,7 +23,7 @@ module.exports = {
       const lock =
         interaction.options.getString("lock") === "yes" ? true : false;
 
-      const forums = await Forums.findOne({
+      const forums = await Configs.findOne({
         server: interaction.guild.id,
       });
 
@@ -35,7 +35,7 @@ module.exports = {
 
       const roleIds = interaction.member.roles.cache.map((role) => role.id);
 
-      if (!containsMultipleData(roleIds, [forums.allowedRole]))
+      if (!containsMultipleData(roleIds, [forums.forumAllowedRole]))
         return await interaction.reply({
           content: _("you_do_not_have_permission_command"),
           ephemeral: true,
@@ -46,7 +46,7 @@ module.exports = {
       );
 
       const solvedText = forums
-        ? forums.solvedText + " - "
+        ? forums.forumSolvedText + " - "
         : _("solved_uppercase") + " - ";
 
       await channel.setLocked(lock);
@@ -55,7 +55,7 @@ module.exports = {
         channel.isThread() &&
         !channel.name.startsWith(solvedText) &&
         (await channel.setName(
-          solvedText + channel.name.replace(forums.solvedText, "")
+          solvedText + channel.name.replace(solvedText, "")
         ));
 
       if (!solveThread)
