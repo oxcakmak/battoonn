@@ -23,6 +23,7 @@
   "dependencies": {
     "ascii-table": "^0.0.9",
     "axios": "^1.6.8",
+    "discord-music-player": "^9.1.1",
     "discord.js": "^14.14.1",
     "gettext": "^0.0.1",
     "js-yaml": "^4.1.0",
