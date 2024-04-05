@@ -26,6 +26,7 @@
     "discord-music-player": "^9.1.1",
     "discord.js": "^14.14.1",
     "gettext": "^0.0.1",
+    "isomorphic-unfetch": "^4.0.2",
     "js-yaml": "^4.1.0",
     "mongoose": "^8.2.3",
     "node-schedule": "^2.1.1",
@@ -34,6 +35,8 @@
     "random-hex": "^1.0.2",
     "shortdate": "^2.0.0",
     "simplest-i18n": "^1.0.0",
+    "spotify-finder": "^2.1.1",
+    "track-duration": "^0.2.7",
     "uuid": "^9.0.1"
   }
 }

@@ -19,11 +19,11 @@ const Configs = mongoose.model("configs", ConfigsSchema);
 const ExplorerSchema = new mongoose.Schema({
   server: String,
   moduleEnabled: { type: Boolean, default: false },
-  givenRole: { type: String, max: 20, default: null },
-  notifyChannel: { type: String, max: 20, default: null },
+  givenRole: { type: String, default: null },
+  notifyChannel: { type: String, default: null },
   joinMessage: { type: String, max: 200, default: null },
   leaveMessage: { type: String, max: 200, default: null },
-  autoTag: { type: String, max: 20, default: null },
+  autoTag: { type: String, default: null },
   autoTagPosition: {
     type: String,
     enum: ["per", "end"],
@@ -75,4 +75,16 @@ const TicketConfigsSchema = new mongoose.Schema({
 
 const TicketConfigs = mongoose.model("ticketConfigs", TicketConfigsSchema);
 
-module.exports = { Configs, Explorers, Tickets, TicketConfigs };
+// Music
+const MusicConfigsSchema = new mongoose.Schema({
+  server: String,
+  channel: { type: String, default: null },
+  djRole: { type: String, default: null },
+  spotifyClientId: { type: String, default: null },
+  spotifyClientSecret: { type: String, default: null },
+  /* templateDescription: { type: String, default: null }, */
+});
+
+const MusicConfigs = mongoose.model("musicConfigs", MusicConfigsSchema);
+
+module.exports = { Configs, Explorers, Tickets, TicketConfigs, MusicConfigs };

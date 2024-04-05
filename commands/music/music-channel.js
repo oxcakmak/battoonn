@@ -1,0 +1,53 @@
+const {
+  PermissionsBitField,
+  SlashCommandBuilder,
+  ChannelType,
+} = require("discord.js");
+const { MusicConfigs } = require("../../database/schemas");
+const { _ } = require("../../utils/localization");
+
+module.exports = {
+  data: new SlashCommandBuilder()
+    .setName("music-channel")
+    .setDescription(_("command_channel"))
+    .addChannelOption((option) =>
+      option
+        .setName("channel")
+        .setDescription(_("music_command_channel"))
+        .addChannelTypes(ChannelType.GuildText)
+        .setRequired(true)
+    ),
+  async execute(interaction) {
+    if (interaction.bot) return;
+
+    // Check if the user has permission to manage messages
+    if (
+      !interaction.member.permissions.has(
+        PermissionsBitField.Flags.Administrator
+      )
+    )
+      return await interaction.reply({
+        content: _("you_do_not_have_permission_command"),
+        ephemeral: true,
+      });
+
+    const targetChannel = interaction.options.getChannel("channel");
+
+    const MusicConfigsQuery = await MusicConfigs.findOne({
+      server: interaction.guild.id,
+    });
+
+    MusicConfigsQuery.channel = targetChannel ? targetChannel.id : null;
+
+    const musicConfigUpdate = await MusicConfigsQuery.save();
+    if (!musicConfigUpdate)
+      return await interaction.reply({
+        content: _("server_settings_update_failed"),
+        ephemeral: true,
+      });
+
+    return await interaction.reply({
+      content: _("server_settings_update_success"),
+    });
+  },
+};
