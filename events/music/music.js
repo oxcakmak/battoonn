@@ -1,13 +1,16 @@
-const { _ } = require("../../utils/localization");
-const voice = require("@discordjs/voice");
 const play = require("play-dl");
+const { _ } = require("../../utils/localization");
+const { queue, playQueue } = require("../../vendor/queue");
+
+queue.on("add", async () => {
+  await playQueue(interaction, channel, currentChannel); // Start playing if the queue is empty
+  console.log(added);
+});
 
 module.exports = {
   name: "interactionCreate",
   async execute(interaction) {
     const { customId, guild, message, channel } = await interaction;
-
-    const serverId = guild.id;
 
     const member = await guild.members.fetch(interaction.user.id);
 
@@ -20,7 +23,6 @@ module.exports = {
       return false;
 
     const selectedTrack = await interaction.values[0];
-
     if (!selectedTrack)
       return await interaction.reply({
         content: _("you_must_the_audio_channel"),
@@ -44,25 +46,19 @@ module.exports = {
     video = video?.video_details;
 
     // let's defer the interaction as things can take time to process
-    await interaction.deferReply();
+    // await interaction.deferReply();
 
-    const connection = await voice.joinVoiceChannel({
-      channelId: currentChannel.id,
-      guildId: serverId,
-      adapterCreator: interaction.guild.voiceAdapterCreator,
-      selfDeaf: true,
-      selfMute: false,
+    queue.push({
+      url: selectedTrack,
+      thumbnail: String(await video.thumbnails[4].url),
+      title: video.title,
+      channelOwner: video.channel.name,
+      duration: video.durationRaw,
+      length: video.durationInSec,
+      requestBy: interaction.user.username,
+      requestById: interaction.user.id,
+      requestedTime: new Date(),
     });
-
-    const stream = await play.stream(selectedTrack);
-    const resource = await voice.createAudioResource(stream.stream, {
-      inputType: stream.type,
-    });
-
-    const player = await voice.createAudioPlayer();
-    player.play(resource);
-
-    connection.subscribe(player);
 
     await message.delete();
 
@@ -70,21 +66,29 @@ module.exports = {
       embeds: [
         {
           type: "rich",
-          title: _("now_playing"),
-          description: `**[${video.title}](${video.url})**`,
+          title: _("added_to_queue"),
+          description: `**[${video.title}](${selectedTrack})**`,
           thumbnail: {
             url: String(await video.thumbnails[4].url),
             width: 0,
             height: 0,
           },
           footer: {
-            text: "Requested by " + (await interaction.user.username),
+            text: "Requested by " + interaction.user.username,
             /* icon_url: await interaction.user.avatarURL(), */
           },
-          timestamp: await new Date(),
+          timestamp: new Date(),
         },
       ],
     });
+
+    // Start playing if the queue is empty
+
+    await playQueue(interaction, channel, currentChannel);
+
+    // Handle new songs added to the queue
+
+    // if (!queue.isProcessing()) await playQueue(interaction, channel);
 
     /*
     return await channel.send({

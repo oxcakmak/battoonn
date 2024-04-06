@@ -19,13 +19,9 @@ module.exports = {
               name: _("commands"),
               value:
                 "/user-avatar `battoonn` - " +
-                _("shows_user_avatar") +
                 " \n /user-info `battoonn` " +
-                _("shows_user_information") +
                 " \n /user-ban `battoonn` `troll and spam`" +
-                _("bans_a_user") +
-                " \n /user-unban `12345678901112131415`" +
-                _("unban_a_user"),
+                " \n /user-unban `12345678901112131415`",
             },
           ],
         },

@@ -18,7 +18,7 @@ module.exports = {
             {
               name: _("commands"),
               value:
-                "/music-register \n /music-jd `role` \n /music-config-spotify `clientId` `clientSecret` \n /music-channel `channel`",
+                "/mp `register` \n /mn \n /ms \n /music-register \n /music-jd `role` \n /music-config-spotify `clientId` `clientSecret` \n /music-channel `channel`",
             },
           ],
         },

@@ -2,7 +2,6 @@ const { SlashCommandBuilder } = require("discord.js");
 const { MusicConfigs } = require("../../database/schemas");
 const { _ } = require("../../utils/localization");
 const play = require("play-dl");
-const { parse } = require("track-duration");
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -19,21 +18,24 @@ module.exports = {
 
     const query = interaction.options.getString("query");
 
-    /*
-    const MusicConfigsQuery = await MusicConfigs.findOne({
-      server: interaction.guild.id,
-    });
-
-    if (!MusicConfigs)
-      return await interaction.reply({
-        content: _("register_the_server_first"),
-      });
-    */
-
     try {
-      let search = await play.search(query, {
-        limit: 10,
-      });
+      let search;
+
+      const urlValidate = play.yt_validate(query);
+
+      switch (urlValidate) {
+        default:
+          search = await play.search(query, {
+            limit: 10,
+          });
+          break;
+        case "playlist":
+          search = await play.search(query, {
+            source: { youtube: "playlist" },
+            limit: 10,
+          });
+          break;
+      }
 
       let trackList = [];
       let nameList = [];
@@ -41,10 +43,11 @@ module.exports = {
       await search.forEach(async (result) => {
         // const id = result.id;
         const url = result.url;
-        const title = result.title.substring(0, 50);
-        const videoChannel = result.channel.name;
+        const title = result.title.slice(0, 50);
+        const channelName = result.channel.name;
         const duration = result.durationRaw;
-        const name = title + ` | ${videoChannel} | ${duration}`;
+        let name = title + ` | ${channelName}`;
+        if (result.type === "video") name += ` | ${duration}`;
         trackList.push(`${numbers}. ${name}`);
         nameList.push({ label: `${numbers}. ${name}`, value: url });
         numbers++;
