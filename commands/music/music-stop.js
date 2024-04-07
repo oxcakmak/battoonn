@@ -18,7 +18,6 @@ module.exports = {
     );
     await connection.destroy();
     await queue.destroy();
-
     await interaction.reply({ content: "Müzik durduruldu." });
   },
 };

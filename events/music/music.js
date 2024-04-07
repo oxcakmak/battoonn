@@ -1,11 +1,6 @@
 const play = require("play-dl");
 const { _ } = require("../../utils/localization");
-const { queue, playQueue } = require("../../vendor/queue");
-
-queue.on("add", async () => {
-  await playQueue(interaction, channel, currentChannel); // Start playing if the queue is empty
-  console.log(added);
-});
+const { addSongToQueue } = require("../../vendor/queue");
 
 module.exports = {
   name: "interactionCreate",
@@ -47,8 +42,20 @@ module.exports = {
 
     // let's defer the interaction as things can take time to process
     // await interaction.deferReply();
+    /*
+      interaction: interaction,
+      channel: channel,
+      currentChannel: currentChannel,
+      */
 
-    queue.push({
+    await message.delete();
+
+    await addSongToQueue({
+      serverId: interaction.guild.id,
+      interaction: interaction,
+      channel: channel,
+      message: message,
+      currentChannel: currentChannel,
       url: selectedTrack,
       thumbnail: String(await video.thumbnails[4].url),
       title: video.title,
@@ -60,31 +67,40 @@ module.exports = {
       requestedTime: new Date(),
     });
 
-    await message.delete();
-
     await channel.send({
       embeds: [
         {
           type: "rich",
           title: _("added_to_queue"),
-          description: `**[${video.title}](${selectedTrack})**`,
+          description: `**[${video.title}](${video.url})**`,
+          fields: [
+            {
+              name: _("channel"),
+              value: video.channel.name,
+              inline: true,
+            },
+            {
+              name: _("duration"),
+              value: video.durationInSec,
+              inline: true,
+            },
+          ],
+          timestamp: new Date(),
           thumbnail: {
             url: String(await video.thumbnails[4].url),
-            width: 0,
             height: 0,
+            width: 0,
           },
           footer: {
             text: "Requested by " + interaction.user.username,
             /* icon_url: await interaction.user.avatarURL(), */
           },
-          timestamp: new Date(),
         },
       ],
     });
 
     // Start playing if the queue is empty
-
-    await playQueue(interaction, channel, currentChannel);
+    // await playQueue(interaction, channel, currentChannel);
 
     // Handle new songs added to the queue
 
