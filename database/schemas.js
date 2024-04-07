@@ -1,3 +1,4 @@
+const { VoiceChannel } = require("discord.js");
 const { mongoose } = require("./connect");
 
 // Configs
@@ -87,4 +88,28 @@ const MusicConfigsSchema = new mongoose.Schema({
 
 const MusicConfigs = mongoose.model("musicConfigs", MusicConfigsSchema);
 
-module.exports = { Configs, Explorers, Tickets, TicketConfigs, MusicConfigs };
+// Define Mongoose schema and model for Song
+const songQueuesSchema = new mongoose.Schema({
+  server: Number,
+  voiceChannel: String,
+  targetChannel: String,
+  url: String,
+  thumbnail: String,
+  title: String,
+  channelOwner: String,
+  duration: String,
+  length: Number,
+  requestBy: String,
+  requestById: Number,
+  requestedTime: String,
+});
+const SongQueues = mongoose.model("songQueues", songQueuesSchema);
+
+module.exports = {
+  Configs,
+  Explorers,
+  Tickets,
+  TicketConfigs,
+  MusicConfigs,
+  SongQueues,
+};

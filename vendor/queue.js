@@ -1,47 +1,92 @@
+const { SongQueues } = require("../database/schemas");
 const voice = require("@discordjs/voice");
 const play = require("play-dl");
-const Queue = require("better-queue");
 const { _ } = require("../utils/localization");
 
-let song;
-// Create a new queue
-const queue = new Queue(function (input, cb) {
-  song = input;
-  // Process the input here
-  console.log("Processing:", input);
+const addQueue = async (request) => {
+  try {
+    const data = request.data[0];
+    const song = request.song[0];
+    const merge = { ...data, ...song };
 
-  // Call the callback when processing is complete
-  cb(null, input);
-});
+    const queueDocumentCount = await SongQueues.countDocuments({
+      server: data.server,
+    });
 
-queue.on("task_queued", (taskId, song) => {
-  console.log("Finished playing song:", song);
-  setTimeout(() => {
-    playSong(song);
-  }, song.length * 1000); // Move on to the next song after the duration of the current song
-});
+    const queueQuery = await SongQueues.findOne({
+      server: data.server,
+      url: song.id,
+      requestById: song.requestById,
+    });
 
-// Add song to the queue
-const addSongToQueue = async (song) => {
-  /*
-  if (queue.length > 0 || queue.running) {
-    queue.push(song);
-  } else {
-    playSong(song);
-  }
-  */
+    if (queueQuery)
+      return await data.interaction.update({
+        content: _("you_have_an_music_in_queue"),
+        embeds: [],
+        components: [],
+      });
 
-  await queue.push(song);
+    const addQueueQuery = await new SongQueues({
+      server: data.server,
+      voiceChannel: data.channel.id,
+      targetChannel: data.currentChannel.id,
+      url: song.id,
+      thumbnail: song.thumbnail,
+      title: song.title,
+      channelOwner: song.channelOwner,
+      duration: song.duration,
+      length: song.length,
+      requestBy: song.requestBy,
+      requestById: song.requestById,
+      requestedTime: song.requestedTime,
+    });
 
-  playSong(song);
-  if (queue.running) console.log("yes");
-};
+    const addMusicTrack = await addQueueQuery.save();
 
-const playNextSong = () => {
-  const nextSong = queue.length > 0 ? queue.peek() : null;
-  if (nextSong) {
-    song = nextSong; // Update the global song variable
-    playSong(song); // Play the next song
+    if (!addMusicTrack)
+      return await data.interaction.update({
+        content: _("music_not_added_to_queue"),
+        embeds: [],
+        components: [],
+      });
+
+    // icon_url: await interaction.user.avatarURL(),
+    await data.interaction.update({
+      content: "",
+      components: [],
+      embeds: [
+        {
+          type: "rich",
+          title: _("added_to_queue"),
+          description: `**[${song.title}](${song.url})**`,
+          fields: [
+            {
+              name: _("channel"),
+              value: song.channelOwner,
+              inline: true,
+            },
+            {
+              name: _("duration"),
+              value: song.duration,
+              inline: true,
+            },
+          ],
+          timestamp: song.requestedTime,
+          thumbnail: {
+            url: song.thumbnail,
+            height: 0,
+            width: 0,
+          },
+          footer: {
+            text: "Requested by " + song.requestBy,
+          },
+        },
+      ],
+    });
+
+    if (queueDocumentCount === 0) await playSong(merge);
+  } catch (error) {
+    console.error("Error playing song:", error);
   }
 };
 
@@ -61,20 +106,23 @@ const playSong = async (song) => {
 
     const player = await voice.createAudioPlayer();
 
-    player.on("error", (error) => {
-      console.error("Audio player error:", error);
-    });
-
-    player.on(voice.AudioPlayerStatus.Idle, () => {
-      setTimeout(() => {
-        playSong(song);
-      }, song.length * 1000); // Move on to the next song after the duration of the current song
-    });
-
     await connection.subscribe(player);
     await player.play(resource);
 
-    await song.channel.send({
+    await setTimeout(async () => {
+      const findAndDeleteObject = {
+        server: song.interaction.guild.id,
+        url: song.url,
+      };
+
+      const findMusicByQueue = await SongQueues.findOne(findAndDeleteObject);
+
+      if (findMusicByQueue) {
+        await SongQueues.deleteMany(findAndDeleteObject);
+      }
+    }, song.length * 1000);
+
+    return await song.channel.send({
       embeds: [
         {
           type: "rich",
@@ -109,41 +157,6 @@ const playSong = async (song) => {
   }
 };
 
-// Skip the current song and play the next one
-const skipSong = () => {
-  queue.remove(0); // Remove the current song from the queue
-  playNextSong(); // Play the next song
-};
-
-// Clear all songs in the queue
-const clearQueue = () => {
-  queue.cancel(); // Clear all tasks in the queue
-};
-
-// End the queue
-const endQueue = () => {
-  queue.destroy(); // End the queue
-};
-
-async function playQueue(interaction, channel, currentChannel) {
-  if (!song) {
-    console.log("No song queued.");
-    return;
-  }
-
-  if (queue.running) {
-    console.log("Song already queued.");
-    return;
-  }
-
-  playSong(song);
-}
-
 module.exports = {
-  queue,
-  playQueue,
-  addSongToQueue,
-  skipSong,
-  clearQueue,
-  endQueue,
+  addQueue,
 };

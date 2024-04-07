@@ -16,6 +16,19 @@ module.exports = {
   async execute(interaction) {
     if (interaction.bot) return;
 
+    const voiceState = interaction.member.voice;
+    const currentChannel = interaction.member.voice.channel;
+
+    if (
+      !currentChannel ||
+      !voiceState ||
+      !voiceState.channel ||
+      voiceState.channel.id !== currentChannel.id
+    )
+      return await interaction.reply({
+        content: _("you_must_the_audio_channel"),
+      });
+
     const query = interaction.options.getString("query");
 
     try {
@@ -32,7 +45,6 @@ module.exports = {
         case "playlist":
           search = await play.search(query, {
             source: { youtube: "playlist" },
-            limit: 10,
           });
           break;
       }
@@ -73,7 +85,7 @@ module.exports = {
             type: 1,
             components: [
               {
-                custom_id: `spotifyResultTrackList`,
+                custom_id: `musicResults`,
                 placeholder: _("select_music_want_to_listen"),
                 options,
                 min_values: 1,

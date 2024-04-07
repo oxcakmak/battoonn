@@ -1,6 +1,5 @@
 const { SlashCommandBuilder } = require("discord.js");
 const { _ } = require("../../utils/localization");
-const { queue } = require("../../vendor/queue");
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -9,15 +8,16 @@ module.exports = {
   async execute(interaction) {
     if (interaction.bot) return;
 
-    if (!interaction.guild.voiceStates.cache.get(interaction.client.user.id)) {
+    if (!interaction.guild.voiceStates.cache.get(interaction.client.user.id))
       return await interaction.reply({ content: "Şu anda müzik çalmıyor!" });
-    }
 
-    let connection = await interaction.guild.voiceStates.cache.get(
-      interaction.client.user.id
-    );
-    await connection.destroy();
-    await queue.destroy();
-    await interaction.reply({ content: "Müzik durduruldu." });
+    const queueQuery = await SongQueues.findOne({
+      server: interaction.guild.id,
+    });
+
+    if (!queueQuery)
+      return await data.interaction.update({
+        content: _("you_have_an_music_in_queue"),
+      });
   },
 };
