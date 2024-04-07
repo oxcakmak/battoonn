@@ -1,4 +1,3 @@
-const { VoiceChannel } = require("discord.js");
 const { mongoose } = require("./connect");
 
 // Configs
@@ -91,6 +90,11 @@ const MusicConfigs = mongoose.model("musicConfigs", MusicConfigsSchema);
 // Define Mongoose schema and model for Song
 const songQueuesSchema = new mongoose.Schema({
   server: Number,
+  id: {
+    // Field for auto-increment
+    type: Number,
+    unique: true, // Optional if you don't want duplicate IDs
+  },
   voiceChannel: String,
   targetChannel: String,
   url: String,
@@ -103,6 +107,17 @@ const songQueuesSchema = new mongoose.Schema({
   requestById: Number,
   requestedTime: String,
 });
+
+songQueuesSchema.pre("save", async function (next) {
+  // Only increment on new documents
+  if (!this.isNew) return next();
+  // Get existing document count
+  const docCount = await SongQueues.countDocuments({});
+  // Assign ID as count + 1
+  this.id = docCount + 1;
+  next();
+});
+
 const SongQueues = mongoose.model("songQueues", songQueuesSchema);
 
 module.exports = {

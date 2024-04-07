@@ -1,6 +1,5 @@
 const { SlashCommandBuilder } = require("discord.js");
 const { _ } = require("../../utils/localization");
-const { queue } = require("../../vendor/queue");
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -13,7 +12,6 @@ module.exports = {
       return await interaction.reply({ content: "Şu anda müzik çalmıyor!" });
     }
 
-    queue.next(); // Skip to the next song in the queue
     await interaction.reply({ content: "Bir sonraki şarkıya geçiliyor..." });
   },
 };

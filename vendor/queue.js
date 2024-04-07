@@ -9,10 +9,6 @@ const addQueue = async (request) => {
     const song = request.song[0];
     const merge = { ...data, ...song };
 
-    const queueDocumentCount = await SongQueues.countDocuments({
-      server: data.server,
-    });
-
     const queueQuery = await SongQueues.findOne({
       server: data.server,
       url: song.id,
@@ -41,17 +37,12 @@ const addQueue = async (request) => {
       requestedTime: song.requestedTime,
     });
 
-    const addMusicTrack = await addQueueQuery.save();
+    await addQueueQuery.save();
 
-    if (!addMusicTrack)
-      return await data.interaction.update({
-        content: _("music_not_added_to_queue"),
-        embeds: [],
-        components: [],
-      });
+    await data.message.delete();
 
     // icon_url: await interaction.user.avatarURL(),
-    await data.interaction.update({
+    await data.channel.send({
       content: "",
       components: [],
       embeds: [
@@ -84,7 +75,38 @@ const addQueue = async (request) => {
       ],
     });
 
-    if (queueDocumentCount === 0) await playSong(merge);
+    await nextSong(merge);
+  } catch (error) {
+    console.error("Error playing song:", error);
+  }
+};
+
+const nextSong = async (song) => {
+  try {
+    const data = song.data;
+    const song = song.song;
+
+    const queueDocumentCount = await SongQueues.countDocuments({
+      server: song.server,
+    });
+
+    if (queueDocumentCount === 1) {
+      await playSong(song);
+    }
+    await setTimeout(async () => {
+      // Get next Track
+      const nextSong = await SongQueues.findOne({
+        server: song.interaction.guild.id,
+        url: song.url,
+      }).sort({ id: 1 });
+      await playSong(nextSong);
+      console.log("NEXT SONG: ", nextSong);
+      // Delete current track
+      await SongQueues.deleteOne({
+        server: song.server,
+        url: song.url,
+      });
+    }, song.length * 1000);
   } catch (error) {
     console.error("Error playing song:", error);
   }
@@ -95,7 +117,7 @@ const playSong = async (song) => {
   try {
     const connection = voice.joinVoiceChannel({
       channelId: song.currentChannel.id,
-      guildId: song.interaction.guild.id,
+      guildId: song.server,
       adapterCreator: song.interaction.guild.voiceAdapterCreator,
     });
 
@@ -108,19 +130,6 @@ const playSong = async (song) => {
 
     await connection.subscribe(player);
     await player.play(resource);
-
-    await setTimeout(async () => {
-      const findAndDeleteObject = {
-        server: song.interaction.guild.id,
-        url: song.url,
-      };
-
-      const findMusicByQueue = await SongQueues.findOne(findAndDeleteObject);
-
-      if (findMusicByQueue) {
-        await SongQueues.deleteMany(findAndDeleteObject);
-      }
-    }, song.length * 1000);
 
     return await song.channel.send({
       embeds: [
