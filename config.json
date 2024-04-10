@@ -7,5 +7,6 @@
   "botColor": "0xffffff",
   "idHelp": "",
   "twitchApiClient": "424284ai68cd2w2p8hnjs4rnsened8",
-  "twitchApiSecret": "fsduplan40pam8nsjlhm6po91and04"
+  "twitchApiSecret": "fsduplan40pam8nsjlhm6po91and04",
+  "prefix": "!"
 }

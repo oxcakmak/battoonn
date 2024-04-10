@@ -3,6 +3,11 @@ const fs = require("fs");
 
 let language = "en";
 
+function t(lang) {
+  language = lang;
+  console.log(language);
+}
+
 function _(data, props) {
   const filePath = `./locales/${language}.yml`;
 
@@ -27,4 +32,5 @@ function _(data, props) {
 
 module.exports = {
   _,
+  t,
 };

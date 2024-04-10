@@ -5,12 +5,7 @@ const {
   ButtonBuilder,
 } = require("discord.js");
 
-const {
-  botName,
-  botAvatar,
-  botWebsite,
-  botColor,
-} = require("../../config.json");
+const { botName, botAvatar, botWebsite } = require("../../config.json");
 
 module.exports = {
   name: "guildCreate",
@@ -29,7 +24,6 @@ module.exports = {
     if (!channelToSend) return;
 
     const embed = new EmbedBuilder()
-      .setColor(botColor)
       .setAuthor({
         name: `${botName}`,
         iconURL: `${botAvatar}`,

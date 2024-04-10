@@ -1,3 +1,5 @@
+const { t } = require("../../utils/localization");
+
 //get time local
 const time = new Date().toLocaleString("en-US", {
   year: "numeric",

@@ -1,3 +1,4 @@
+const { SongQueues } = require("../../database/schemas");
 const { SlashCommandBuilder } = require("discord.js");
 const { _ } = require("../../utils/localization");
 
@@ -16,7 +17,7 @@ module.exports = {
     });
 
     if (!queueQuery)
-      return await data.interaction.update({
+      return await interaction.update({
         content: _("you_have_an_music_in_queue"),
       });
   },

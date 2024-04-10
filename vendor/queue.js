@@ -1,127 +1,118 @@
 const { SongQueues } = require("../database/schemas");
 const voice = require("@discordjs/voice");
 const play = require("play-dl");
+const urlParser = require("js-video-url-parser");
 const { _ } = require("../utils/localization");
 
-const addQueue = async (request) => {
-  try {
-    const data = request.data[0];
-    const song = request.song[0];
-    const merge = { ...data, ...song };
+let musicQueue = []; // Array to store song objects
+let currentSongIndex = 0; // Index of the currently playing song (starts at -1)
+let isPlaying = false; // Flag to track playback state
 
+async function addQueue(request) {
+  try {
     const queueQuery = await SongQueues.findOne({
-      server: data.server,
-      url: song.id,
-      requestById: song.requestById,
+      server: request.server,
+      url: request.id,
+      requestedById: request.requestedById,
     });
 
-    if (queueQuery)
-      return await data.interaction.update({
+    if (queueQuery) {
+      await request.interaction.update({
         content: _("you_have_an_music_in_queue"),
         embeds: [],
         components: [],
       });
+      return;
+    }
 
     const addQueueQuery = await new SongQueues({
-      server: data.server,
-      voiceChannel: data.channel.id,
-      targetChannel: data.currentChannel.id,
-      url: song.id,
-      thumbnail: song.thumbnail,
-      title: song.title,
-      channelOwner: song.channelOwner,
-      duration: song.duration,
-      length: song.length,
-      requestBy: song.requestBy,
-      requestById: song.requestById,
-      requestedTime: song.requestedTime,
+      server: request.server,
+      voiceChannel: request.channel.id,
+      targetChannel: request.currentChannel.id,
+      url: request.id,
+      thumbnail: request.thumbnail,
+      title: request.title,
+      channelOwner: request.channelOwner,
+      duration: request.duration,
+      length: request.length,
+      requestedBy: request.requestedBy,
+      requestedById: request.requestedById,
+      requestedTime: request.requestedTime,
     });
 
     await addQueueQuery.save();
 
-    await data.message.delete();
-
     // icon_url: await interaction.user.avatarURL(),
-    await data.channel.send({
+    await request.channel.send({
       content: "",
       components: [],
       embeds: [
         {
           type: "rich",
           title: _("added_to_queue"),
-          description: `**[${song.title}](${song.url})**`,
+          description: `**[${request.title}](${request.url})**`,
           fields: [
             {
               name: _("channel"),
-              value: song.channelOwner,
+              value: request.channelOwner,
               inline: true,
             },
             {
               name: _("duration"),
-              value: song.duration,
+              value: request.duration,
               inline: true,
             },
           ],
-          timestamp: song.requestedTime,
+          timestamp: request.requestedTime,
           thumbnail: {
-            url: song.thumbnail,
+            url: request.thumbnail,
             height: 0,
             width: 0,
           },
           footer: {
-            text: "Requested by " + song.requestBy,
+            text: "Requested by " + request.requestedBy,
           },
         },
       ],
     });
 
-    await nextSong(merge);
+    return Promise.resolve(); // Resolve the promise after successful addition
   } catch (error) {
     console.error("Error playing song:", error);
   }
-};
+}
 
-const nextSong = async (song) => {
-  try {
-    const data = song.data;
-    const song = song.song;
-
-    const queueDocumentCount = await SongQueues.countDocuments({
-      server: song.server,
-    });
-
-    if (queueDocumentCount === 1) {
-      await playSong(song);
-    }
-    await setTimeout(async () => {
-      // Get next Track
-      const nextSong = await SongQueues.findOne({
-        server: song.interaction.guild.id,
-        url: song.url,
-      }).sort({ id: 1 });
-      await playSong(nextSong);
-      console.log("NEXT SONG: ", nextSong);
-      // Delete current track
-      await SongQueues.deleteOne({
-        server: song.server,
-        url: song.url,
-      });
-    }, song.length * 1000);
-  } catch (error) {
-    console.error("Error playing song:", error);
-  }
-};
-
-// Function to play a song
 const playSong = async (song) => {
   try {
+    if (isPlaying) return;
+
     const connection = voice.joinVoiceChannel({
       channelId: song.currentChannel.id,
       guildId: song.server,
       adapterCreator: song.interaction.guild.voiceAdapterCreator,
     });
 
-    const stream = await play.stream(song.url);
+    let video = await play.video_info(
+      await urlParser.create({
+        videoInfo: urlParser.parse(song.url),
+        format: "short",
+      })
+    );
+    video = video.video_details;
+
+    console.log(video);
+
+    const stream = await play.stream(
+      await urlParser.create({
+        videoInfo: urlParser.parse(song.url),
+        format: "short",
+      }),
+      {
+        source: {
+          youtube: "video",
+        },
+      }
+    );
     const resource = await voice.createAudioResource(stream.stream, {
       inputType: voice.StreamType.Opus,
     });
@@ -131,7 +122,7 @@ const playSong = async (song) => {
     await connection.subscribe(player);
     await player.play(resource);
 
-    return await song.channel.send({
+    await song.channel.send({
       embeds: [
         {
           type: "rich",
@@ -155,17 +146,193 @@ const playSong = async (song) => {
             },
           ],
           footer: {
-            text: "Requested by " + song.requestBy,
+            text: "Requested by " + song.requestedBy,
           },
           timestamp: song.requestedTime,
         },
       ],
     });
+
+    isPlaying = true; // Simulate starting playback
+
+    await player.on("idle", async () => {
+      isPlaying = false; // Simulate starting playback
+
+      // Player becomes idle after the stream ends
+      console.log("Song finished. Playing next song...");
+      await SongQueues.findOneAndDelete({
+        server: song.server,
+        url: song.url,
+      });
+      await nextSong(song); // Call nextSong function to handle transitioning
+    });
+
+    await Promise.resolve();
   } catch (error) {
-    console.error("Error playing song:", error);
+    console.error("Error playing song:", error.message);
+  }
+};
+
+const nextSong = async (data) => {
+  try {
+    const musicQueue = await SongQueues.find({
+      server: data.server,
+    });
+
+    if (!musicQueue || musicQueue.length === 0) {
+      await data.interaction.channel.send({
+        content: _("next_music_not_available"),
+        embeds: [],
+        components: [],
+      });
+      return;
+    }
+
+    currentSongIndex++;
+    if (currentSongIndex >= musicQueue.length) {
+      currentSongIndex = musicQueue.length - 1; // Stay on the last song
+    }
+
+    const song = musicQueue[currentSongIndex];
+    console.log(song);
+    const newData = {
+      server: data.interaction.guild.id,
+      interaction: data.interaction,
+      channel: data.channel,
+      message: data.message,
+      currentChannel: data.currentChannel,
+    };
+
+    const sendData = {
+      ...newData,
+      ...song,
+    };
+
+    await playSong(sendData);
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+const skipSong = async (data) => {
+  try {
+    const musicQueue = await SongQueues.find({
+      server: data.server,
+    });
+
+    if (!musicQueue || musicQueue.length === 0) {
+      await data.channel.send({
+        content: _("next_music_not_available"),
+        embeds: [],
+        components: [],
+      });
+      return;
+    }
+
+    currentSongIndex++;
+    if (currentSongIndex >= musicQueue.length) {
+      currentSongIndex = musicQueue.length - 1; // Stay on the last song
+    }
+
+    const song = musicQueue[currentSongIndex];
+
+    const newData = {
+      server: data.interaction.guild.id,
+      interaction: data.interaction,
+      channel: data.channel,
+      message: data.message,
+      currentChannel: data.currentChannel,
+    };
+
+    const sendData = {
+      ...newData,
+      ...song,
+    };
+
+    await playSong(sendData);
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+const jumpToSong = async (data) => {
+  try {
+    const musicQueue = await SongQueues.find({
+      server: data.server,
+    });
+
+    if (!musicQueue || musicQueue.length === 0) {
+      await data.channel.send({
+        content: _("next_music_not_available"),
+        embeds: [],
+        components: [],
+      });
+      return;
+    }
+
+    if (songIndex < 0 || songIndex >= musicQueue.length) {
+      await data.channel.send({
+        content: _("invalid_music_order"),
+        embeds: [],
+        components: [],
+      });
+      return;
+    }
+
+    currentSongIndex++;
+    if (currentSongIndex >= musicQueue.length) {
+      currentSongIndex = musicQueue.length - 1; // Stay on the last song
+    }
+
+    let previousSongs = [];
+    const queueLength = musicQueue.length;
+
+    /*
+    // Handle looping back to the beginning
+    for (let i = currentSongIndex - 1; i >= 0; i--) {
+      previousSongs.push(musicQueue[i]);
+    }
+    */
+
+    // Handle songs before the current index
+    for (let i = queueLength - 1; i > currentSongIndex; i--) {
+      previousSongs.push(musicQueue[i]);
+    }
+
+    await SongQueues.updateOne(
+      { server: data.server },
+      {
+        $pullAll: previousSongs,
+      }
+    )
+      .then(() => console.log("Veriler silindi"))
+      .catch((err) => console.error(err));
+
+    const song = musicQueue[currentSongIndex];
+
+    const newData = {
+      server: data.interaction.guild.id,
+      interaction: data.interaction,
+      channel: data.channel,
+      message: data.message,
+      currentChannel: data.currentChannel,
+    };
+
+    const sendData = {
+      ...newData,
+      ...song,
+    };
+
+    await playSong(sendData);
+  } catch (error) {
+    console.error(error);
   }
 };
 
 module.exports = {
   addQueue,
+  playSong,
+  nextSong,
+  skipSong,
+  jumpToSong,
 };

@@ -21,14 +21,14 @@ module.exports = {
     const deleteSongQueues = await SongQueues.deleteMany({
       server: interaction.guild.id,
     });
-
-    if (!deleteSongQueues)
+    try {
+      return await interaction.reply({
+        content: _("music_queue_cleared"),
+      });
+    } catch (error) {
       return await interaction.reply({
         content: _("music_queue_not_cleared"),
       });
-
-    return await interaction.reply({
-      content: _("music_queue_cleared"),
-    });
+    }
   },
 };

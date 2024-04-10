@@ -90,24 +90,27 @@ const MusicConfigs = mongoose.model("musicConfigs", MusicConfigsSchema);
 // Define Mongoose schema and model for Song
 const songQueuesSchema = new mongoose.Schema({
   server: Number,
+  /*
   id: {
     // Field for auto-increment
     type: Number,
     unique: true, // Optional if you don't want duplicate IDs
   },
-  voiceChannel: String,
-  targetChannel: String,
+  */
+  voiceChannel: Number,
+  targetChannel: Number,
   url: String,
   thumbnail: String,
   title: String,
   channelOwner: String,
   duration: String,
   length: Number,
-  requestBy: String,
-  requestById: Number,
-  requestedTime: String,
+  requestedBy: String,
+  requestedById: Number,
+  requestedTime: Date,
 });
 
+/*
 songQueuesSchema.pre("save", async function (next) {
   // Only increment on new documents
   if (!this.isNew) return next();
@@ -117,6 +120,7 @@ songQueuesSchema.pre("save", async function (next) {
   this.id = docCount + 1;
   next();
 });
+*/
 
 const SongQueues = mongoose.model("songQueues", songQueuesSchema);
 

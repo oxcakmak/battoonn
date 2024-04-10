@@ -1,5 +1,4 @@
 const { SlashCommandBuilder } = require("discord.js");
-const { MusicConfigs } = require("../../database/schemas");
 const { _ } = require("../../utils/localization");
 const play = require("play-dl");
 
@@ -70,32 +69,43 @@ module.exports = {
         value: option.value.toString(),
       }));
 
-      return await interaction.reply({
-        embeds: [
-          {
-            type: "rich",
-            title: _("search_resuts_for_query_variable", {
-              query: `"${query}"`,
-            }),
-            description: trackList.join("\n"),
-          },
-        ],
-        components: [
-          {
-            type: 1,
-            components: [
-              {
-                custom_id: `musicResults`,
-                placeholder: _("select_music_want_to_listen"),
-                options,
-                min_values: 1,
-                max_values: 1,
-                type: 3,
-              },
-            ],
-          },
-        ],
-      });
+      await interaction
+        .reply({
+          embeds: [
+            {
+              type: "rich",
+              title: _("search_resuts_for_query_variable", {
+                query: `"${query}"`,
+              }),
+              description: trackList.join("\n"),
+            },
+          ],
+          components: [
+            {
+              type: 1,
+              components: [
+                {
+                  custom_id: `musicResults`,
+                  placeholder: _("select_music_want_to_listen"),
+                  options,
+                  min_values: 1,
+                  max_values: 1,
+                  type: 3,
+                },
+              ],
+            },
+          ],
+          ephemeral: true,
+        })
+        .then((a) => {
+          // Schedule the deletion after 10 seconds
+          setTimeout(async () => {
+            await interaction.deleteReply();
+          }, 10000);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     } catch (error) {
       console.log(error);
     }
