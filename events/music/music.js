@@ -44,17 +44,16 @@ module.exports = {
       const data = {
         server: interaction.guild.id,
         interaction: interaction,
-        channel: channel,
+        targetChannel: channel,
         message: message,
         currentChannel: currentChannel,
       };
 
       const song = {
-        id: video.id,
         url: selectedTrack,
         thumbnail: String(await video.thumbnails[0].url),
         title: video.title,
-        channelOwner: video.channel.name,
+        channel: video.channel.name,
         duration: video.durationRaw,
         length: video.durationInSec,
         requestedBy: interaction.user.username,
@@ -68,6 +67,7 @@ module.exports = {
       };
 
       await addQueue(sendData);
+
       await playSong(sendData);
     } catch (error) {
       console.log(error);

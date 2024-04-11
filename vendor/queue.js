@@ -1,5 +1,15 @@
 const { SongQueues } = require("../database/schemas");
-const voice = require("@discordjs/voice");
+const {
+  createAudioPlayer,
+  createAudioResource,
+  StreamType,
+  demuxProbe,
+  joinVoiceChannel,
+  NoSubscriberBehavior,
+  AudioPlayerStatus,
+  VoiceConnectionStatus,
+  getVoiceConnection,
+} = require("@discordjs/voice");
 const play = require("play-dl");
 const urlParser = require("js-video-url-parser");
 const { _ } = require("../utils/localization");
@@ -27,12 +37,10 @@ async function addQueue(request) {
 
     const addQueueQuery = await new SongQueues({
       server: request.server,
-      voiceChannel: request.channel.id,
-      targetChannel: request.currentChannel.id,
-      url: request.id,
+      url: request.url,
       thumbnail: request.thumbnail,
       title: request.title,
-      channelOwner: request.channelOwner,
+      channel: request.channel,
       duration: request.duration,
       length: request.length,
       requestedBy: request.requestedBy,
@@ -43,7 +51,7 @@ async function addQueue(request) {
     await addQueueQuery.save();
 
     // icon_url: await interaction.user.avatarURL(),
-    await request.channel.send({
+    await request.targetChannel.send({
       content: "",
       components: [],
       embeds: [
@@ -54,7 +62,7 @@ async function addQueue(request) {
           fields: [
             {
               name: _("channel"),
-              value: request.channelOwner,
+              value: request.channel,
               inline: true,
             },
             {
@@ -86,43 +94,42 @@ const playSong = async (song) => {
   try {
     if (isPlaying) return;
 
-    const connection = voice.joinVoiceChannel({
+    const connection = joinVoiceChannel({
       channelId: song.currentChannel.id,
       guildId: song.server,
       adapterCreator: song.interaction.guild.voiceAdapterCreator,
     });
 
-    let video = await play.video_info(
-      await urlParser.create({
-        videoInfo: urlParser.parse(song.url),
-        format: "short",
-      })
-    );
-    video = video.video_details;
-
-    console.log(video);
-
-    const stream = await play.stream(
-      await urlParser.create({
-        videoInfo: urlParser.parse(song.url),
-        format: "short",
-      }),
-      {
-        source: {
-          youtube: "video",
-        },
-      }
-    );
-    const resource = await voice.createAudioResource(stream.stream, {
-      inputType: voice.StreamType.Opus,
+    const songUrl = await urlParser.create({
+      videoInfo: urlParser.parse(song.url),
+      format: "short",
     });
 
-    const player = await voice.createAudioPlayer();
+    const stream = await play.stream(songUrl);
 
-    await connection.subscribe(player);
-    await player.play(resource);
+    /*
+    
 
-    await song.channel.send({
+    // OR if you want to get info about youtube link and then stream it
+   
+
+    let ytInfo = await play.video_info(song.url);
+
+    let stream = await play.stream_from_info(ytInfo);
+    console.log(stream);
+    */
+
+    const resource = await createAudioResource(stream.stream, {
+      inputType: stream.type,
+    });
+
+    const player = await createAudioPlayer({
+      behaviors: {
+        noSubscriber: NoSubscriberBehavior.Play,
+      },
+    });
+
+    await song.targetChannel.send({
       embeds: [
         {
           type: "rich",
@@ -136,7 +143,7 @@ const playSong = async (song) => {
           fields: [
             {
               name: _("channel"),
-              value: song.channelOwner,
+              value: song.channel,
               inline: true,
             },
             {
@@ -152,6 +159,10 @@ const playSong = async (song) => {
         },
       ],
     });
+
+    await player.play(resource);
+
+    await connection.subscribe(player);
 
     isPlaying = true; // Simulate starting playback
 
@@ -169,7 +180,7 @@ const playSong = async (song) => {
 
     await Promise.resolve();
   } catch (error) {
-    console.error("Error playing song:", error.message);
+    console.error("Error playing song:", error);
   }
 };
 
@@ -190,11 +201,11 @@ const nextSong = async (data) => {
 
     currentSongIndex++;
     if (currentSongIndex >= musicQueue.length) {
-      currentSongIndex = musicQueue.length - 1; // Stay on the last song
+      currentSongIndex = 0; // Stay on the last song
     }
 
     const song = musicQueue[currentSongIndex];
-    console.log(song);
+
     const newData = {
       server: data.interaction.guild.id,
       interaction: data.interaction,
@@ -210,7 +221,7 @@ const nextSong = async (data) => {
 
     await playSong(sendData);
   } catch (error) {
-    console.error(error);
+    console.log(error);
   }
 };
 

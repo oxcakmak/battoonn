@@ -97,12 +97,10 @@ const songQueuesSchema = new mongoose.Schema({
     unique: true, // Optional if you don't want duplicate IDs
   },
   */
-  voiceChannel: Number,
-  targetChannel: Number,
   url: String,
   thumbnail: String,
   title: String,
-  channelOwner: String,
+  channel: String,
   duration: String,
   length: Number,
   requestedBy: String,
