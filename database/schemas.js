@@ -2,13 +2,13 @@ const { mongoose } = require("./connect");
 
 // Configs
 const ConfigsSchema = new mongoose.Schema({
-  server: String,
+  server: Number,
   premiumLeft: { type: Number, default: 0 },
   premiumEnabled: { type: Boolean, default: false },
-  commandChannel: { type: String, default: null },
-  responseChannel: { type: String, default: null },
-  announcementChannel: { type: String, default: null },
-  allowedChannels: [String],
+  commandChannel: { type: Number, default: null },
+  responseChannel: { type: Number, default: null },
+  announcementChannel: { type: Number, default: null },
+  allowedChannels: [Number],
   forumSolvedText: { type: String, default: null },
   forumAllowedRole: { type: String, default: null },
 });
@@ -17,10 +17,10 @@ const Configs = mongoose.model("configs", ConfigsSchema);
 
 // Explorer
 const ExplorerSchema = new mongoose.Schema({
-  server: String,
+  server: Number,
   moduleEnabled: { type: Boolean, default: false },
   givenRole: { type: String, default: null },
-  notifyChannel: { type: String, default: null },
+  notifyChannel: { type: Number, default: null },
   joinMessage: { type: String, max: 200, default: null },
   leaveMessage: { type: String, max: 200, default: null },
   autoTag: { type: String, default: null },
@@ -40,13 +40,13 @@ const TicketsSchema = new mongoose.Schema({
     type: Number,
     unique: true, // Optional if you don't want duplicate IDs
   },
-  server: String,
-  ticketId: String,
-  ticket: String,
-  content: String,
+  server: { type: Number, default: null },
+  ticketId: { type: Number, default: null },
+  ticket: { type: String, default: null },
+  content: { type: String, default: null },
   isPost: { type: Boolean, default: false },
-  createdBy: String,
-  createdAt: String,
+  createdBy: { type: Number, default: null },
+  createdAt: { type: String, default: null },
 });
 
 TicketsSchema.pre("save", async function (next) {
@@ -63,25 +63,25 @@ const Tickets = mongoose.model("tickets", TicketsSchema);
 
 // Ticket Configs
 const TicketConfigsSchema = new mongoose.Schema({
-  server: String,
+  server: Number,
   moduleEnabled: { type: Boolean, default: false },
-  category: String,
-  templateChannel: String,
-  templateTitle: String,
-  templateDescription: String,
-  templateButtonText: String,
-  role: String,
+  category: { type: Number, default: null },
+  templateChannel: { type: Number, default: null },
+  templateTitle: { type: String, default: null },
+  templateDescription: { type: String, default: null },
+  templateButtonText: { type: String, default: null },
+  transcriptChannel: { type: Number, default: null },
+  sendDm: { type: Boolean, default: null },
+  role: { type: Number, default: null },
 });
 
 const TicketConfigs = mongoose.model("ticketConfigs", TicketConfigsSchema);
 
 // Music
 const MusicConfigsSchema = new mongoose.Schema({
-  server: String,
-  channel: { type: String, default: null },
-  djRole: { type: String, default: null },
-  spotifyClientId: { type: String, default: null },
-  spotifyClientSecret: { type: String, default: null },
+  server: Number,
+  channel: { type: Number, default: null },
+  djRole: { type: Number, default: null },
   /* templateDescription: { type: String, default: null }, */
 });
 
@@ -97,15 +97,15 @@ const songQueuesSchema = new mongoose.Schema({
     unique: true, // Optional if you don't want duplicate IDs
   },
   */
-  url: String,
-  thumbnail: String,
-  title: String,
-  channel: String,
-  duration: String,
-  length: Number,
-  requestedBy: String,
-  requestedById: Number,
-  requestedTime: Date,
+  url: { type: String, default: null },
+  thumbnail: { type: String, default: null },
+  title: { type: String, default: null },
+  channel: { type: Number, default: null },
+  duration: { type: String, default: null },
+  length: { type: Number, default: null },
+  requestedBy: { type: String, default: null },
+  requestedById: { type: Number, default: null },
+  requestedTime: { type: Date, default: null },
 });
 
 /*

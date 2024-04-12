@@ -11,6 +11,7 @@ const {
   getVoiceConnection,
 } = require("@discordjs/voice");
 const play = require("play-dl");
+const { RepeatMode } = require("discord-music-player");
 const urlParser = require("js-video-url-parser");
 const { _ } = require("../utils/localization");
 
@@ -22,7 +23,7 @@ async function addQueue(request) {
   try {
     const queueQuery = await SongQueues.findOne({
       server: request.server,
-      url: request.id,
+      url: request.url,
       requestedById: request.requestedById,
     });
 
@@ -129,6 +130,8 @@ const playSong = async (song) => {
       },
     });
 
+    await connection.subscribe(player);
+
     await song.targetChannel.send({
       embeds: [
         {
@@ -162,8 +165,6 @@ const playSong = async (song) => {
 
     await player.play(resource);
 
-    await connection.subscribe(player);
-
     isPlaying = true; // Simulate starting playback
 
     await player.on("idle", async () => {
@@ -175,7 +176,17 @@ const playSong = async (song) => {
         server: song.server,
         url: song.url,
       });
-      await nextSong(song); // Call nextSong function to handle transitioning
+
+      const newData = {
+        server: data.interaction.guild.id,
+        interaction: data.interaction,
+        client: data.client,
+        channel: data.channel,
+        message: data.message,
+        currentChannel: data.currentChannel,
+      };
+
+      await nextSong(newData); // Call nextSong function to handle transitioning
     });
 
     await Promise.resolve();
@@ -209,6 +220,7 @@ const nextSong = async (data) => {
     const newData = {
       server: data.interaction.guild.id,
       interaction: data.interaction,
+      client: data.client,
       channel: data.channel,
       message: data.message,
       currentChannel: data.currentChannel,
@@ -250,6 +262,7 @@ const skipSong = async (data) => {
     const newData = {
       server: data.interaction.guild.id,
       interaction: data.interaction,
+      client: data.client,
       channel: data.channel,
       message: data.message,
       currentChannel: data.currentChannel,
@@ -324,6 +337,7 @@ const jumpToSong = async (data) => {
     const newData = {
       server: data.interaction.guild.id,
       interaction: data.interaction,
+      client: interaction.client,
       channel: data.channel,
       message: data.message,
       currentChannel: data.currentChannel,

@@ -18,7 +18,7 @@ module.exports = {
             {
               name: _("commands"),
               value:
-                "/ticket-module-enable \n /ticket-module-disable \n /ticket-create-template \n /ticket-config {category|channel|title|description|button|role}",
+                "/ticket-module-enable \n /ticket-module-disable \n /ticket-create-template \n /ticket-config {category|channel|title|description|button}",
             },
             {
               name: _("fields") + " (for ticket-config)",

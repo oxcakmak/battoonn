@@ -8,35 +8,32 @@ const { _ } = require("../../utils/localization");
 
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName("ticket-config")
+    .setName("ticket-template")
     .setDescription(_("ticket_description_full"))
-    .addChannelOption((option) =>
-      option
-        .setName("category")
-        .setDescription(_("ticket_category_open_text"))
-        .addChannelTypes(ChannelType.GuildCategory)
-    )
     .addChannelOption((option) =>
       option
         .setName("channel")
         .setDescription(_("ticket_template_channel"))
         .addChannelTypes(ChannelType.GuildText)
+        .setRequired(true)
     )
     .addStringOption((option) =>
-      option.setName("title").setDescription(_("ticket_template_title"))
+      option
+        .setName("title")
+        .setDescription(_("ticket_template_title"))
+        .setRequired(true)
     )
     .addStringOption((option) =>
       option
         .setName("description")
         .setDescription(_("ticket_template_description"))
+        .setRequired(true)
     )
     .addStringOption((option) =>
       option
         .setName("button")
         .setDescription(_("ticket_template_button_text_example"))
-    )
-    .addRoleOption((option) =>
-      option.setName("role").setDescription(_("ticket_role_description"))
+        .setRequired(true)
     ),
   async execute(interaction) {
     if (interaction.bot) return;
@@ -54,12 +51,10 @@ module.exports = {
 
     const serverId = interaction.guild.id;
 
-    const category = interaction.options.getChannel("category");
     const channel = interaction.options.getChannel("channel");
     const title = interaction.options.getString("title");
     const description = interaction.options.getString("description");
     const button = interaction.options.getString("button");
-    const role = interaction.options.getRole("role");
 
     const checkRegisteredServer = await Configs.findOne({ server: serverId });
     const ticketConfigsQuery = await TicketConfigs.findOne({
@@ -71,43 +66,13 @@ module.exports = {
         content: _("register_the_server_first"),
       });
 
-    if (interaction.options.data.length === 0)
-      return await interaction.reply({
-        embeds: [
-          {
-            type: "rich",
-            title: _("ticket_command"),
-            description: _("ticket_description_full"),
-            fields: [
-              {
-                name: _("fields") + " (for ticket-config)",
-                value: `**category**: ${_(
-                  "ticket_category_open_text"
-                )} \n **channel**: ${_(
-                  "ticket_template_channel"
-                )} \n **title**: ${_(
-                  "ticket_template_title"
-                )} \n **description**: ${_(
-                  "ticket_template_description"
-                )} \n **button**: ${_(
-                  "ticket_template_button_text_example"
-                )} \n **role**: ${_("ticket_role_description")}`,
-              },
-            ],
-          },
-        ],
-      });
-
     if (!ticketConfigsQuery) {
       const newTicketConfigs = new TicketConfigs({
         server: serverId,
-        moduleEnabled: false,
-        category: category,
         templateChannel: channel,
         templateTitle: title,
         templateDescription: description,
         templateButtonText: button,
-        role: role,
       });
 
       const savedTicketConfigs = await newTicketConfigs.save();
@@ -130,12 +95,10 @@ module.exports = {
         ephemeral: true,
       });
 
-    if (category) ticketConfigsQuery.category = category.id;
-    if (channel) ticketConfigsQuery.templateChannel = channel.id;
-    if (title) ticketConfigsQuery.templateTitle = title;
-    if (description) ticketConfigsQuery.templateDescription = description;
-    if (button) ticketConfigsQuery.templateButtonText = button;
-    if (role) ticketConfigsQuery.role = role.id;
+    ticketConfigsQuery.templateChannel = channel.id;
+    ticketConfigsQuery.templateTitle = title;
+    ticketConfigsQuery.templateDescription = description;
+    ticketConfigsQuery.templateButtonText = button;
 
     const ticketConfigsUpdate = await ticketConfigsQuery.save();
     if (!ticketConfigsUpdate)

@@ -44,6 +44,7 @@ module.exports = {
       const data = {
         server: interaction.guild.id,
         interaction: interaction,
+        client: interaction.client,
         targetChannel: channel,
         message: message,
         currentChannel: currentChannel,

@@ -29,9 +29,9 @@ module.exports = {
         );
 
         // Attempt to delete the initial reply message (optional)
-        await interaction.deferReply();
+        // await interaction.deferReply();
         // Delete the original slash command reply
-        await interaction.deleteReply();
+        // await interaction.deleteReply();
 
         if (responseChannel)
           return await responseChannel.send({

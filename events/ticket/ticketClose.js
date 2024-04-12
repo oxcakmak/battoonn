@@ -115,6 +115,16 @@ module.exports = {
 
         await fs.writeFileSync(transcriptTempFilePath, transcriptFile);
 
+        const transcriptChannel = await interaction.guild.channels.cache.get(
+          TicketConfigsQuery.transcriptChannel
+        );
+        if (transcriptChannel) {
+          await transcriptChannel.send({
+            type: 4,
+            files: [transcriptTempFilePath],
+          });
+        }
+
         async function sendDM(userId) {
           const user = await interaction.client.users.fetch(userId);
           try {
@@ -129,9 +139,11 @@ module.exports = {
           }
         }
 
-        // Send transcripts to users direct message
-        for (const userId of conversationsUsers) {
-          await sendDM(userId);
+        if (TicketConfigsQuery.sendDm) {
+          // Send transcripts to users direct message
+          for (const userId of conversationsUsers) {
+            await sendDM(userId);
+          }
         }
 
         // Delete transcripts send users after

@@ -31,22 +31,9 @@ module.exports = {
     const query = interaction.options.getString("query");
 
     try {
-      let search;
-
-      const urlValidate = play.yt_validate(query);
-
-      switch (urlValidate) {
-        default:
-          search = await play.search(query, {
-            limit: 10,
-          });
-          break;
-        case "playlist":
-          search = await play.search(query, {
-            source: { youtube: "playlist" },
-          });
-          break;
-      }
+      const search = await play.search(query, {
+        limit: 10,
+      });
 
       let trackList = [];
       let nameList = [];
