@@ -10,16 +10,31 @@ module.exports = {
 
     const member = await guild.members.fetch(interaction.user.id);
 
-    if (!member) return false;
+    if (!member) return;
 
-    if (!interaction.isStringSelectMenu() && customId !== "musicResults")
-      return false;
+    // if (!interaction.isButton() && !customId.startsWith("btnMusicLine")) return;
 
     try {
-      const selectedTrack = await interaction.values[0];
-      const voiceState = member.voice;
-      const currentChannel = interaction.member.voice.channel;
+      if (customId.startsWith("btnMusicLine")) {
+        const trackLineNumber = customId.replace("btnMusicLine", "");
 
+        function getLineWithNumber(text, lineNumber) {
+          if (lineNumber <= 0 || !text) return null; // Handle invalid input
+
+          const lines = text.split("\n");
+          if (lineNumber > lines.length) return null; // Handle out-of-bounds line number
+
+          return lines[lineNumber - 1]; // Use zero-based indexing
+        }
+
+        const trackLine = await getLineWithNumber(
+          message.embeds[0].data.description,
+          trackLineNumber
+        );
+        const voiceState = member.voice;
+        const currentChannel = interaction.member.voice.channel;
+        console.log();
+        /*
       if (
         !currentChannel ||
         !voiceState ||
@@ -70,6 +85,9 @@ module.exports = {
       await addQueue(sendData);
 
       await playSong(sendData);
+
+      */
+      }
     } catch (error) {
       console.log(error);
     }

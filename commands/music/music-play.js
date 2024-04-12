@@ -46,15 +46,48 @@ module.exports = {
         const duration = result.durationRaw;
         let name = title + ` | ${channelName}`;
         if (result.type === "video") name += ` | ${duration}`;
-        trackList.push(`${numbers}. ${name}`);
-        nameList.push({ label: `${numbers}. ${name}`, value: url });
+        trackList.push(`${numbers}. [${name}](${url})`);
+        nameList.push({
+          style: 2,
+          label: numbers,
+          id: numbers,
+          disabled: false,
+          type: 2,
+        });
         numbers++;
       });
 
       const options = nameList.map((option) => ({
+        style: option.style,
         label: option.label,
-        value: option.value.toString(),
+        custom_id: `btnMusicLine${option.id}`,
+        disabled: option.disabled,
+        type: option.type,
       }));
+
+      function splitArrayIntoComponents(array, buttonsPerRow = 5) {
+        const components = [];
+        let currentRow = [];
+
+        for (const item of array) {
+          currentRow.push(item); // Add item to the current row
+
+          if (currentRow.length === buttonsPerRow) {
+            components.push({ type: 1, components: currentRow }); // Add full row to components
+            currentRow = []; // Reset current row for the next chunk
+          }
+        }
+
+        // Add the last remaining items (if any):
+        if (currentRow.length > 0) {
+          components.push({ type: 1, components: currentRow });
+        }
+
+        return components;
+      }
+
+      // Example usage:
+      const components = splitArrayIntoComponents(options);
 
       await interaction
         .reply({
@@ -67,6 +100,23 @@ module.exports = {
               description: trackList.join("\n"),
             },
           ],
+          components: components,
+          ephemeral: true,
+        })
+        .then((a) => {
+          // Schedule the deletion after 10 seconds
+          setTimeout(async () => {
+            await interaction.deleteReply();
+          }, 15000);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    } catch (error) {
+      console.log(error);
+    }
+
+    /*
           components: [
             {
               type: 1,
@@ -82,19 +132,6 @@ module.exports = {
               ],
             },
           ],
-          ephemeral: true,
-        })
-        .then((a) => {
-          // Schedule the deletion after 10 seconds
-          setTimeout(async () => {
-            await interaction.deleteReply();
-          }, 10000);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    } catch (error) {
-      console.log(error);
-    }
+          */
   },
 };
