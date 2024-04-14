@@ -36,66 +36,76 @@ module.exports = {
           trackLineNumber
         );
 
-        console.log(trackLine);
+        const youtubeUrl = await findYoutubeUrl(trackLine).replace(")", "");
 
         const voiceState = member.voice;
         const currentChannel = interaction.member.voice.channel;
-        /*
-      if (
-        !currentChannel ||
-        !voiceState ||
-        !voiceState.channel ||
-        voiceState.channel.id !== currentChannel.id
-      )
-        return await interaction.editReply({
-          content: _("you_must_the_audio_channel"),
-        });
 
-      // YTDL Section start
-      let video = await play.video_info(
-        await urlParser.create({
-          videoInfo: urlParser.parse(selectedTrack),
-          format: "short",
-        })
-      );
-      video = video.video_details;
+        if (
+          !currentChannel ||
+          !voiceState ||
+          !voiceState.channel ||
+          voiceState.channel.id !== currentChannel.id
+        )
+          return await interaction.editReply({
+            content: _("you_must_the_audio_channel"),
+          });
 
-      // let's defer the interaction as things can take time to process
-      // await interaction.deferReply();
-      const data = {
-        server: interaction.guild.id,
-        interaction: interaction,
-        client: interaction.client,
-        targetChannel: channel,
-        message: message,
-        currentChannel: currentChannel,
-      };
+        // YTDL Section start
+        let video = await play.video_info(
+          await urlParser.create({
+            videoInfo: urlParser.parse(youtubeUrl),
+            format: "short",
+          })
+        );
+        video = video.video_details;
 
-      const song = {
-        url: selectedTrack,
-        thumbnail: String(await video.thumbnails[0].url),
-        title: video.title,
-        channel: video.channel.name,
-        duration: video.durationRaw,
-        length: video.durationInSec,
-        requestedBy: interaction.user.username,
-        requestedById: interaction.user.id,
-        requestedTime: new Date().toISOString(),
-      };
+        // let's defer the interaction as things can take time to process
+        // await interaction.deferReply();
+        const data = {
+          server: interaction.guild.id,
+          interaction: interaction,
+          client: interaction.client,
+          targetChannel: channel,
+          message: message,
+          currentChannel: currentChannel,
+        };
 
-      const sendData = {
-        ...data,
-        ...song,
-      };
+        const song = {
+          url: video.url,
+          thumbnail: String(await video.thumbnails[0].url),
+          title: video.title,
+          channel: video.channel.name,
+          duration: video.durationRaw,
+          length: video.durationInSec,
+          requestedBy: interaction.user.username,
+          requestedById: interaction.user.id,
+          requestedTime: new Date().toISOString(),
+        };
 
-      await addQueue(sendData);
+        const sendData = {
+          ...data,
+          ...song,
+        };
 
-      await playSong(sendData);
+        await addQueue(sendData);
 
-      */
+        await playSong(sendData);
       } catch (error) {
         console.log(error);
       }
     }
   },
 };
+
+function findYoutubeUrl(text) {
+  const youtubeRegex =
+    /(?:https?:\/\/)?(?:www\.)?youtu(?:\.be|be\.com)\/(watch\?v=)?([^\s&]+)/gi;
+  const match = youtubeRegex.exec(text);
+
+  if (match) {
+    return match[0]; // Return the video ID (second capturing group)
+  } else {
+    return null;
+  }
+}

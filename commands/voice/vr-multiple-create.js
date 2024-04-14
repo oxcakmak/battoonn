@@ -1,15 +1,20 @@
-const { SlashCommandBuilder, PermissionsBitField } = require("discord.js");
+const {
+  ChannelType,
+  SlashCommandBuilder,
+  PermissionsBitField,
+} = require("discord.js");
 
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName("voice-create")
+    .setName("vr-multiple-create")
     .setDescription(
       "Creates a voice channel in a category with a limit and dynamic name."
     )
-    .addStringOption((option) =>
+    .addChannelOption((option) =>
       option
-        .setName("category_id")
+        .setName("category")
         .setDescription("The ID of the category to create the channel in.")
+        .addChannelTypes(ChannelType.GuildCategory)
         .setRequired(true)
     )
     .addIntegerOption((option) =>
@@ -37,14 +42,14 @@ module.exports = {
         .setRequired(false)
     ),
   async execute(interaction) {
-    const categoryId = interaction.options.getString("category_id");
+    const category = interaction.options.getChannel("category");
     const channelCount = interaction.options.getInteger("channel_count");
     const userLimit = interaction.options.getInteger("limit");
     const namePrefix = interaction.options.getString("name_prefix") || ""; // Optional prefix
 
-    const category = interaction.guild.channels.cache.get(categoryId);
+    const targetCategory = interaction.guild.channels.cache.get(category.id);
     if (
-      !category &&
+      !targetCategory &&
       !interaction.member.permissions.has(
         PermissionsBitField.Flags.Administrator
       )
@@ -57,21 +62,25 @@ module.exports = {
 
     try {
       for (let i = 1; i <= channelCount; i++) {
-        await interaction.guild.channels.create({
-          type: 2,
-          name: namePrefix + " - " + i,
-          parent: category,
-          userLimit,
-          permissionOverwrites: [
-            {
-              id: interaction.guild.roles.everyone,
-              allow: [PermissionsBitField.Flags.ViewChannel], // Basic permissions for everyone
-            },
-          ],
-        });
+        await interaction.guild.channels
+          .create({
+            type: 2,
+            name: namePrefix ? namePrefix + " - " + i : i,
+            parent: category.id,
+            userLimit,
+            permissionOverwrites: [
+              {
+                id: interaction.guild.roles.everyone,
+                allow: [PermissionsBitField.Flags.ViewChannel], // Basic permissions for everyone
+              },
+            ],
+          })
+          .then((channel) => {
+            console.log(channel.id);
+          });
       }
       await interaction.reply({
-        content: `Created voice channel "${channelName}" with limit ${userLimit} users.`,
+        content: `Created voice channel "${namePrefix}" with limit ${userLimit} users.`,
         ephemeral: true,
       });
     } catch (error) {

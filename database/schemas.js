@@ -100,7 +100,7 @@ const songQueuesSchema = new mongoose.Schema({
   url: { type: String, default: null },
   thumbnail: { type: String, default: null },
   title: { type: String, default: null },
-  channel: { type: Number, default: null },
+  channel: { type: String, default: null },
   duration: { type: String, default: null },
   length: { type: Number, default: null },
   requestedBy: { type: String, default: null },
@@ -122,6 +122,24 @@ songQueuesSchema.pre("save", async function (next) {
 
 const SongQueues = mongoose.model("songQueues", songQueuesSchema);
 
+// Voice Rooms
+const VoiceRoomsSchema = new mongoose.Schema({
+  server: Number,
+  channel: { type: Number, default: null },
+  name: { type: String, default: null },
+  limit: { type: Number, default: null },
+  allowedMembers: [Number],
+  disallowedMembers: [Number],
+  createdById: { type: Number, default: null },
+  createdDateTime: { type: String, default: null },
+  canWebcam: { type: Boolean, default: true },
+  canScreen: { type: Boolean, default: true },
+  canActivity: { type: Boolean, default: true },
+  /* templateDescription: { type: String, default: null }, */
+});
+
+const VoiceRooms = mongoose.model("voiceRooms", VoiceRoomsSchema);
+
 module.exports = {
   Configs,
   Explorers,
@@ -129,4 +147,5 @@ module.exports = {
   TicketConfigs,
   MusicConfigs,
   SongQueues,
+  VoiceRooms,
 };
