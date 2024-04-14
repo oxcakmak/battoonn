@@ -4,14 +4,15 @@ const { Configs } = require("../../database/schemas");
 
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName("config-forum-role")
-    .setDescription(_("forum_role"))
-    .addRoleOption((option) =>
+    .setName("forum-set-solved-title")
+    .setDescription(_("forum_configuration_role_and_resolved_title"))
+    .addStringOption((option) =>
       option
-        .setName("role")
-        .setDescription(_("forum_lock_unlock_edit_the_thread_title_role"))
+        .setName("title")
+        .setDescription(_("thread_untied_text"))
         .setRequired(true)
     ),
+
   async execute(interaction) {
     if (interaction.bot) return;
 
@@ -27,25 +28,14 @@ module.exports = {
       });
 
     try {
-      const role = await interaction.options.getRole("role");
-
-      if (!role)
-        return await interaction.reply({
-          content: _("role_not_selected"),
-        });
-
-      const checkRole = await interaction.guild.roles.cache.get(role.id);
-
-      if (!checkRole)
-        return await interaction.reply({
-          content: _("role_not_found"),
-        });
+      const title =
+        (await interaction.options.getString("title")) || _("solved_uppercase");
 
       const forumsQuery = await Configs.findOne({
         server: interaction.guild.id,
       });
 
-      if (role) forumsQuery.forumAllowedRole = checkRole.id;
+      if (title) forumsQuery.forumSolvedText = title;
 
       const updatedForums = await forumsQuery.save();
 

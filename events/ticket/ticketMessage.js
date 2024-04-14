@@ -22,36 +22,34 @@ module.exports = {
       server: serverId,
     });
 
-    if (TicketConfigsQuery && !TicketConfigsQuery.moduleEnabled)
-      return await message.reply({
-        content: _("activate_module_first"),
-        ephemeral: true,
-      });
+    if (TicketConfigsQuery && message.channel.name.startsWith("ticket-")) {
+      if (!TicketConfigsQuery.moduleEnabled)
+        return await message.reply({
+          content: _("activate_module_first"),
+          ephemeral: true,
+        });
 
-    const TicketsQuery = await Tickets.findOne({
-      server: serverId,
-      ticketId: channelId,
-      isPost: false,
-    });
-
-    if (
-      (TicketsQuery && channelId === TicketsQuery.ticketId) ||
-      message.channel.name.startsWith("ticket-")
-    ) {
-      const createTickets = await new Tickets({
+      const TicketsQuery = await Tickets.findOne({
         server: serverId,
         ticketId: channelId,
-        ticket: message.channel.name,
-        content: message.content,
-        isPost: true,
-        createdBy: message.author.id,
-        createdAt: time,
+        isPost: false,
       });
 
-      await createTickets.save();
-    }
+      if (TicketsQuery && channelId === TicketsQuery.ticketId) {
+        const createTickets = await new Tickets({
+          server: serverId,
+          ticketId: channelId,
+          ticket: message.channel.name,
+          content: message.content,
+          isPost: true,
+          createdBy: message.author.id,
+          createdAt: time,
+        });
 
-    /*
+        await createTickets.save();
+      }
+
+      /*
     if (message.channel.name.startsWith("t-")) {
       // Extract relevant data from the message
       const messageContent = await message.content;
@@ -60,5 +58,6 @@ module.exports = {
       const ticketId = await message.channel.name.split("-")[1];
     }
     */
+    }
   },
 };

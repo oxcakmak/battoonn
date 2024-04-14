@@ -6,17 +6,21 @@ const { addQueue, playSong } = require("../../vendor/queue");
 module.exports = {
   name: "interactionCreate",
   async execute(interaction) {
-    const { customId, guild, message, channel } = await interaction;
+    const { guild, message, channel } = await interaction;
 
     const member = await guild.members.fetch(interaction.user.id);
 
     if (!member) return;
 
+    if (!interaction.isButton()) return;
+
+    const customId = interaction.customId;
+
     // if (!interaction.isButton() && !customId.startsWith("btnMusicLine")) return;
 
-    try {
-      if (customId.startsWith("btnMusicLine")) {
-        const trackLineNumber = customId.replace("btnMusicLine", "");
+    if (customId?.startsWith("btnMusicLine")) {
+      try {
+        const trackLineNumber = customId.slice("btnMusicLine".length);
 
         function getLineWithNumber(text, lineNumber) {
           if (lineNumber <= 0 || !text) return null; // Handle invalid input
@@ -31,9 +35,11 @@ module.exports = {
           message.embeds[0].data.description,
           trackLineNumber
         );
+
+        console.log(trackLine);
+
         const voiceState = member.voice;
         const currentChannel = interaction.member.voice.channel;
-        console.log();
         /*
       if (
         !currentChannel ||
@@ -87,9 +93,9 @@ module.exports = {
       await playSong(sendData);
 
       */
+      } catch (error) {
+        console.log(error);
       }
-    } catch (error) {
-      console.log(error);
     }
   },
 };
