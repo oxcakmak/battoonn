@@ -5,21 +5,10 @@ const { containsMultipleData } = require("../../utils/arrayFunctions");
 
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName("forum-solved")
-    .setDescription(_("mark_thread_as_resolved"))
-    .addStringOption((option) =>
-      option
-        .setName("lock")
-        .setDescription(_("lock_thread_after_marked_resolved"))
-        .addChoices(
-          { name: _("lock_it"), value: "yes" },
-          { name: _("dont_lock_it"), value: "no" }
-        )
-    ),
+    .setName("forum-unsolved")
+    .setDescription(_("mark_thread_as_resolved")),
   async execute(interaction) {
     if (interaction.bot) return;
-
-    const lock = interaction.options.getString("lock") === "yes" ? true : false;
 
     const forums = await Configs.findOne({
       server: interaction.guild.id,
@@ -47,15 +36,13 @@ module.exports = {
       ? forums.forumSolvedText + " - "
       : _("solved_uppercase") + " - ";
 
-    await channel.setLocked(lock);
+    if (channel.locked) await channel.setLocked(false);
 
     try {
       const solveThread =
         channel.isThread() &&
-        !channel.name.startsWith(solvedText) &&
-        (await channel.setName(
-          solvedText + channel.name.replace(solvedText, "")
-        ));
+        channel.name.startsWith(solvedText) &&
+        (await channel.setName(channel.name.replace(solvedText, "")));
 
       if (!solveThread)
         return await interaction.reply({
@@ -74,6 +61,6 @@ module.exports = {
         ephemeral: true,
       });
     }
-    await channel.setArchived(true);
+    await channel.setArchived(false);
   },
 };
