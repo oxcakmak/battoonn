@@ -15,25 +15,19 @@ module.exports = {
         .setName("channel")
         .setDescription(_("ticket_template_channel"))
         .addChannelTypes(ChannelType.GuildText)
-        .setRequired(true)
     )
     .addStringOption((option) =>
-      option
-        .setName("title")
-        .setDescription(_("ticket_template_title"))
-        .setRequired(true)
+      option.setName("title").setDescription(_("ticket_template_title"))
     )
     .addStringOption((option) =>
       option
         .setName("description")
         .setDescription(_("ticket_template_description"))
-        .setRequired(true)
     )
     .addStringOption((option) =>
       option
         .setName("button")
         .setDescription(_("ticket_template_button_text_example"))
-        .setRequired(true)
     ),
   async execute(interaction) {
     if (interaction.bot) return;
@@ -46,6 +40,12 @@ module.exports = {
     )
       return await interaction.reply({
         content: _("you_do_not_have_permission_command"),
+        ephemeral: true,
+      });
+
+    if (interaction.options.data.length === 0)
+      return await interaction.reply({
+        content: _("enter_an_option"),
         ephemeral: true,
       });
 
@@ -69,7 +69,7 @@ module.exports = {
     if (!ticketConfigsQuery) {
       const newTicketConfigs = new TicketConfigs({
         server: serverId,
-        templateChannel: channel,
+        templateChannel: channel.id,
         templateTitle: title,
         templateDescription: description,
         templateButtonText: button,
@@ -95,12 +95,13 @@ module.exports = {
         ephemeral: true,
       });
 
-    ticketConfigsQuery.templateChannel = channel.id;
-    ticketConfigsQuery.templateTitle = title;
-    ticketConfigsQuery.templateDescription = description;
-    ticketConfigsQuery.templateButtonText = button;
+    if (channel) ticketConfigsQuery.templateChannel = channel.id;
+    if (title) ticketConfigsQuery.templateTitle = title;
+    if (description) ticketConfigsQuery.templateDescription = description;
+    if (button) ticketConfigsQuery.templateButtonText = button;
 
     const ticketConfigsUpdate = await ticketConfigsQuery.save();
+
     if (!ticketConfigsUpdate)
       return await interaction.reply({
         content: _("ticket_settings_not_updated"),

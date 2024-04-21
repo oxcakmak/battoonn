@@ -2,19 +2,31 @@ const { PermissionsBitField, SlashCommandBuilder } = require("discord.js");
 const {
   Configs,
   Explorers,
-  MusicConfigs,
   TicketConfigs,
+  InviteTrackerConfigs,
 } = require("../../database/schemas");
 const { _ } = require("../../utils/localization");
 
 module.exports = {
+  cooldowns: 5,
   data: new SlashCommandBuilder()
     .setName("register")
-    .setDescription(_("register_server")),
+    .setDescription(_("register_module"))
+    .addStringOption((option) =>
+      option
+        .setName("module")
+        .setDescription(_("explorer_module_related_to_members"))
+        .addChoices(
+          { name: _("modules_all"), value: "all" },
+          { name: _("module_server"), value: "server" },
+          { name: _("module_explorer"), value: "explorer" },
+          { name: _("ticket_module"), value: "ticket" },
+          { name: _("module_invite_tracker"), value: "inviteTracker" }
+        )
+        .setRequired(true)
+    ),
   async execute(interaction) {
-    if (interaction.bot) return;
-
-    // Check if the user has permission to manage messages
+    // Permission check with a descriptive error message
     if (
       !interaction.member.permissions.has(
         PermissionsBitField.Flags.Administrator
@@ -25,87 +37,102 @@ module.exports = {
         ephemeral: true,
       });
 
+    const module = interaction.options.getString("module");
+
     const serverId = interaction.guild.id;
-    let messageContent;
-    try {
-      const [server, explorer, musicConfig, ticketConfig] = await Promise.all([
-        Configs.findOne({ server: serverId }),
-        Explorers.findOne({ server: serverId }),
-        MusicConfigs.findOne({ server: serverId }),
-        TicketConfigs.findOne({ server: serverId }),
-      ]);
 
-      const existingSchemas = [];
-      const notExistingSchemas = [];
-      const notSavedSchemas = [];
+    const existingSchemas = [];
+    const registeredSchemas = [];
 
-      if (server) existingSchemas.push(_("configs"));
-      if (explorer) existingSchemas.push(_("explorer"));
-      if (musicConfig) existingSchemas.push(_("music"));
-      if (ticketConfig) existingSchemas.push(_("ticket"));
+    // Retrieve existing configurations using Promise.all for efficiency
+    const [server, explorer, ticket, inviteTracker] = await Promise.all([
+      Configs.findOne({ server: serverId }),
+      Explorers.findOne({ server: serverId }),
+      TicketConfigs.findOne({ server: serverId }),
+      InviteTrackerConfigs.findOne({ server: serverId }),
+    ]);
 
-      if (existingSchemas.length > 0) {
-        const existingSchemaList = existingSchemas.join(", ");
-        // console.log(`Schemas already exist: ${existingSchemaList}`);
-        // You can send a response (e.g., using Express) here
-        messageContent = _("schema_with_variable_exists", {
-          schema: existingSchemaList,
-        });
-      } else {
-        // Perform registration logic here, assuming schemas don't exist
-        // console.log("No existing schemas found. Registering...");
+    if (server) existingSchemas.push(_("configs"));
+    if (explorer) existingSchemas.push(_("explorer"));
+    if (ticket) existingSchemas.push(_("ticket"));
+    if (inviteTracker) existingSchemas.push(_("invite_tracker"));
 
-        const newConfig = new Configs({
-          server: serverId,
-        });
+    let newConfig;
+    let newExplorer;
+    let newTickets;
+    let newInviteTrackers;
 
-        const saveConfig = await newConfig.save();
+    switch (module) {
+      case "all":
+        if (!server) {
+          newConfig = await new Configs({ server: serverId });
+          await newConfig.save();
+          await registeredSchemas.push(_("configs"));
+        }
 
-        const newExplorer = new Explorers({
-          server: serverId,
-        });
+        if (!explorer) {
+          newExplorer = await new Explorers({ server: serverId });
+          await newExplorer.save();
+          await registeredSchemas.push(_("explorer"));
+        }
 
-        const saveExplorer = await newExplorer.save();
+        if (!ticket) {
+          newTickets = await new TicketConfigs({ server: serverId });
+          await newTickets.save();
+          await registeredSchemas.push(_("ticket"));
+        }
 
-        const newMusicConfig = new MusicConfigs({
-          server: serverId,
-        });
+        if (!inviteTracker) {
+          newInviteTrackers = await new InviteTrackerConfigs({
+            server: serverId,
+          });
+          await newInviteTrackers.save();
+          await registeredSchemas.push(_("invite_tracker"));
+        }
+        break;
 
-        const saveMusicConfig = await newMusicConfig.save();
+      case "server":
+        if (!server) {
+          newConfig = await new Configs({ server: serverId });
+          await newConfig.save();
+          await registeredSchemas.push(_("configs"));
+        }
+        break;
 
-        const newTicketConfigs = new TicketConfigs({
-          server: serverId,
-        });
+      case "explorer":
+        if (!explorer) {
+          newExplorer = await new Explorers({ server: serverId });
+          await newExplorer.save();
+          await registeredSchemas.push(_("explorer"));
+        }
+        break;
 
-        const saveTicketConfigs = await newTicketConfigs.save();
+      case "ticket":
+        if (!ticket) {
+          newTickets = await new TicketConfigs({ server: serverId });
+          await newTickets.save();
+          await registeredSchemas.push(_("ticket"));
+        }
+        break;
 
-        if (!saveConfig) notSavedSchemas.push(_("configs"));
-        if (!saveExplorer) notSavedSchemas.push(_("explorer"));
-        if (!saveMusicConfig) notSavedSchemas.push(_("music"));
-        if (!saveTicketConfigs) notSavedSchemas.push(_("ticket"));
-
-        notExistingSchemas.push(_("configs"));
-        notExistingSchemas.push(_("explorer"));
-        notExistingSchemas.push(_("music"));
-        notExistingSchemas.push(_("ticket"));
-
-        const notExistingSchemaList = notExistingSchemas.join(", ");
-
-        messageContent = _("schema_with_variable_registered", {
-          schema: notExistingSchemaList,
-        });
-      }
-    } catch (error) {
-      console.error("Error during registration:", error);
-      // Handle errors appropriately (e.g., send an error response)
-      const notSavedSchemasList = notSavedSchemas.join(", ");
-      messageContent = _("schema_with_variable_not_registered", {
-        schema: notSavedSchemasList,
-      });
+      case "inviteTracker":
+        if (!inviteTracker) {
+          newInviteTrackers = await new InviteTrackerConfigs({
+            server: serverId,
+          });
+          await newInviteTrackers.save();
+          await registeredSchemas.push(_("invite_tracker"));
+        }
+        break;
     }
 
-    return await interaction.reply({
-      content: messageContent,
+    if (existingSchemas.length === 0) existingSchemas.push("n/A");
+    if (registeredSchemas.length === 0) registeredSchemas.push("n/A");
+
+    const responseMessage = _("schema_with_variable_exists_and_registered", {
+      exists: existingSchemas.join(", "),
+      registered: registeredSchemas.join(", "),
     });
+    await interaction.reply({ content: responseMessage, ephemeral: true });
   },
 };

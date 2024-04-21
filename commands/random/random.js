@@ -3,7 +3,7 @@ const { _ } = require("../../utils/localization");
 
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName("random")
+    .setName("r")
     .setDescription(_("generate_random_items")),
   async execute(interaction) {
     if (interaction.bot) return;

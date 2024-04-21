@@ -3,7 +3,7 @@ const { _ } = require("../../utils/localization");
 
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName("meme")
+    .setName("r-meme")
     .setDescription(_("random_show_meme")),
   async execute(interaction) {
     const memeUrl = `https://www.reddit.com/r/memes/.json`;

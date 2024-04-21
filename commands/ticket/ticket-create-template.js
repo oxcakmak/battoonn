@@ -26,13 +26,6 @@ module.exports = {
     const ticketConfigsQuery = await TicketConfigs.findOne({
       server: serverId,
     });
-    const {
-      moduleEnabled,
-      templateChannel,
-      templateTitle,
-      templateDescription,
-      templateButtonText,
-    } = ticketConfigsQuery;
 
     if (!checkRegisteredServer)
       return await interaction.reply({
@@ -44,6 +37,14 @@ module.exports = {
         content: _("ticket_configuration_not_found"),
         ephemeral: true,
       });
+
+    const {
+      moduleEnabled,
+      templateChannel,
+      templateTitle,
+      templateDescription,
+      templateButtonText,
+    } = ticketConfigsQuery;
 
     if (ticketConfigsQuery && !moduleEnabled)
       return await interaction.reply({
@@ -62,10 +63,18 @@ module.exports = {
         ephemeral: true,
       });
 
-    const channel = await interaction.guild.channels.cache.get(templateChannel);
+    try {
+      const templateTextChannel = await interaction.guild.channels.fetch(
+        templateChannel
+      );
 
-    if (channel) {
-      const channelSendMessage = await channel.send({
+      if (!templateTextChannel)
+        return await interaction.reply({
+          content: _("channel_not_found"),
+          ephemeral: true,
+        });
+
+      const sendTemplate = await templateTextChannel.send({
         components: [
           {
             type: 1,
@@ -88,7 +97,8 @@ module.exports = {
           },
         ],
       });
-      if (!channelSendMessage)
+
+      if (!sendTemplate)
         return await interaction.reply({
           content: _("template_message_not_sent"),
           ephemeral: true,
@@ -97,6 +107,8 @@ module.exports = {
       return await interaction.reply({
         content: _("template_message_sent"),
       });
+    } catch (error) {
+      console.error("Error fetching channel information:", error);
     }
   },
 };

@@ -4,7 +4,7 @@ const randomHex = require("random-hex");
 
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName("random-hex")
+    .setName("r-hex")
     .setDescription(_("generate_random_color_code")),
   async execute(interaction) {
     if (interaction.bot) return;

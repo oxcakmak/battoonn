@@ -29,9 +29,10 @@ module.exports = {
       });
 
     try {
-      const channel = await interaction.guild.channels.fetch(
-        targetChannel ? targetChannel : configs.announcementChannel
-      );
+      let targetId = targetChannel
+        ? targetChannel.id
+        : configs.announcementChannel;
+      const channel = await interaction.guild.channels.fetch(targetId);
 
       if (!channel)
         return await interaction.reply({
