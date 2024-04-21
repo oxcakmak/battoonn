@@ -3,6 +3,7 @@ const {
   Collection,
   GatewayIntentBits,
   Partials,
+  ShardingManager,
 } = require("discord.js");
 
 const {
@@ -34,17 +35,15 @@ const client = new Client({
   partials: [User, Message, GuildMember, ThreadMember],
 });
 
-// Music player
-const { Player } = require("discord-music-player");
-
-const player = new Player(client, {
-  leaveOnEmpty: false, // This options are optional.
-});
-
-// You can define the Player as *client.player* to easily access it.
-client.player = player;
-
 client.commands = new Collection();
+
+// Set up sharding
+const shard = new ShardingManager("./index.js", { total: "auto" });
+
+// Listen for shard ready event
+shard.on("shardCreate", (shard) => {
+  console.log(`Shard ${shard.id} is ready!`);
+});
 
 //login
 client.login(token).then(async () => {

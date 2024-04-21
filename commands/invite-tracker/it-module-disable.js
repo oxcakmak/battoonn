@@ -1,26 +1,11 @@
-const {
-  PermissionsBitField,
-  SlashCommandBuilder,
-  ChannelType,
-} = require("discord.js");
+const { PermissionsBitField, SlashCommandBuilder } = require("discord.js");
 const { InviteTrackerConfigs } = require("../../database/schemas");
 const { _ } = require("../../utils/localization");
 
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName("it-channel")
-    .setDescription(
-      _("chanel_notifications_send_to_joining_or_leaving_message")
-    )
-    .addChannelOption((option) =>
-      option
-        .setName("channel")
-        .setDescription(
-          _("chanel_notifications_send_to_joining_or_leaving_message")
-        )
-        .addChannelTypes(ChannelType.GuildText)
-        .setRequired(true)
-    ),
+    .setName("it-module-disable")
+    .setDescription(_("open_explorer_module")),
   async execute(interaction) {
     if (interaction.bot) return;
 
@@ -37,8 +22,6 @@ module.exports = {
 
     const serverId = interaction.guild.id;
 
-    const channel = interaction.options.getChannel("channel");
-
     const inviteTrackerConfig = await InviteTrackerConfigs.findOne({
       server: serverId,
     });
@@ -49,7 +32,7 @@ module.exports = {
         ephemeral: true,
       });
 
-    inviteTrackerConfig.channel = channel.id;
+    inviteTrackerConfig.moduleEnabled = false;
 
     const inviteTrackerUpdate = await inviteTrackerConfig.save();
     if (!inviteTrackerUpdate)

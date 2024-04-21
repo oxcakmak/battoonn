@@ -140,6 +140,7 @@ const VoiceRooms = mongoose.model("voiceRooms", VoiceRoomsSchema);
 // Invite Tracker
 const InviteTrackerConfigsSchema = new mongoose.Schema({
   server: String,
+  moduleEnabled: { type: Boolean, default: false },
   channel: { type: String, default: null },
   message: { type: String, default: null },
 });

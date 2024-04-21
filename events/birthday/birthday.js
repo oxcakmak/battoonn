@@ -5,10 +5,10 @@ module.exports = {
   once: true,
   async execute(client) {
     // Get the first guild ID from the bot's cache (adjust as needed)
-    const guildId = client.guilds.cache.first()?.id;
+    const guildId = client.guilds.cache.first().id;
 
     if (guildId) {
-      console.log(`Guild ID: ${client}`);
+      console.log(`Guild ID: ${guildId}`);
     } else {
       console.log("Bot is not in any guilds.");
     }

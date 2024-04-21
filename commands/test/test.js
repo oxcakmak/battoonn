@@ -15,8 +15,6 @@ module.exports = {
   async execute(interaction) {
     if (interaction.bot) return;
 
-    console.log(interaction.client);
-
     return await interaction.reply({
       content: "Şu anda müzik çalmıyor!",
     });

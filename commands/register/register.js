@@ -11,20 +11,7 @@ module.exports = {
   cooldowns: 5,
   data: new SlashCommandBuilder()
     .setName("register")
-    .setDescription(_("register_module"))
-    .addStringOption((option) =>
-      option
-        .setName("module")
-        .setDescription(_("explorer_module_related_to_members"))
-        .addChoices(
-          { name: _("modules_all"), value: "all" },
-          { name: _("module_server"), value: "server" },
-          { name: _("module_explorer"), value: "explorer" },
-          { name: _("ticket_module"), value: "ticket" },
-          { name: _("module_invite_tracker"), value: "inviteTracker" }
-        )
-        .setRequired(true)
-    ),
+    .setDescription(_("register_module")),
   async execute(interaction) {
     // Permission check with a descriptive error message
     if (
@@ -62,68 +49,30 @@ module.exports = {
     let newTickets;
     let newInviteTrackers;
 
-    switch (module) {
-      case "all":
-        if (!server) {
-          newConfig = await new Configs({ server: serverId });
-          await newConfig.save();
-          await registeredSchemas.push(_("configs"));
-        }
+    if (!server) {
+      newConfig = await new Configs({ server: serverId });
+      await newConfig.save();
+      await registeredSchemas.push(_("configs"));
+    }
 
-        if (!explorer) {
-          newExplorer = await new Explorers({ server: serverId });
-          await newExplorer.save();
-          await registeredSchemas.push(_("explorer"));
-        }
+    if (!explorer) {
+      newExplorer = await new Explorers({ server: serverId });
+      await newExplorer.save();
+      await registeredSchemas.push(_("explorer"));
+    }
 
-        if (!ticket) {
-          newTickets = await new TicketConfigs({ server: serverId });
-          await newTickets.save();
-          await registeredSchemas.push(_("ticket"));
-        }
+    if (!ticket) {
+      newTickets = await new TicketConfigs({ server: serverId });
+      await newTickets.save();
+      await registeredSchemas.push(_("ticket"));
+    }
 
-        if (!inviteTracker) {
-          newInviteTrackers = await new InviteTrackerConfigs({
-            server: serverId,
-          });
-          await newInviteTrackers.save();
-          await registeredSchemas.push(_("invite_tracker"));
-        }
-        break;
-
-      case "server":
-        if (!server) {
-          newConfig = await new Configs({ server: serverId });
-          await newConfig.save();
-          await registeredSchemas.push(_("configs"));
-        }
-        break;
-
-      case "explorer":
-        if (!explorer) {
-          newExplorer = await new Explorers({ server: serverId });
-          await newExplorer.save();
-          await registeredSchemas.push(_("explorer"));
-        }
-        break;
-
-      case "ticket":
-        if (!ticket) {
-          newTickets = await new TicketConfigs({ server: serverId });
-          await newTickets.save();
-          await registeredSchemas.push(_("ticket"));
-        }
-        break;
-
-      case "inviteTracker":
-        if (!inviteTracker) {
-          newInviteTrackers = await new InviteTrackerConfigs({
-            server: serverId,
-          });
-          await newInviteTrackers.save();
-          await registeredSchemas.push(_("invite_tracker"));
-        }
-        break;
+    if (!inviteTracker) {
+      newInviteTrackers = await new InviteTrackerConfigs({
+        server: serverId,
+      });
+      await newInviteTrackers.save();
+      await registeredSchemas.push(_("invite_tracker"));
     }
 
     if (existingSchemas.length === 0) existingSchemas.push("n/A");
