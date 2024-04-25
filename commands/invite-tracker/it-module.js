@@ -4,13 +4,8 @@ const { _ } = require("../../utils/localization");
 
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName("it-message")
-    .setDescription(_("notified_for_the_member_joining_the_server"))
-    .addStringOption((option) =>
-      option
-        .setName("message")
-        .setDescription(_("notified_for_the_member_joining_the_server"))
-    ),
+    .setName("it-module")
+    .setDescription(_("open_explorer_module")),
   async execute(interaction) {
     if (interaction.bot) return;
 
@@ -27,8 +22,6 @@ module.exports = {
 
     const serverId = interaction.guild.id;
 
-    const message = interaction.options.getString("message");
-
     const inviteTrackerConfig = await InviteTrackerConfigs.findOne({
       server: serverId,
     });
@@ -39,28 +32,9 @@ module.exports = {
         ephemeral: true,
       });
 
-    if (!inviteTrackerConfig.moduleEnabled)
-      return await interaction.reply({
-        content: _("activate_module_first"),
-        ephemeral: true,
-      });
-
-    if (interaction.options.data.length === 0)
-      return await interaction.reply({
-        content: inviteTrackerConfig.message,
-      });
-
-    inviteTrackerConfig.message = message;
-
-    const inviteTrackerUpdate = await inviteTrackerConfig.save();
-    if (!inviteTrackerUpdate)
-      return await interaction.reply({
-        content: _("explorer_settings_updated_failed"),
-        ephemeral: true,
-      });
-
     return await interaction.reply({
-      content: _("explorer_settings_updated_success"),
+      content: inviteTrackerConfig.moduleEnabled,
+      ephemeral: true,
     });
   },
 };

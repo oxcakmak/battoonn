@@ -19,7 +19,6 @@ module.exports = {
           _("chanel_notifications_send_to_joining_or_leaving_message")
         )
         .addChannelTypes(ChannelType.GuildText)
-        .setRequired(true)
     ),
   async execute(interaction) {
     if (interaction.bot) return;
@@ -46,6 +45,11 @@ module.exports = {
     if (!inviteTrackerConfig)
       return await interaction.reply({
         content: _("register_as_an_explorer"),
+      });
+
+    if (interaction.options.data.length === 0)
+      return await interaction.reply({
+        content: `<#${inviteTrackerConfig.channel}>`,
         ephemeral: true,
       });
 
