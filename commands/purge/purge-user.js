@@ -49,6 +49,21 @@ module.exports = {
         ephemeral: true,
       });
 
+    // Fetch messages efficiently (up to 100)
+    const messages = await channel.messages.fetch();
+
+    // Sort messages in descending order by timestamp (most recent first)
+    // await messages.sort((a, b) => b.createdTimestamp - a.createdTimestamp);
+
+    messages.forEach(async (msg) => {
+      if (msg.author.id === user) await messageList.push(msg);
+    });
+
+    for (let i = 0; i < messageList.length; i++) {
+      if (messageList[i].author.id === user && i < amount)
+        await messagesToDelete.push(messageList[i]);
+    }
+
     try {
       // Fetch messages from the target channel
       const messages = await targetChannel.messages.fetch();
@@ -59,21 +74,6 @@ module.exports = {
         });
 
       let messagesToDelete = [];
-
-      if (user) {
-        let i = 0;
-        messages.forEach(async (msg) => {
-          if (
-            msg.author.id === user.id &&
-            messagesToDelete.length < deleteAmount
-          ) {
-            await messagesToDelete.push(msg);
-            i++;
-          }
-        });
-      } else {
-        messagesToDelete = await messages.first(deleteAmount);
-      }
 
       if (messagesToDelete.length > 0) {
         await targetChannel.bulkDelete(messagesToDelete, true);

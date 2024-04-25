@@ -39,15 +39,11 @@ module.exports = {
       });
     }
 
-    const amount = interaction.options.getInteger("amount");
-    const user = interaction.options.getUser("user");
+    const amount = interaction.options.getInteger("amount") || 50;
+    const user = interaction.options.getUser("user")?.id;
     const channel = interaction.options.getChannel("channel");
 
-    // Determine the channel to delete messages from
-    const targetChannel = channel ? channel : interaction.channel;
-    const deleteAmount = amount ? amount : 50;
-
-    if (deleteAmount > 50 || deleteAmount < 1)
+    if (amount > 50 || amount < 1)
       return await interaction.reply({
         content: _("number_messages_to_delete_between_numbers", {
           min: 1,
@@ -56,39 +52,36 @@ module.exports = {
         ephemeral: true,
       });
 
+    let messagesToDelete = [];
+    let messageList = [];
+
+    // Fetch messages efficiently (up to 100)
+    const messages = await channel.messages.fetch();
+
+    // Sort messages in descending order by timestamp (most recent first)
+    // await messages.sort((a, b) => b.createdTimestamp - a.createdTimestamp);
+
+    messages.forEach(async (msg) => {
+      if (msg.author.id === user) await messageList.push(msg);
+    });
+
+    for (let i = 0; i < messageList.length; i++) {
+      if (messageList[i].author.id === user && i < amount)
+        await messagesToDelete.push(messageList[i]);
+    }
+
+    if (messages.size === 0 || messageList.length === 0)
+      return await interaction.reply({
+        content: _("message_not_found_to_delete"),
+      });
+
     try {
-      // Fetch messages from the target channel
-      const messages = await targetChannel.messages.fetch();
+      await channel.bulkDelete(messagesToDelete, true);
 
-      if (messages.size === 0)
-        return await interaction.reply({
-          content: _("message_not_found_to_delete"),
-        });
-
-      let messagesToDelete = [];
-
-      if (user) {
-        let i = 0;
-        messages.forEach(async (msg) => {
-          if (
-            msg.author.id === user.id &&
-            messagesToDelete.length < deleteAmount
-          ) {
-            await messagesToDelete.push(msg);
-            i++;
-          }
-        });
-      } else {
-        messagesToDelete = await messages.first(deleteAmount);
-      }
-
-      if (messagesToDelete.length > 0) {
-        await targetChannel.bulkDelete(messagesToDelete, true);
-        await interaction.reply({
-          content: _("message_deleted_successfully"),
-          ephemeral: true,
-        });
-      }
+      await interaction.reply({
+        content: _("message_deleted_successfully"),
+        ephemeral: true,
+      });
     } catch (error) {
       console.error(error);
       await interaction.reply({

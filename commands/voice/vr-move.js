@@ -1,4 +1,8 @@
-const { PermissionsBitField, SlashCommandBuilder } = require("discord.js");
+const {
+  ChannelType,
+  PermissionsBitField,
+  SlashCommandBuilder,
+} = require("discord.js");
 const { _ } = require("../../utils/localization");
 
 module.exports = {
@@ -15,6 +19,7 @@ module.exports = {
       option
         .setName("channel")
         .setDescription(_("which_channel_should_move"))
+        .addChannelTypes(ChannelType.GuildVoice)
         .setRequired(true)
     ),
   async execute(interaction) {

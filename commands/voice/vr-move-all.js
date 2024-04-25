@@ -1,4 +1,8 @@
-const { PermissionsBitField, SlashCommandBuilder } = require("discord.js");
+const {
+  ChannelType,
+  PermissionsBitField,
+  SlashCommandBuilder,
+} = require("discord.js");
 const { _ } = require("../../utils/localization");
 
 module.exports = {
@@ -9,12 +13,14 @@ module.exports = {
       option
         .setName("from")
         .setDescription(_("which_channel_should_move"))
+        .addChannelTypes(ChannelType.GuildVoice)
         .setRequired(true)
     )
     .addChannelOption((option) =>
       option
         .setName("to")
         .setDescription(_("which_channel_should_move"))
+        .addChannelTypes(ChannelType.GuildVoice)
         .setRequired(true)
     ),
   async execute(interaction) {
@@ -28,10 +34,6 @@ module.exports = {
       interaction.guild.channels.cache.get(destinationChannelId);
 
     if (
-      (!sourceChannel ||
-        !destinationChannel ||
-        !sourceChannel.type !== 2 ||
-        !destinationChannel.type !== 2) &&
       !interaction.member.permissions.has(
         PermissionsBitField.Flags.Administrator
       )

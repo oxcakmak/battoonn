@@ -9,27 +9,12 @@ module.exports = {
     const InviteTrackerConfig = await InviteTrackerConfigs.findOne({
       server: serverId,
     });
-    const { channel, message } = InviteTrackerConfig; // Destructuring
+    const { moduleEnabled, channel, message } = InviteTrackerConfig; // Destructuring
 
-    const fetchInvite = async () => {
-      return await guild.invites
-        .fetch()
-        .then(
-          async (invites) =>
-            await invites.find(
-              (invite) =>
-                invite.uses > 0 &&
-                (invitedBy.get(member.id) || {}).code === invite.code
-            )
-        );
-    };
+    console.log(await guild.invites.fetch());
 
-    const inviter = await fetchInvite();
-
-    // Clear invitedBy information for the member after processing
-    invitedBy.delete(member.id);
-
-    if (InviteTrackerConfig && channel && inviter) {
+    /*
+    if (InviteTrackerConfig && moduleEnabled && channel) {
       const targetChannel = await guild.channels.cache.get(channel);
 
       let inviterMessage = message
@@ -45,5 +30,6 @@ module.exports = {
 
       await targetChannel.send(inviterMessage);
     }
+    */
   },
 };

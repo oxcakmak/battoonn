@@ -35,7 +35,7 @@ module.exports = {
     )
     .addStringOption((option) =>
       option
-        .setName("name_prefix") // Optional prefix for dynamic naming
+        .setName("name") // Optional prefix for dynamic naming
         .setDescription(
           'Optional prefix for the channel name (e.g., "Voice Chat - ").'
         )

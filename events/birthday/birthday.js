@@ -4,14 +4,6 @@ module.exports = {
   name: "ready",
   once: true,
   async execute(client) {
-    // Get the first guild ID from the bot's cache (adjust as needed)
-    const guildId = client.guilds.cache.first().id;
-
-    if (guildId) {
-      console.log(`Guild ID: ${guildId}`);
-    } else {
-      console.log("Bot is not in any guilds.");
-    }
     /*
 
     // Schedule birthday checks every day at midnight (adjust as needed)

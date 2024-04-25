@@ -1,0 +1,7 @@
+/*
+    const invites = await interaction.guild.invites.fetch();
+    invites.forEach((invite) => {
+      // console.log(invite.code);
+      // console.log(invite.url);
+    });
+    */

@@ -1,0 +1,9 @@
+
+const isDiscordInvite = require("is-discord-invite");
+
+
+  const message = "Free Nitro \n https://discord.gg/EE8KXQpg";
+
+    if (isDiscordInvite.regex(message, { everything: true }))
+      console.log("true");
+    else console.log("false");

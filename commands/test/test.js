@@ -1,9 +1,6 @@
 const { SlashCommandBuilder } = require("discord.js");
-const { SongQueues } = require("../../database/schemas");
 const { _ } = require("../../utils/localization");
-const { getNextTrack } = require("../../vendor/queue");
-const play = require("play-dl");
-const urlParser = require("js-video-url-parser");
+const isDiscordInvite = require("is-discord-invite");
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -17,6 +14,7 @@ module.exports = {
 
     return await interaction.reply({
       content: "Şu anda müzik çalmıyor!",
+      ephemeral: true,
     });
   },
 };
