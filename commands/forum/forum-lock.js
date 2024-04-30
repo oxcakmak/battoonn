@@ -45,6 +45,24 @@ module.exports = {
           ephemeral: true,
         });
 
+      const transactions = await ForumTransactions.findOne({
+        server: interaction.guild.id,
+        threadId: interaction.channel.id,
+        moderationById: interaction.member.id,
+      });
+
+      if (transactions) {
+        transactions.moderationType = "lock";
+      } else {
+        const newTransactions = await new ForumTransactions({
+          server: interaction.guild.id,
+          threadId: interaction.channel.id,
+          moderationById: interaction.member.id,
+          moderationType: "lock",
+        });
+        await newTransactions.save();
+      }
+
       const lockThread = channel.isThread() && (await channel.setLocked(true));
 
       if (!lockThread)

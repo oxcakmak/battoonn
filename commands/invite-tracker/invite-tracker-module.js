@@ -4,7 +4,7 @@ const { _ } = require("../../utils/localization");
 
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName("it-module-disable")
+    .setName("it-module")
     .setDescription(_("open_explorer_module")),
   async execute(interaction) {
     if (interaction.bot) return;
@@ -20,7 +20,7 @@ module.exports = {
         ephemeral: true,
       });
 
-    const serverId = interaction.guild.id;
+    const serverId = await interaction.guild.id;
 
     const inviteTrackerConfig = await InviteTrackerConfigs.findOne({
       server: serverId,
@@ -32,17 +32,9 @@ module.exports = {
         ephemeral: true,
       });
 
-    inviteTrackerConfig.moduleEnabled = false;
-
-    const inviteTrackerUpdate = await inviteTrackerConfig.save();
-    if (!inviteTrackerUpdate)
-      return await interaction.reply({
-        content: _("explorer_settings_updated_failed"),
-        ephemeral: true,
-      });
-
     return await interaction.reply({
-      content: _("explorer_settings_updated_success"),
+      content: inviteTrackerConfig.moduleEnabled,
+      ephemeral: true,
     });
   },
 };

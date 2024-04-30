@@ -26,7 +26,7 @@ module.exports = {
 
     const module = interaction.options.getString("module");
 
-    const serverId = interaction.guild.id;
+    const serverId = await interaction.guild.id;
 
     const existingSchemas = [];
     const registeredSchemas = [];

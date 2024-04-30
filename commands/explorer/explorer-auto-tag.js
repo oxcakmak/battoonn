@@ -4,7 +4,7 @@ const { _ } = require("../../utils/localization");
 
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName("explorer-auto-rename")
+    .setName("explorer-auto-tag")
     .setDescription(_("adds_tags_the_beginning_end_of_username"))
     .addStringOption((option) =>
       option
@@ -37,7 +37,7 @@ module.exports = {
         ephemeral: true,
       });
 
-    const serverId = interaction.guild.id;
+    const serverId = await interaction.guild.id;
 
     const position = interaction.options.getString("position");
     const tag = interaction.options.getString("tag");

@@ -31,7 +31,7 @@ module.exports = {
         ephemeral: true,
       });
 
-    const serverId = interaction.guild.id;
+    const serverId = await interaction.guild.id;
 
     const channel = interaction.options.getChannel("channel");
 

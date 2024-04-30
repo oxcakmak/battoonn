@@ -43,6 +43,7 @@
     "js-yaml": "^4.1.0",
     "mediaplex": "^0.0.9",
     "mongoose": "^8.2.3",
+    "node-datetime": "^2.1.2",
     "node-opus": "^0.3.3",
     "node-schedule": "^2.1.1",
     "node-twitch": "^0.5.0",

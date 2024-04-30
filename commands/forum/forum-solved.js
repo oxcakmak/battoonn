@@ -1,6 +1,6 @@
 const { SlashCommandBuilder } = require("discord.js");
 const { _ } = require("../../utils/localization");
-const { Configs } = require("../../database/schemas");
+const { Configs, ForumTransactions } = require("../../database/schemas");
 const { containsMultipleData } = require("../../utils/arrayFunctions");
 
 module.exports = {
@@ -30,6 +30,26 @@ module.exports = {
         content: _("register_to_use_forum_commands"),
         ephemeral: true,
       });
+
+    const transactions = await ForumTransactions.findOne({
+      server: interaction.guild.id,
+      threadId: interaction.channel.id,
+      moderationById: interaction.member.id,
+    });
+
+    if (transactions) {
+      transactions.moderationType = "solve";
+    } else {
+      const newTransactions = await new ForumTransactions({
+        server: interaction.guild.id,
+        threadId: interaction.channel.id,
+        moderationById: interaction.member.id,
+        moderationType: "solve",
+      });
+      await newTransactions.save();
+    }
+
+    /*
 
     const roleIds = interaction.member.roles.cache.map((role) => role.id);
 
@@ -75,5 +95,6 @@ module.exports = {
       });
     }
     await channel.setArchived(true);
+    */
   },
 };

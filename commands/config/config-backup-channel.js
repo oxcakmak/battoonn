@@ -8,12 +8,12 @@ const { _ } = require("../../utils/localization");
 
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName("config-announcement-channel")
-    .setDescription(_("which_channel_will_the_announcement"))
+    .setName("config-backup-channel")
+    .setDescription(_("command_channel"))
     .addChannelOption((option) =>
       option
         .setName("channel")
-        .setDescription(_("which_channel_will_the_announcement"))
+        .setDescription(_("command_channel"))
         .addChannelTypes(ChannelType.GuildText)
         .setRequired(true)
     ),
@@ -42,7 +42,7 @@ module.exports = {
         content: _("register_the_server_first"),
       });
 
-    configsQuery.announcementChannel = channel ? channel.id : null;
+    configsQuery.backupChannel = channel ? channel.id : null;
 
     const configsUpdate = await configsQuery.save();
     if (!configsUpdate)

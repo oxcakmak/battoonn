@@ -4,7 +4,7 @@ const { _ } = require("../../utils/localization");
 module.exports = {
   name: "interactionCreate",
   async execute(interaction, client) {
-    const serverId = interaction.guild.id;
+    const serverId = await interaction.guild.id;
     const server = await Configs.findOne({ server: serverId });
 
     if (interaction.isChatInputCommand()) {
