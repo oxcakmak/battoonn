@@ -14,7 +14,7 @@ module.exports = {
       option
         .setName("data")
         .setDescription(_("qr_code_data"))
-        .setMaxLength(50)
+        .setMaxLength(100)
         .setRequired(true)
     ),
   async execute(interaction) {
@@ -54,6 +54,7 @@ module.exports = {
     await interaction.reply({
       type: 4,
       files: [qrCodeFilePath],
+      ephemeral: true,
     });
 
     // Delete generated QR code file after sending

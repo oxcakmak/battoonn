@@ -1,0 +1,3 @@
+add - blacklist and participants add / remove user
+add - delete, edit, update giveaway
+update - qr to visibility only see user

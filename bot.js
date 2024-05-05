@@ -40,12 +40,7 @@ const client = new Client({
 client.commands = new Collection();
 
 // Set up sharding
-const shard = new ShardingManager("./index.js", { total: "auto" });
-
-// Listen for shard ready event
-shard.on("shardCreate", (shard) => {
-  console.log(`Shard ${shard.id} is ready!`);
-});
+const shard = new ShardingManager("./bot.js", { total: "auto" });
 
 //login
 client.login(token).then(async () => {
@@ -53,4 +48,9 @@ client.login(token).then(async () => {
   loadCommands(client);
   loadDatabase();
   loadUtils();
+});
+
+// Listen for shard ready event
+shard.on("shardCreate", (shard) => {
+  console.log(`Shard ${shard.id} is ready!`);
 });

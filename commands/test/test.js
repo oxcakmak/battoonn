@@ -2,6 +2,8 @@ const { SlashCommandBuilder } = require("discord.js");
 const { _ } = require("../../utils/localization");
 const isDiscordInvite = require("is-discord-invite");
 
+const secret = "GEZDCNRQHE4DSMZRGA3TKOBUGYYTONA";
+
 module.exports = {
   data: new SlashCommandBuilder()
     .setName("test")
@@ -11,10 +13,44 @@ module.exports = {
     ),
   async execute(interaction) {
     if (interaction.bot) return;
-
+    /*
     return await interaction.reply({
-      content: "Şu anda müzik çalmıyor!",
+      content: authenticator.encode(interaction.guild.id),
       ephemeral: true,
     });
+
+   return await interaction.reply({
+      content: authenticator.verifyCode(
+        secret,
+        interaction.options.getString("query")
+      ),
+      ephemeral: true,
+    });
+
+    return await interaction.reply({
+      content: authenticator.verifyCode(
+        secret,
+        interaction.options.getString("query")
+      ),
+      ephemeral: true,
+    });
+
+
+    if (
+      !authenticator.verifyCode(
+        "GEZDCNRQHE4DSMZRGA3TKOBUGYYTONA",
+        interaction.options.getString("query")
+      )
+    )
+      return await interaction.reply({
+        content: "Not Valid Key",
+        ephemeral: true,
+      });
+
+    return await interaction.reply({
+      content: "Valid Key",
+      ephemeral: true,
+    });
+    */
   },
 };
