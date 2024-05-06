@@ -94,12 +94,11 @@ module.exports = {
       interaction.options.getString("description") ||
       _("giveaway_join_message_with_emoji");
 
-    const roleIds = await interaction.member.roles.cache.map((role) => role.id);
-
     const newGiveaways = await new Giveaways({
       server: serverId,
       channelId: channel.id,
       voiceId: voice ? voice : null,
+      description: description,
       winners: winners,
       reserves: reserves,
       duration: duration,
@@ -130,12 +129,23 @@ module.exports = {
               { name: "", value: "" },
               {
                 name: "Join Role Required",
-                value: role ? role : "-",
+                value: role ? "Yes" : "No",
                 inline: true,
               },
               {
                 name: "Joiner Role",
                 value: role ? `<@${role}>` : "-",
+                inline: true,
+              },
+              { name: "", value: "" },
+              {
+                name: "Winners",
+                value: winners,
+                inline: true,
+              },
+              {
+                name: "Reserves",
+                value: reserves,
                 inline: true,
               },
               { name: "", value: "" },

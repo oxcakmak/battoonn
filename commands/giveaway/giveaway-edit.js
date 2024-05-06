@@ -21,40 +21,53 @@ module.exports = {
     .setName("giveaway-edit")
     .setDescription(_("open_explorer_module"))
     .addStringOption((option) =>
-      option
-        .setName("code")
-        .setDescription(_("filter_by_role"))
-        .setRequired(true)
+      option.setName("code").setDescription("Giveaway code").setRequired(true)
     )
     .addStringOption((option) =>
-      option.setName("description").setDescription(_("filter_by_role"))
+      option
+        .setName("duration")
+        .setDescription("Giveaway duration: m-minutes, h-hours, d-day")
+    )
+    .addStringOption((option) =>
+      option
+        .setName("description")
+        .setDescription(
+          "Section where you can give information about the giveaway"
+        )
     )
     .addRoleOption((option) =>
-      option.setName("role").setDescription(_("filter_by_role"))
+      option
+        .setName("role")
+        .setDescription(
+          "Role-specific giveaway setting, enter roles if you want specific role groups to participate"
+        )
     )
     .addChannelOption((option) =>
       option
         .setName("voice")
-        .setDescription(_("which_channel_should_move"))
+        .setDescription(
+          "Section set up for voice room events (radio, christmas etc.)"
+        )
         .addChannelTypes(ChannelType.GuildVoice)
     )
     .addStringOption((option) =>
       option
         .setName("winners")
-        .setDescription(_("filter_by_role"))
+        .setDescription("Number of winners")
         .setMinLength(1)
     )
     .addStringOption((option) =>
       option
         .setName("reserves")
-        .setDescription(_("filter_by_role"))
+        .setDescription("Number of reserves other than the winner")
         .setMinLength(1)
     )
     .addStringOption((option) =>
-      option.setName("limit").setDescription(_("filter_by_role"))
-    )
-    .addStringOption((option) =>
-      option.setName("duration").setDescription(_("filter_by_role"))
+      option
+        .setName("limit")
+        .setDescription(
+          "Giveaway participation limit, leave blank for unlimited participants"
+        )
     ),
   async execute(interaction) {
     if (interaction.bot) return;
@@ -71,81 +84,54 @@ module.exports = {
       });
 
     const serverId = await interaction.guild.id;
-
+    const code = interaction.options.getString("code");
     const voice = interaction.options.getChannel("voice")?.id;
     const role = interaction.options.getRole("role")?.id;
     const winners = interaction.options.getString("winners");
     const reserves = interaction.options.getString("reserves");
     const limit = interaction.options.getString("limit");
     const duration = interaction.options.getString("duration");
-    const channel = interaction.channel;
     const description =
       interaction.options.getString("description") ||
       _("giveaway_join_message_with_emoji");
 
-    const roleIds = await interaction.member.roles.cache.map((role) => role.id);
-
-    const newGiveaways = await new Giveaways({
-      server: serverId,
-      voiceId: voice ? voice : null,
-      winnerPrimaryCount: winners,
-      winnerSecondaryCount: reserves,
-      duration: duration,
-      joinerRole: role,
-      maxParticipants: limit,
-      isFinished: false,
-      createdById: interaction.member.id,
-      createdByDateTime: time,
-      createdByChannel: channel.id,
-    });
-
-    await newGiveaways.save();
-
     const giveaway = await Giveaways.findOne({
       server: serverId,
-      code: doc.code,
+      code: code,
     });
 
-    // Update Giveaway messageId
-    giveaway.messageId = message.id;
-    await giveaway.save();
+    if (!giveaway)
+      return await interaction.reply({
+        content: "Giveaway not found",
+        ephemeral: true,
+      });
 
-    if (participantCount >= limit)
+    if (limit <= winners)
       return await interaction.reply({
         content:
           "You cannot participate because the number of participants has been exceeded",
         ephemeral: true,
       });
 
-    if (role && !containsMultipleData(roleIds, [role]))
+    if (voice) giveaway.voiceId = voice;
+    if (winners) giveaway.winnerPrimaryCount = winners;
+    if (reserves) giveaway.winnerSecondaryCount = reserves;
+    if (duration) giveaway.duration = duration;
+    if (role) giveaway.joinerRole = role;
+    if (limit) giveaway.maxParticipants = limit;
+    if (description) giveaway.description = description;
+
+    const updateGiveaway = await giveaway.save();
+
+    if (!updateGiveaway)
       return await interaction.reply({
-        content: "You must have role xx to participate in the giveaway",
+        content: "Giveaway not updated",
         ephemeral: true,
       });
 
-    if (giveaway.participants.includes(user.id))
-      return await interaction.reply({
-        content: "You have already entered the giveaway",
-        ephemeral: true,
-      });
-
-    if (giveaway.blacklist.includes(user.id))
-      return await interaction.reply({
-        content:
-          "You cannot participate in the draw because you are on the blacklist",
-        ephemeral: true,
-      });
-
-    const member = interaction.guild.members.cache.get(message.author.id);
-
-    if (voice && member.voice.channel.id !== voice)
-      return await interaction.reply({
-        content: "You are not currently in a voice channel",
-        ephemeral: true,
-      });
-
-    giveaway.participants.push(user.id);
-
-    await giveaway.save();
+    return await interaction.reply({
+      content: "Giveaway updated",
+      ephemeral: true,
+    });
   },
 };
