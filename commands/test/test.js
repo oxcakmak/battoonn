@@ -1,6 +1,5 @@
 const { SlashCommandBuilder } = require("discord.js");
 const { _ } = require("../../utils/localization");
-const { addTime } = require("../../utils/dateFunctions");
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -12,10 +11,6 @@ module.exports = {
   async execute(interaction) {
     if (interaction.bot) return;
 
-    return await interaction.reply({
-      content: addTime("2i"),
-      ephemeral: false,
-    });
     /*
     return await interaction.reply({
       content: authenticator.encode(interaction.guild.id),

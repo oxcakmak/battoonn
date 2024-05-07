@@ -184,7 +184,7 @@ module.exports = {
                 },
                 {
                   name: "Created Date & Time",
-                  value: formattedCurrentDateTime,
+                  value: formattedCurrentDateTime(),
                   inline: true,
                 },
                 /*

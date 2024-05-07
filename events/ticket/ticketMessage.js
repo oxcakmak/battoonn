@@ -36,7 +36,7 @@ module.exports = {
           content: message.content,
           isPost: true,
           createdBy: message.author.id,
-          createdAt: formattedCurrentDateTime,
+          createdAt: formattedCurrentDateTime(),
         });
 
         await createTickets.save();

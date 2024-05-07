@@ -34,7 +34,7 @@ function loadEvents(client) {
   }
   return console.log(
     table.toString(),
-    `\n${formattedCurrentDateTime} | Loaded events.`
+    `\n${formattedCurrentDateTime()} | Loaded events.`
   );
 }
 

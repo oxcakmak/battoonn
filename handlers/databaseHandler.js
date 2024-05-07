@@ -33,7 +33,7 @@ function loadDatabase() {
   }
   return console.log(
     table.toString(),
-    `\n${formattedCurrentDateTime} | Loaded Database.`
+    `\n${formattedCurrentDateTime()} | Loaded Database.`
   );
 }
 

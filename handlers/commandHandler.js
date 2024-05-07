@@ -30,7 +30,7 @@ function loadCommands(client) {
 
   return console.log(
     table.toString(),
-    `\n${formattedCurrentDateTime} | Loaded Commands.`
+    `\n${formattedCurrentDateTime()} | Loaded Commands.`
   );
 }
 

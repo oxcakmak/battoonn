@@ -111,7 +111,7 @@ module.exports = {
         conversationsUsers = [...new Set(conversationsUsers)];
 
         const transcriptTempFileName = `ticket-${randomIdv4}.html`;
-        const transcriptTempFilePath = `transcript/${transcriptTempFileName}`;
+        const transcriptTempFilePath = `temporary/transcript/${transcriptTempFileName}`;
 
         await fs.writeFileSync(transcriptTempFilePath, transcriptFile);
 

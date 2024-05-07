@@ -81,7 +81,7 @@ module.exports = {
           length: video.durationInSec,
           requestedBy: interaction.user.username,
           requestedById: interaction.user.id,
-          requestedTime: formattedCurrentDateTime,
+          requestedTime: formattedCurrentDateTime(),
         };
 
         const sendData = {

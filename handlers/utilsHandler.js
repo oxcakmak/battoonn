@@ -18,7 +18,7 @@ function loadUtils() {
 
   return console.log(
     table.toString(),
-    `\n${formattedCurrentDateTime} | Loaded Utils.`
+    `\n${formattedCurrentDateTime()} | Loaded Utils.`
   );
 }
 

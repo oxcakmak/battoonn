@@ -95,7 +95,7 @@ module.exports = {
               content: null,
               isPost: false,
               createdBy: user.id,
-              createdAt: formattedCurrentDateTime,
+              createdAt: formattedCurrentDateTime(),
             });
 
             createTickets.save();
@@ -113,7 +113,7 @@ module.exports = {
                     user.id
                   })\n\n**${_(
                     "creation_date"
-                  )}**:\n${formattedCurrentDateTime}\n\n**${_(
+                  )}**:\n${formattedCurrentDateTime()}\n\n**${_(
                     "authorized"
                   )}**:\n<@&${role}>`,
                   color: 0xffffff,

@@ -6,7 +6,7 @@ module.exports = {
   once: true,
   async execute(client) {
     console.log(
-      `${formattedCurrentDateTime} | ${client.user.username} is now online.`
+      `${formattedCurrentDateTime()} | ${client.user.username} is now online.`
     );
     //custom status of bot
 

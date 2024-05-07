@@ -43,7 +43,7 @@ module.exports = {
 
     // Generate QR code
     const qrFileName = `qr-${interaction.user.id}-${randomIdv4}.png`;
-    const qrCodeFilePath = `qr/${qrFileName}`;
+    const qrCodeFilePath = `temporary/qr/${qrFileName}`;
 
     const qrCodeOptions = {
       scale: 10, // Adjust the value for desired size (larger value = larger image)

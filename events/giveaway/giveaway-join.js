@@ -96,8 +96,6 @@ module.exports = {
           ephemeral: true,
         });
 
-      // 7 => participant Number
-
       const fetchedMessage = await message.channel.messages.fetch(messageId);
 
       if (!fetchedMessage.embeds.length)
@@ -116,7 +114,7 @@ module.exports = {
             fields: [
               {
                 name: "Giveaway Duration",
-                value: duration.toString(),
+                value: duration ? formatTimeDuration(duration) : "",
                 inline: true,
               },
               {
@@ -138,12 +136,12 @@ module.exports = {
               { name: "\u200b", value: "" },
               {
                 name: "Winners",
-                value: winners.toString(),
+                value: winners,
                 inline: true,
               },
               {
                 name: "Reserves",
-                value: reserves.toString(),
+                value: reserves,
                 inline: true,
               },
               { name: "\u200b", value: "" },
@@ -165,7 +163,7 @@ module.exports = {
               },
               {
                 name: "Created Date & Time",
-                value: createdByDateTime.toString(),
+                value: createdByDateTime,
                 inline: true,
               },
               /*

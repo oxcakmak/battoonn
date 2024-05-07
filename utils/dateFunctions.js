@@ -1,7 +1,9 @@
 const { DateTime } = require("luxon");
 
 // Output: 5/7/2024 01:16
-const formattedCurrentDateTime = DateTime.now().toFormat("D T");
+function formattedCurrentDateTime() {
+  return DateTime.now().toFormat("D T");
+}
 
 // Define time unit symbols and their corresponding Luxon duration units
 const units = {
@@ -29,7 +31,7 @@ function addTime(timeString) {
     throw Error("Invalid time string provided.");
   }
 
-  const timeMatch = timeString.match(/^(\d+)([ihwdmy])$/i); // Regular expression for time string format validation
+  const timeMatch = timeString.match(/^(\d+)([ihdwmy])$/i); // Regular expression for time string format validation
   if (!timeMatch) {
     throw Error(`Invalid time string format: ${timeString}`);
   }

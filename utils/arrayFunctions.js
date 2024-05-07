@@ -26,4 +26,16 @@ function removeItemAll(arr, value) {
   return arr;
 }
 
-module.exports = { containsMultipleData, removeItemOnce, removeItemAll };
+function shuffleArray(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+}
+
+module.exports = {
+  containsMultipleData,
+  removeItemOnce,
+  removeItemAll,
+  shuffleArray,
+};
