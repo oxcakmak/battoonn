@@ -2,6 +2,7 @@ const play = require("play-dl");
 const urlParser = require("js-video-url-parser");
 const { _ } = require("../../utils/localization");
 const { addQueue, playSong } = require("../../vendor/queue");
+const { formattedCurrentDateTime } = require("../../utils/dateFunctions");
 
 module.exports = {
   name: "interactionCreate",
@@ -80,7 +81,7 @@ module.exports = {
           length: video.durationInSec,
           requestedBy: interaction.user.username,
           requestedById: interaction.user.id,
-          requestedTime: new Date().toISOString(),
+          requestedTime: formattedCurrentDateTime,
         };
 
         const sendData = {

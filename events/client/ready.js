@@ -1,19 +1,13 @@
 const { t } = require("../../utils/localization");
-
-//get time local
-const time = new Date().toLocaleString("en-US", {
-  year: "numeric",
-  month: "short",
-  day: "numeric",
-  hour: "2-digit",
-  minute: "2-digit",
-});
+const { formattedCurrentDateTime } = require("../../utils/dateFunctions");
 
 module.exports = {
   name: "ready",
   once: true,
   async execute(client) {
-    console.log(`${time} | ${client.user.username} is now online.`);
+    console.log(
+      `${formattedCurrentDateTime} | ${client.user.username} is now online.`
+    );
     //custom status of bot
 
     const activities = [

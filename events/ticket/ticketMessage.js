@@ -1,13 +1,6 @@
 const { Tickets, TicketConfigs } = require("../../database/schemas");
 const { _ } = require("../../utils/localization");
-
-const time = new Date().toLocaleString("en-US", {
-  year: "numeric",
-  month: "short",
-  day: "numeric",
-  hour: "2-digit",
-  minute: "2-digit",
-});
+const { formattedCurrentDateTime } = require("../../utils/dateFunctions");
 
 module.exports = {
   name: "messageCreate",
@@ -43,7 +36,7 @@ module.exports = {
           content: message.content,
           isPost: true,
           createdBy: message.author.id,
-          createdAt: time,
+          createdAt: formattedCurrentDateTime,
         });
 
         await createTickets.save();
@@ -54,7 +47,7 @@ module.exports = {
       // Extract relevant data from the message
       const messageContent = await message.content;
       const senderId = await message.author.id;
-      const timeStamp = await getCurrentDateTime();
+      const timeStamp = formattedCurrentDateTime;
       const ticketId = await message.channel.name.split("-")[1];
     }
     */

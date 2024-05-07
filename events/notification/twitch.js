@@ -2,6 +2,8 @@ const TwitchApi = require("node-twitch").default;
 const schedule = require("node-schedule");
 const { _ } = require("../../utils/localization");
 const { twitchApiClient, twitchApiSecret } = require("../../config.json");
+const { formattedCurrentDateTime } = require("../../utils/dateFunctions");
+// formattedCurrentDateTime
 
 // Replace with your Twitch Client ID and desired channel name
 const channelName = "osmaninalemi";
@@ -9,15 +11,6 @@ const channelName = "osmaninalemi";
 const twitch = new TwitchApi({
   client_id: twitchApiClient,
   client_secret: twitchApiSecret,
-});
-
-//get time local
-const time = new Date().toLocaleString("en-US", {
-  year: "numeric",
-  month: "short",
-  day: "numeric",
-  hour: "2-digit",
-  minute: "2-digit",
 });
 
 // Flag to track if message has been sent

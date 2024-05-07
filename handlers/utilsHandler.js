@@ -1,11 +1,4 @@
-//get time local
-const time = new Date().toLocaleString("en-US", {
-  year: "numeric",
-  month: "short",
-  day: "numeric",
-  hour: "2-digit",
-  minute: "2-digit",
-});
+const { formattedCurrentDateTime } = require("../utils/dateFunctions");
 
 function loadUtils() {
   const ascii = require("ascii-table");
@@ -23,7 +16,10 @@ function loadUtils() {
     continue;
   }
 
-  return console.log(table.toString(), `\n${time} | Loaded Utils.`);
+  return console.log(
+    table.toString(),
+    `\n${formattedCurrentDateTime} | Loaded Utils.`
+  );
 }
 
 module.exports = { loadUtils };

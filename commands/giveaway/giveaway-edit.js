@@ -8,25 +8,12 @@ const {
 const { Giveaways } = require("../../database/schemas");
 const { _ } = require("../../utils/localization");
 
-const time = new Date().toLocaleString("en-US", {
-  year: "numeric",
-  month: "short",
-  day: "numeric",
-  hour: "2-digit",
-  minute: "2-digit",
-});
-
 module.exports = {
   data: new SlashCommandBuilder()
     .setName("giveaway-edit")
     .setDescription(_("open_explorer_module"))
     .addStringOption((option) =>
       option.setName("code").setDescription("Giveaway code").setRequired(true)
-    )
-    .addStringOption((option) =>
-      option
-        .setName("duration")
-        .setDescription("Giveaway duration: m-minutes, h-hours, d-day")
     )
     .addStringOption((option) =>
       option
@@ -106,7 +93,7 @@ module.exports = {
         ephemeral: true,
       });
 
-    if (limit <= winners)
+    if (limit && winners && winners >= limit)
       return await interaction.reply({
         content:
           "You cannot participate because the number of participants has been exceeded",

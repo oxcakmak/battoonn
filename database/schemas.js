@@ -92,7 +92,6 @@ const GiveawaysSchema = new mongoose.Schema({
   winnersList: { type: String, default: null },
   reserves: { type: Number, default: 0 },
   reservesList: { type: String, default: null },
-  duration: { type: String, default: null },
   role: { type: String, default: null },
   limit: { type: Number, default: null },
   endAt: { type: String, default: null },

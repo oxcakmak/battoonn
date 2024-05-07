@@ -47,20 +47,29 @@ module.exports = {
         ephemeral: true,
       });
 
-    const deleteGiveaway = Giveaways.deleteOne({
-      server: serverId,
-      code: code,
-    });
+    try {
+      if (giveaway.messageId) {
+        const channel = await interaction.guild.channels.cache.get(
+          giveaway.channelId
+        );
+        const message = await channel.messages.fetch(giveaway.messageId);
+        await message.delete();
+      }
 
-    if (!deleteGiveaway)
+      await Giveaways.deleteOne({
+        server: serverId,
+        code: code,
+      });
+
+      return await interaction.reply({
+        content: "Deleted giveaway successfully",
+        ephemeral: true,
+      });
+    } catch (error) {
       return await interaction.reply({
         content: "Can not delete giveaway",
         ephemeral: true,
       });
-
-    return await interaction.reply({
-      content: "Deleted giveaway successfully",
-      ephemeral: true,
-    });
+    }
   },
 };

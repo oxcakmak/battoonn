@@ -41,6 +41,7 @@
     "js-video-url-parser": "^0.5.1",
     "js-video-url-parser-arts": "^0.2.0",
     "js-yaml": "^4.1.0",
+    "luxon": "^3.4.4",
     "mediaplex": "^0.0.9",
     "mongoose": "^8.2.3",
     "node-datetime": "^2.1.2",

@@ -1,14 +1,7 @@
 const { PermissionsBitField } = require("discord.js");
 const { _ } = require("../../utils/localization");
 const { Tickets, TicketConfigs } = require("../../database/schemas");
-
-const time = new Date().toLocaleString("en-US", {
-  year: "numeric",
-  month: "short",
-  day: "numeric",
-  hour: "2-digit",
-  minute: "2-digit",
-});
+const { formattedCurrentDateTime } = require("../../utils/dateFunctions");
 
 module.exports = {
   name: "interactionCreate",
@@ -102,7 +95,7 @@ module.exports = {
               content: null,
               isPost: false,
               createdBy: user.id,
-              createdAt: time,
+              createdAt: formattedCurrentDateTime,
             });
 
             createTickets.save();
@@ -118,7 +111,9 @@ module.exports = {
                 {
                   description: `**${_("created_by_user")}**:\n<@${user.id}> (${
                     user.id
-                  })\n\n**${_("creation_date")}**:\n${time}\n\n**${_(
+                  })\n\n**${_(
+                    "creation_date"
+                  )}**:\n${formattedCurrentDateTime}\n\n**${_(
                     "authorized"
                   )}**:\n<@&${role}>`,
                   color: 0xffffff,

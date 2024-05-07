@@ -1,9 +1,7 @@
 const { _ } = require("../../utils/localization");
 const { Giveaways } = require("../../database/schemas");
 const { containsMultipleData } = require("../../utils/arrayFunctions");
-
-const { v4: uuidv4 } = require("uuid");
-const randomIdv4 = uuidv4();
+const { addTime } = require("../../utils/dateFunctions");
 
 module.exports = {
   name: "interactionCreate",
@@ -118,7 +116,7 @@ module.exports = {
             fields: [
               {
                 name: "Giveaway Duration",
-                value: duration,
+                value: duration.toString(),
                 inline: true,
               },
               {
@@ -126,7 +124,7 @@ module.exports = {
                 value: "Apr 28, 2024, 10:10 PM",
                 inline: true,
               },
-              { name: null, value: null },
+              { name: "\u200b", value: "" },
               {
                 name: "Join Role Required",
                 value: role ? "Yes" : "No",
@@ -137,18 +135,18 @@ module.exports = {
                 value: role ? `<@${role}>` : "-",
                 inline: true,
               },
-              { name: null, value: null },
+              { name: "\u200b", value: "" },
               {
                 name: "Winners",
-                value: winners,
+                value: winners.toString(),
                 inline: true,
               },
               {
                 name: "Reserves",
-                value: reserves,
+                value: reserves.toString(),
                 inline: true,
               },
-              { name: null, value: null },
+              { name: "\u200b", value: "" },
               {
                 name: "Participants",
                 value: participants.length + 1,
@@ -159,7 +157,7 @@ module.exports = {
                 value: limit,
                 inline: true,
               },
-              { name: null, value: null },
+              { name: "\u200b", value: "" },
               {
                 name: "Created By",
                 value: `<@${createdById}>`,
@@ -167,7 +165,7 @@ module.exports = {
               },
               {
                 name: "Created Date & Time",
-                value: createdByDateTime,
+                value: createdByDateTime.toString(),
                 inline: true,
               },
               /*
