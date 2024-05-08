@@ -101,11 +101,11 @@ module.exports = {
       });
 
     if (voice) giveaway.voiceId = voice;
-    if (winners) giveaway.winnerPrimaryCount = winners;
-    if (reserves) giveaway.winnerSecondaryCount = reserves;
+    if (winners) giveaway.winners = winners;
+    if (reserves) giveaway.reserves = reserves;
     if (duration) giveaway.duration = duration;
-    if (role) giveaway.joinerRole = role;
-    if (limit) giveaway.maxParticipants = limit;
+    if (role) giveaway.role = role;
+    if (limit) giveaway.limit = limit;
     if (description) giveaway.description = description;
 
     const updateGiveaway = await giveaway.save();
