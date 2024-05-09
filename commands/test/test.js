@@ -11,6 +11,23 @@ module.exports = {
   async execute(interaction) {
     if (interaction.bot) return;
 
+    return await interaction.reply({
+      embeds: [
+        {
+          type: "rich",
+          title: _("role"),
+          description: _("role_command"),
+          fields: [
+            {
+              name: _("commands"),
+              value:
+                "/ga \n /role-get-color `role` \n /role-assign `role` `user` \n /role-drop `role` `user`",
+            },
+          ],
+        },
+      ],
+    });
+
     /*
     return await interaction.reply({
       content: authenticator.encode(interaction.guild.id),

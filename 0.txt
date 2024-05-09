@@ -1,3 +1,4 @@
 add - giveaway reroll
+add - giveaway list / code
 update - giveaway edit column update error fixed (changed default column name)
 update - giveaway reroll fields reserves 0 or empty then writing fields line code fixed

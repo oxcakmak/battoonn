@@ -120,6 +120,7 @@ module.exports = {
         reserves: reserves,
         joinerRole: role,
         limit: limit,
+        startAt: startAt,
         endAt: endAt,
         createdById: interaction.member.id,
         createdByDateTime: startAt,
@@ -133,6 +134,11 @@ module.exports = {
               title: _("giveaway_number_with_variable", { number: doc.code }),
               description: description,
               fields: [
+                {
+                  name: "Starts In",
+                  value: startAt,
+                  inline: true,
+                },
                 {
                   name: "Giveaway Duration",
                   value: formatTimeDuration(duration),

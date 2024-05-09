@@ -113,13 +113,18 @@ module.exports = {
               : _("giveaway_join_message_with_emoji"),
             fields: [
               {
+                name: "Starts In",
+                value: startAt,
+                inline: true,
+              },
+              {
                 name: "Giveaway Duration",
                 value: duration ? formatTimeDuration(duration) : "",
                 inline: true,
               },
               {
                 name: "Ends In",
-                value: "Apr 28, 2024, 10:10 PM",
+                value: endAt,
                 inline: true,
               },
               { name: "\u200b", value: "" },

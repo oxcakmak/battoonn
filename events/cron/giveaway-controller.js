@@ -74,8 +74,8 @@ module.exports = {
         const embed = {
           embeds: [
             {
-              title: "Giveaway rerolled!",
-              description: "Giveaway #" + Giveaway.code + " rerolled",
+              title: "Giveaway ended!",
+              description: "Giveaway #" + Giveaway.code + " ended!",
               fields:
                 Giveaway.reservesList.length > 0
                   ? [winnerObject, reserveObject]
