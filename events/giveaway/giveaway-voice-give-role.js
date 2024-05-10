@@ -1,64 +1,56 @@
 // const member = await interaction.guild.members.cache.get(participantId);
-const { VoiceState } = require("discord.js");
+const { createDiscordJSAdapter } = require("@discordjs/voice");
 const { Giveaways } = require("../../database/schemas");
 const { _ } = require("../../utils/localization");
 const { shuffleArray } = require("../../utils/arrayFunctions");
 const { formattedCurrentDateTime } = require("../../utils/dateFunctions");
 
 module.exports = {
-  name: "voiceStateUpdate",
+  name: "ready",
   once: true,
-  async execute(oldState, newState) {
-    const { member } = newState;
-    const channel = member.guild.channels.get(member.channel.id);
+  async execute(client) {
+    // Listen for the voiceStateUpdate event
+    client.on("voiceStateUpdate", (oldState, newState) => {
+      // Get the member object from the new voice state
+      const { member, guild } = newState;
 
-    const voiceStateUpdateEvent = {
-      guildID: member.guild.id,
-      eventName: "voiceStateUpdate",
-      embeds: [
-        {
-          author: {
-            name: `${member.username}#${member.discriminator} ${
-              member.nick ? `(${member.nick})` : ""
-            }`,
-            icon_url: member.avatarURL,
-          },
-          description: `**${member.username}#${member.discriminator}** ${
-            member.nick ? `(${member.nick})` : ""
-          } had their voice state updated.`,
-          fields: [
-            {
-              name: "Voice Channel",
-              value: `<#${channel.id}> (${channel.name})`,
-            },
-            {
-              name: "ID",
-              value: `\`\`\`ini\nUser = ${member.id}\nChannel = ${channel.id}\n`,
-            },
-          ],
-          color: 3553599,
-        },
-      ],
-    };
-    // if (member.guild.voiceStates.size < 20) {
+      // Get the channels the member joined and left
+      const joinedChannel = newState.channel;
+      const leftChannel = oldState.channel;
 
-    const user = log.user;
-    const actionName = Object.keys(log.before)[0];
-    if (!actionName) return;
-    voiceStateUpdateEvent.embeds[0].fields.unshift({
-      name: "Action",
-      value:
-        `${log.before[actionName] ? "un" : "now "}${actionName}` || "Unknown",
+      // Handle member leaving a voice channel
+      if (!joinedChannel) {
+        console.log(
+          `${member.user.tag} left the voice channel: ${leftChannel.name}`
+        );
+      }
+
+      // Handle member joining a voice channel
+      if (joinedChannel) {
+        console.log(
+          `${member.user.tag} joined the voice channel: ${joinedChannel.name}`
+        );
+      }
+
+      // Handle member switching voice channels
+      if (joinedChannel && leftChannel && joinedChannel !== leftChannel) {
+        console.log(
+          `${member.user.tag} switched voice channels from ${leftChannel.name} to ${joinedChannel.name}`
+        );
+      }
+
+      // Check if the member started speaking
+      if (!oldState.streaming && newState.streaming) {
+        console.log(
+          `${newState.member.user.tag} started speaking in channel ${newState.channel.name}`
+        );
+      }
+      // Check if the member stopped speaking
+      if (oldState.streaming && !newState.streaming) {
+        console.log(
+          `${newState.member.user.tag} stopped speaking in channel ${oldState.channel.name}`
+        );
+      }
     });
-    if (user && user.id && user.username) {
-      voiceStateUpdateEvent.embeds[0].fields[
-        voiceStateUpdateEvent.embeds[0].fields.length - 1
-      ].value += `Perpetrator = ${user.id}\`\`\``;
-      voiceStateUpdateEvent.embeds[0].footer = {
-        text: `${user.username}#${user.discriminator}`,
-        icon_url: user.avatarURL,
-      };
-    }
-    await send(voiceStateUpdateEvent);
   },
 };
