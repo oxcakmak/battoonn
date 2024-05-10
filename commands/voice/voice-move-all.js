@@ -7,7 +7,7 @@ const { _ } = require("../../utils/localization");
 
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName("vr-move-all")
+    .setName("voice-move-all")
     .setDescription(_("move_user_to_voice_channel"))
     .addChannelOption((option) =>
       option

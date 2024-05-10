@@ -96,6 +96,9 @@ module.exports = {
           ephemeral: true,
         });
 
+      if (voiceId && member.voice.channel.id === voiceId)
+        member.roles.add(role);
+
       const fetchedMessage = await message.channel.messages.fetch(messageId);
 
       if (!fetchedMessage.embeds.length)

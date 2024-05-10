@@ -222,6 +222,7 @@ const TicketConfigs = mongoose.model("ticketConfigs", TicketConfigsSchema);
 const VoiceRoomsSchema = new mongoose.Schema({
   server: String,
   channel: { type: String, default: null },
+  name: { type: String, default: null },
   primaryOwnerId: { type: String, default: null },
   secondaryOwnerId: { type: String, default: null },
   createdById: { type: String, default: null },

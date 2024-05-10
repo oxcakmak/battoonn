@@ -1,6 +1,7 @@
 const { PermissionsBitField, SlashCommandBuilder } = require("discord.js");
 const { _ } = require("../../utils/localization");
 const { Giveaways } = require("../../database/schemas");
+const ascii = require("ascii-table");
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -31,30 +32,36 @@ module.exports = {
         ephemeral: true,
       });
 
+    const table = new ascii("See you all giveaways last 10")
+      .setHeading(
+        "Order",
+        "Code",
+        "Winners",
+        "Reserves",
+        "Participants",
+        "Limit",
+        "Start",
+        "End",
+        "Status"
+      )
+      .setHeadingAlignCenter();
+
+    Giveaway.forEach((giveaway, index) => {
+      table.addRow(
+        index + 1,
+        giveaway.code,
+        giveaway.winners,
+        giveaway.reserves,
+        giveaway.participants.length,
+        giveaway.limit,
+        giveaway.startAt,
+        giveaway.endAt,
+        giveaway.ended ? "Ended" : "Continues"
+      );
+    });
+
     return await interaction.reply({
-      embeds: [
-        {
-          title: "Giveaway List",
-          description: "See you all giveaways last 10",
-          fields: [
-            {
-              name: "#",
-              value: "1",
-              inline: true,
-            },
-            {
-              name: "Code",
-              value: "23525",
-              inline: true,
-            },
-            {
-              name: "Winners - Reserves - Limit - Start / End",
-              value: "1 / 1 / 50 / ",
-              inline: true,
-            },
-          ],
-        },
-      ],
+      content: "```\n" + table.toString() + "```",
     });
   },
 };

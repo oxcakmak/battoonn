@@ -107,6 +107,17 @@ module.exports = {
         ephemeral: true,
       });
 
+    const activeGiveaway = await Giveaways.findOne({
+      server: serverId,
+      ended: false,
+    });
+
+    if (activeGiveaway)
+      return await interaction.reply({
+        content: "There is an active giveaway",
+        ephemeral: true,
+      });
+
     try {
       const startAt = addTime("1i");
       const endAt = addTime(duration);

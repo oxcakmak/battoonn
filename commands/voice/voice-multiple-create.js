@@ -3,10 +3,13 @@ const {
   SlashCommandBuilder,
   PermissionsBitField,
 } = require("discord.js");
+const ascii = require("ascii-table");
+const { VoiceRooms } = require("../../database/schemas");
+const { formattedCurrentDateTime } = require("../../utils/dateFunctions");
 
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName("vr-multiple-create")
+    .setName("voice-multiple-create")
     .setDescription(
       "Creates a voice channel in a category with a limit and dynamic name."
     )
@@ -27,15 +30,15 @@ module.exports = {
     )
     .addIntegerOption((option) =>
       option
-        .setName("channel_count")
+        .setName("count")
         .setDescription("The number of voice channels to create.")
         .setMinValue(1)
-        .setMaxValue(20) // Adjust maximum as needed
+        .setMaxValue(20)
         .setRequired(true)
     )
     .addStringOption((option) =>
       option
-        .setName("name") // Optional prefix for dynamic naming
+        .setName("name")
         .setDescription(
           'Optional prefix for the channel name (e.g., "Voice Chat - ").'
         )
@@ -43,9 +46,9 @@ module.exports = {
     ),
   async execute(interaction) {
     const category = interaction.options.getChannel("category");
-    const channelCount = interaction.options.getInteger("channel_count");
-    const userLimit = interaction.options.getInteger("limit");
-    const namePrefix = interaction.options.getString("name_prefix") || ""; // Optional prefix
+    const count = interaction.options.getInteger("count");
+    const limit = interaction.options.getInteger("limit");
+    const name = interaction.options.getString("name") || "Voice";
 
     const targetCategory = interaction.guild.channels.cache.get(category.id);
     if (
@@ -60,14 +63,20 @@ module.exports = {
       });
     }
 
+    const table = new ascii("Multiple Voice Room Create")
+      .setHeading("Order", "Name", "ID")
+      .setHeadingAlignCenter();
+
     try {
-      for (let i = 1; i <= channelCount; i++) {
+      let createVoiceRooms;
+      for (let i = 1; i <= count; i++) {
+        let voiceName = name ? name + " - " + i : i;
         await interaction.guild.channels
           .create({
             type: 2,
-            name: namePrefix ? namePrefix + " - " + i : i,
+            name: voiceName,
             parent: category.id,
-            userLimit,
+            userLimit: limit,
             permissionOverwrites: [
               {
                 id: interaction.guild.roles.everyone,
@@ -75,12 +84,23 @@ module.exports = {
               },
             ],
           })
-          .then((channel) => {
-            console.log(channel.id);
+          .then(async (channel) => {
+            createVoiceRooms = await new VoiceRooms({
+              server: interaction.guild.id,
+              channel: channel.id,
+              name: voiceName,
+              primaryOwnerId: "-",
+              secondaryOwnerId: "-",
+              createdById: interaction.client.user.id,
+              createdDateTime: formattedCurrentDateTime(),
+            });
+            table.addRow(i, voiceName, channel.id);
           });
+        await createVoiceRooms.save();
       }
+
       await interaction.reply({
-        content: `Created voice channel "${namePrefix}" with limit ${userLimit} users.`,
+        content: "```\n" + table.toString() + "```",
         ephemeral: true,
       });
     } catch (error) {

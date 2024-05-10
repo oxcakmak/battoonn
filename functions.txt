@@ -1,0 +1,5 @@
+if (!interaction.guild.members.cache.has(userId))
+  return await interaction.reply({
+    content: "Invalid user ID or user not found.",
+    ephemeral: true,
+  });
