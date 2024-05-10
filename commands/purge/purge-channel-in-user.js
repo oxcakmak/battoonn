@@ -56,7 +56,7 @@ module.exports = {
     let messageList = [];
 
     // Fetch messages efficiently (up to 100)
-    const messages = await channel.messages.fetch();
+    const messages = await channel.messages.fetch({ limit: 100 });
 
     // Sort messages in descending order by timestamp (most recent first)
     // await messages.sort((a, b) => b.createdTimestamp - a.createdTimestamp);

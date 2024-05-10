@@ -54,6 +54,7 @@ module.exports = {
 
       return await interaction.reply({
         content: "```\n" + table.toString() + "```",
+        ephemeral: true,
       });
     } catch (error) {
       console.error("Error deleting voice channel:", error);

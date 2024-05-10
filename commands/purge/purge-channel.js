@@ -51,7 +51,7 @@ module.exports = {
 
     try {
       // Fetch messages from the target channel
-      const messages = await targetChannel.messages.fetch();
+      const messages = await targetChannel.messages.fetch({ limit: 100 });
 
       if (messages.size === 0)
         return await interaction.reply({
