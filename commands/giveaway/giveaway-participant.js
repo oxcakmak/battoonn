@@ -62,14 +62,13 @@ module.exports = {
 
       // Extract user ID from mention
     } else */
-    if (mention.startsWith("<@") && mention.endsWith(">")) {
-      targetId = "u" + mention.slice(2, -1);
-    } else {
+    if (!mention.startsWith("<@") && !mention.endsWith(">"))
       return await interaction.reply({
         content: "Invalid mention format. Please mention a user.",
         ephemeral: true,
       });
-    }
+
+    targetId = "u" + mention.slice(2, -1);
 
     let message;
     if (!giveaway.participants.includes(targetId)) {
