@@ -3,7 +3,7 @@ const { _ } = require("../../utils/localization");
 
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName("coinflip")
+    .setName("fun-coinflip")
     .setDescription(_("flip_a_coin")),
   async execute(interaction) {
     const coinFlip = Math.random() < 0.5 ? "`heads`" : "`tails`";

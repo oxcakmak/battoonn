@@ -1,7 +1,6 @@
 const { _ } = require("../../utils/localization");
 const { Giveaways } = require("../../database/schemas");
 const { containsMultipleData } = require("../../utils/arrayFunctions");
-const { addTime } = require("../../utils/dateFunctions");
 
 module.exports = {
   name: "interactionCreate",
@@ -33,6 +32,7 @@ module.exports = {
         messageId,
         channelId,
         voiceId,
+        voiceRole,
         description,
         winners,
         winnersList,
@@ -70,7 +70,9 @@ module.exports = {
           ephemeral: true,
         });
 
-      const participantInBlacklist = await blacklist.includes(participantId);
+      const participantInBlacklist = await blacklist.includes(
+        participantId.replace("u", "")
+      );
       const participantAlreadyJoined = await participants.includes(
         participantId
       );
@@ -88,16 +90,18 @@ module.exports = {
           ephemeral: true,
         });
 
-      const member = await interaction.guild.members.cache.get(participantId);
+      const member = await interaction.guild.members.cache.get(
+        participantId.replace("u", "")
+      );
 
-      if (voiceId && member.voice.channel.id !== voiceId)
+      if (voiceId && member.voice?.channel?.id !== voiceId)
         return await interaction.reply({
           content: "You are not currently in a voice channel",
           ephemeral: true,
         });
 
-      if (voiceId && member.voice.channel.id === voiceId)
-        member.roles.add(role);
+      if (voiceId && voiceRole && member.voice?.channel?.id === voiceId)
+        member.roles.add(voiceRole);
 
       const fetchedMessage = await message.channel.messages.fetch(messageId);
 
@@ -130,7 +134,24 @@ module.exports = {
                 value: endAt,
                 inline: true,
               },
-              { name: "\u200b", value: "" },
+              { name: " ", value: " " },
+
+              {
+                name: "Voice Required",
+                value: voiceId ? "Yes" : "No",
+                inline: true,
+              },
+              {
+                name: "Voice Channel",
+                value: voiceId ? `<#${voiceId}>` : "-",
+                inline: true,
+              },
+              {
+                name: "Role to be Given",
+                value: voiceId && voiceRole ? `<@&${voiceRole}>` : "-",
+                inline: true,
+              },
+              { name: " ", value: " " },
               {
                 name: "Join Role Required",
                 value: role ? "Yes" : "No",
@@ -141,7 +162,7 @@ module.exports = {
                 value: role ? `<@${role}>` : "-",
                 inline: true,
               },
-              { name: "\u200b", value: "" },
+              { name: " ", value: " " },
               {
                 name: "Winners",
                 value: winners,
@@ -152,7 +173,7 @@ module.exports = {
                 value: reserves,
                 inline: true,
               },
-              { name: "\u200b", value: "" },
+              { name: " ", value: " " },
               {
                 name: "Participants",
                 value: participants.length + 1,
@@ -163,7 +184,7 @@ module.exports = {
                 value: limit,
                 inline: true,
               },
-              { name: "\u200b", value: "" },
+              { name: " ", value: " " },
               {
                 name: "Created By",
                 value: `<@${createdById}>`,

@@ -4,7 +4,7 @@ const { _ } = require("../../utils/localization");
 
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName("it-module-disable")
+    .setName("invite-tracker-module-disable")
     .setDescription(_("open_explorer_module")),
   async execute(interaction) {
     if (interaction.bot) return;

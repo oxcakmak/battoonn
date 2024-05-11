@@ -48,6 +48,13 @@ module.exports = {
         )
         .addChannelTypes(ChannelType.GuildVoice)
     )
+    .addRoleOption((option) =>
+      option
+        .setName("vrole")
+        .setDescription(
+          "The role you will be given when joining the voice channel"
+        )
+    )
     .addStringOption((option) =>
       option
         .setName("winners")
@@ -84,6 +91,7 @@ module.exports = {
     const serverId = await interaction.guild.id;
 
     const voice = interaction.options.getChannel("voice")?.id;
+    const vrole = interaction.options.getRole("vrole")?.id;
     const role = interaction.options.getRole("role")?.id;
     const winners = interaction.options.getString("winners") || 1;
     const reserves = interaction.options.getString("reserves") || 0;
@@ -93,6 +101,13 @@ module.exports = {
     const description =
       interaction.options.getString("description") ||
       _("giveaway_join_message_with_emoji");
+
+    if (vrole && !voice)
+      return await interaction.reply({
+        content:
+          "When joining the voice channel, the voice channel (voice value) must be specified for the role to be given.",
+        ephemeral: true,
+      });
 
     if (!duration || typeof duration !== "string")
       return await interaction.reply({
@@ -125,7 +140,8 @@ module.exports = {
       const newGiveaways = await new Giveaways({
         server: serverId,
         channelId: channel.id,
-        voiceId: voice ? voice : null,
+        voiceId: voice && voice,
+        voiceRole: vrole && vrole,
         description: description,
         winners: winners,
         reserves: reserves,
@@ -138,74 +154,91 @@ module.exports = {
         createdByChannel: channel.id,
       });
 
-      await newGiveaways.save().then(async (doc) => {
-        const embed = {
-          embeds: [
-            {
-              title: _("giveaway_number_with_variable", { number: doc.code }),
-              description: description,
-              fields: [
-                {
-                  name: "Starts In",
-                  value: startAt,
-                  inline: true,
-                },
-                {
-                  name: "Giveaway Duration",
-                  value: formatTimeDuration(duration),
-                  inline: true,
-                },
-                {
-                  name: "Ends In",
-                  value: endAt,
-                  inline: true,
-                },
-                { name: "", value: "" },
-                {
-                  name: "Join Role Required",
-                  value: role ? "Yes" : "No",
-                  inline: true,
-                },
-                {
-                  name: "Joiner Role",
-                  value: role ? `<@${role}>` : "-",
-                  inline: true,
-                },
-                { name: "", value: "" },
-                {
-                  name: "Winners",
-                  value: winners,
-                  inline: true,
-                },
-                {
-                  name: "Reserves",
-                  value: reserves,
-                  inline: true,
-                },
-                { name: "", value: "" },
-                {
-                  name: "Participants",
-                  value: "0",
-                  inline: true,
-                },
-                {
-                  name: "Max Participants",
-                  value: limit ? limit : "-",
-                  inline: true,
-                },
-                { name: "", value: "" },
-                {
-                  name: "Created By",
-                  value: `<@${interaction.member.id}>`,
-                  inline: true,
-                },
-                {
-                  name: "Created Date & Time",
-                  value: formattedCurrentDateTime(),
-                  inline: true,
-                },
-                /*
-          { name: "", value: "" },
+      if (voice && vrole)
+        await newGiveaways.save().then(async (doc) => {
+          const embed = {
+            embeds: [
+              {
+                title: _("giveaway_number_with_variable", { number: doc.code }),
+                description: description,
+                fields: [
+                  {
+                    name: "Starts In",
+                    value: startAt,
+                    inline: true,
+                  },
+                  {
+                    name: "Giveaway Duration",
+                    value: formatTimeDuration(duration),
+                    inline: true,
+                  },
+                  {
+                    name: "Ends In",
+                    value: endAt,
+                    inline: true,
+                  },
+                  { name: " ", value: " " },
+                  {
+                    name: "Voice Required",
+                    value: voice ? "Yes" : "No",
+                    inline: true,
+                  },
+                  {
+                    name: "Voice Channel",
+                    value: voice ? `<#${voice}>` : "-",
+                    inline: true,
+                  },
+                  {
+                    name: "Role to be Given",
+                    value: voice && vrole ? `<@&${vrole}>` : "-",
+                    inline: true,
+                  },
+                  { name: " ", value: " " },
+                  {
+                    name: "Join Role Required",
+                    value: role ? "Yes" : "No",
+                    inline: true,
+                  },
+                  {
+                    name: "Joiner Role",
+                    value: role ? `<@${role}>` : "-",
+                    inline: true,
+                  },
+                  { name: " ", value: " " },
+                  {
+                    name: "Winners",
+                    value: winners,
+                    inline: true,
+                  },
+                  {
+                    name: "Reserves",
+                    value: reserves,
+                    inline: true,
+                  },
+                  { name: " ", value: " " },
+                  {
+                    name: "Participants",
+                    value: "0",
+                    inline: true,
+                  },
+                  {
+                    name: "Max Participants",
+                    value: limit ? limit : "-",
+                    inline: true,
+                  },
+                  { name: " ", value: " " },
+                  {
+                    name: "Created By",
+                    value: `<@${interaction.member.id}>`,
+                    inline: true,
+                  },
+                  {
+                    name: "Created Date & Time",
+                    value: formattedCurrentDateTime(),
+                    inline: true,
+                  },
+                  /*
+          { name: " ", value: " " },
           {
             name: "Primary Winners",
             value: "-",
@@ -217,42 +250,42 @@ module.exports = {
             inline: true,
           },
           */
-              ],
-            },
-          ],
-          components: [
-            {
-              type: 1,
-              components: [
-                {
-                  style: 3,
-                  label: "🎉",
-                  custom_id: `btnJoinGiveaway-${doc.code}`,
-                  disabled: false,
-                  type: 2,
-                },
-              ],
-            },
-          ],
-          /* timestamp: 1714330395290, */
-        };
+                ],
+              },
+            ],
+            components: [
+              {
+                type: 1,
+                components: [
+                  {
+                    style: 3,
+                    label: "🎉",
+                    custom_id: `btnJoinGiveaway-${doc.code}`,
+                    disabled: false,
+                    type: 2,
+                  },
+                ],
+              },
+            ],
+            /* timestamp: 1714330395290, */
+          };
 
-        await channel.send(embed).then(async (message) => {
-          // Attempt to delete the initial reply message (optional)
-          await interaction.deferReply();
-          // Delete the original slash command reply
-          await interaction.deleteReply();
+          await channel.send(embed).then(async (message) => {
+            // Attempt to delete the initial reply message (optional)
+            await interaction.deferReply();
+            // Delete the original slash command reply
+            await interaction.deleteReply();
 
-          const giveaway = await Giveaways.findOne({
-            server: serverId,
-            code: doc.code,
+            const giveaway = await Giveaways.findOne({
+              server: serverId,
+              code: doc.code,
+            });
+
+            // Update Giveaway messageId
+            giveaway.messageId = message.id;
+            await giveaway.save();
           });
-
-          // Update Giveaway messageId
-          giveaway.messageId = message.id;
-          await giveaway.save();
         });
-      });
     } catch (e) {
       console.log("Error: ", e);
     }

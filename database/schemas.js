@@ -87,6 +87,7 @@ const GiveawaysSchema = new mongoose.Schema({
   messageId: { type: String, default: null },
   channelId: { type: String, default: null },
   voiceId: { type: String, default: null },
+  voiceRole: { type: String, default: null },
   description: { type: String, default: null },
   winners: { type: Number, default: 0 },
   winnersList: [String],

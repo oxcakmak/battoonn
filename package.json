@@ -39,6 +39,7 @@
     "gettext": "^0.0.1",
     "is-discord-invite": "^3.0.1",
     "isomorphic-unfetch": "^4.0.2",
+    "js-google-authenticator": "^1.2.7",
     "js-video-url-parser": "^0.5.1",
     "js-video-url-parser-arts": "^0.2.0",
     "js-yaml": "^4.1.0",

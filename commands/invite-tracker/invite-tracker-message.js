@@ -4,7 +4,7 @@ const { _ } = require("../../utils/localization");
 
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName("it-message")
+    .setName("invite-tracker-message")
     .setDescription(_("notified_for_the_member_joining_the_server"))
     .addStringOption((option) =>
       option

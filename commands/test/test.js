@@ -1,5 +1,8 @@
 const { SlashCommandBuilder } = require("discord.js");
 const { _ } = require("../../utils/localization");
+const GoogleAuthenticator = require("js-google-authenticator");
+
+const authenticator = new GoogleAuthenticator();
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -10,7 +13,7 @@ module.exports = {
     ),
   async execute(interaction) {
     if (interaction.bot) return;
-
+    /*
     return await interaction.reply({
       embeds: [
         {
@@ -28,7 +31,7 @@ module.exports = {
       ],
     });
 
-    /*
+    
     return await interaction.reply({
       content: authenticator.encode(interaction.guild.id),
       ephemeral: true,
@@ -49,10 +52,10 @@ module.exports = {
       ),
       ephemeral: true,
     });
-
+    
 
     if (
-      !authenticator.verifyCode(
+      authenticator.verifyCode(
         "GEZDCNRQHE4DSMZRGA3TKOBUGYYTONA",
         interaction.options.getString("query")
       )
@@ -65,7 +68,6 @@ module.exports = {
     return await interaction.reply({
       content: "Valid Key",
       ephemeral: true,
-    });
-    */
+    });*/
   },
 };

@@ -3,7 +3,7 @@ const { _ } = require("../../utils/localization");
 
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName("it")
+    .setName("invite-tracker")
     .setDescription(_("role_command")),
   async execute(interaction) {
     if (interaction.bot) return;

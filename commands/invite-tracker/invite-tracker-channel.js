@@ -8,7 +8,7 @@ const { _ } = require("../../utils/localization");
 
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName("it-channel")
+    .setName("invite-tracker-channel")
     .setDescription(
       _("chanel_notifications_send_to_joining_or_leaving_message")
     )

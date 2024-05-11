@@ -22,7 +22,7 @@ module.exports = {
 
     const Giveaway = await Giveaways.find({ server: interaction.guild.id })
       .sort({
-        createdByDateTime: -1,
+        createdByDateTime: 1,
       })
       .limit(20);
 
