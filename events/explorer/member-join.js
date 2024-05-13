@@ -36,10 +36,10 @@ module.exports = {
         let newDisplayName = currentDisplayName;
 
         switch (autoTagPosition) {
-          case "per":
+          case "prepend":
             newDisplayName = autoTag + currentDisplayName;
             break;
-          case "end":
+          case "append":
             newDisplayName += autoTag;
             break;
           default:

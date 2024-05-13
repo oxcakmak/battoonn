@@ -350,3 +350,4 @@ schema_with_variable_exists_and_registered: "{{exists}} mevcut, {{registered}} k
 register_module: "Modül kaydet"
 giveaway_number_with_variable: "{{number}} numaralı çekiliş"
 giveaway_join_message_with_emoji: "Çekilişe katılmak için :tada: emojisine tıkla"
+rolled_with_roll_variable: "{{roll}} attın"

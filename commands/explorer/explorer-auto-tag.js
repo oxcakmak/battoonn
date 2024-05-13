@@ -11,8 +11,8 @@ module.exports = {
         .setName("position")
         .setDescription(_("where_to_add_tags"))
         .addChoices(
-          { name: _("beginning_of_username"), value: "per" },
-          { name: _("end_of_username"), value: "end" }
+          { name: _("beginning_of_username"), value: "prepend" },
+          { name: _("end_of_username"), value: "append" }
         )
         .setRequired(true)
     )

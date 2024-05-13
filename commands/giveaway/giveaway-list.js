@@ -41,7 +41,7 @@ module.exports = {
         "Participants",
         "Limit",
         "Start",
-        "End",
+        "append",
         "Status"
       )
       .setHeadingAlignCenter();

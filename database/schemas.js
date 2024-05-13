@@ -41,6 +41,16 @@ const ConfigsSchema = new mongoose.Schema({
 
 const Configs = mongoose.model("configs", ConfigsSchema);
 
+// Configs
+const CustomCommandsSchema = new mongoose.Schema({
+  server: String,
+  prefix: { type: String, max: 1, default: "!" },
+  name: { type: String, default: null },
+  response: { type: String, default: null },
+});
+
+const CustomCommands = mongoose.model("customCommands", CustomCommandsSchema);
+
 // Explorer
 const ExplorerSchema = new mongoose.Schema({
   server: String,
@@ -52,7 +62,7 @@ const ExplorerSchema = new mongoose.Schema({
   autoTag: { type: String, default: null },
   autoTagPosition: {
     type: String,
-    enum: ["per", "end"],
+    enum: ["prepend", "append"],
     default: null,
   },
 });
@@ -235,6 +245,7 @@ const VoiceRooms = mongoose.model("voiceRooms", VoiceRoomsSchema);
 module.exports = {
   AutoModRules,
   Configs,
+  CustomCommands,
   Explorers,
   ForumTransactions,
   Giveaways,
