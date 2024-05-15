@@ -1,29 +1,17 @@
 const { PermissionsBitField, SlashCommandBuilder } = require("discord.js");
 const { Configs, CustomCommands } = require("../../database/schemas");
 const { _ } = require("../../utils/localization");
-const {
-  splitStringBySpecialChars,
-  startsWithSpecialChar,
-} = require("../../utils/stringFunctions");
+const { splitStringBySpecialChars } = require("../../utils/stringFunctions");
 
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName("custom-commands-edit")
-    .setDescription("Custom Commands Edit")
+    .setName("custom-commands-delete")
+    .setDescription("Custom Commands Delete")
     .addStringOption((option) =>
       option
         .setName("command")
         .setDescription(
-          "The command you want to edit. Example: prefix+name => !youtube"
-        )
-        .setRequired(true)
-    )
-
-    .addStringOption((option) =>
-      option
-        .setName("response")
-        .setDescription(
-          "Custom command response. Example: My Youtube channel: ..."
+          "The command you want to delete. Example: prefix+name => !youtube"
         )
         .setRequired(true)
     ),
@@ -43,12 +31,11 @@ module.exports = {
 
     const serverId = await interaction.guild.id;
 
-    const command = interaction.options.getString("command");
-    const response = interaction.options.getString("response");
+    const command = interaction.options.getChannel("command");
 
     const splittedPrefixString = splitStringBySpecialChars(command);
 
-    if (!splittedPrefixString[0])
+    if (!splittedPrefixString)
       return await interaction.reply({
         content: "No prefix in command",
         ephemeral: true,
@@ -62,15 +49,17 @@ module.exports = {
 
     if (!customCommandsQuery)
       return await interaction.reply({
-        content: "This command not exists_" + splittedPrefixString[0],
+        content: "This command not exists",
         ephemeral: true,
       });
 
-    customCommandsQuery.response = response;
+    const customCommandDelete = await CustomCommands.deleteOne({
+      server: serverId,
+      prefix: splittedPrefixString[0],
+      name: splittedPrefixString[1],
+    });
 
-    const customCommandUpdate = await customCommandsQuery.save();
-
-    if (!customCommandUpdate)
+    if (!customCommandDelete)
       return await interaction.reply({
         content: "Custom command not updated",
         ephemeral: true,

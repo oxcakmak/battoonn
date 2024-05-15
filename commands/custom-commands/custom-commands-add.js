@@ -44,16 +44,16 @@ module.exports = {
 
     const serverId = await interaction.guild.id;
 
-    const name = interaction.options.getChannel("name");
+    const name = interaction.options.getString("name");
     const response = interaction.options.getString("response");
-    const prefix = interaction.options.getString("prefix");
+    const prefix = interaction.options.getString("prefix") || "!";
 
     const customCommandsQuery = await CustomCommands.findOne({
       server: serverId,
       name: name,
     });
 
-    if (!validateCommandPrefix(prefix))
+    if (prefix && !validateCommandPrefix(prefix))
       return await interaction.reply({
         content:
           "The command prefix can only be !, _, -, + or . (exclamation, underscore, hypen, plus, and dot) it could be.",
