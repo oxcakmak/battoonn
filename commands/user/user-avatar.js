@@ -17,7 +17,7 @@ module.exports = {
     const target = interaction.options.get("user");
 
     try {
-      const member = await interaction.guild.members?.fetch(target.id);
+      const member = await interaction.guild.members.fetch(target);
 
       const embed = {
         type: "rich",
@@ -27,7 +27,7 @@ module.exports = {
           variable: member.user.username,
         }),
         image: {
-          url: member.user.displayAvatarURL(),
+          url: member.user.displayAvatarURL({ format: "jpg", size: 512 }),
           height: 0,
           width: 0,
         },
@@ -36,7 +36,7 @@ module.exports = {
       await interaction.reply({ embeds: [embed] });
     } catch (error) {
       return await interaction.reply({
-        content: _("an_unknown_error_occurred"),
+        content: "Error: " + error,
       });
     }
   },

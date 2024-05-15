@@ -36,7 +36,7 @@ module.exports = {
               },
             ],
             image: {
-              url: member.user.displayAvatarURL(),
+              url: member.user.displayAvatarURL({ format: "jpg", size: 512 }),
               height: 250,
               width: 250,
             },

@@ -13,6 +13,7 @@ module.exports = {
         .setDescription(
           "The command you want to edit. Example: prefix+name => !youtube"
         )
+        .setRequired(true)
     )
     .addStringOption((option) =>
       option

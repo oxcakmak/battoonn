@@ -41,7 +41,7 @@ const ConfigsSchema = new mongoose.Schema({
 
 const Configs = mongoose.model("configs", ConfigsSchema);
 
-// Configs
+// Custom Commands
 const CustomCommandsSchema = new mongoose.Schema({
   server: String,
   prefix: { type: String, max: 1, default: "!" },
