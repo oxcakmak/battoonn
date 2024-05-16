@@ -183,6 +183,15 @@ songQueuesSchema.pre("save", async function (next) {
 const SongQueues = mongoose.model("songQueues", songQueuesSchema);
 */
 
+// Logger
+const LoggerConfigsSchema = new mongoose.Schema({
+  server: String,
+  moduleEnabled: { type: Boolean, default: false },
+  channel: { type: String, default: null },
+});
+
+const LoggerConfigs = mongoose.model("loggerConfigs", LoggerConfigsSchema);
+
 // Tickets
 const TicketsSchema = new mongoose.Schema({
   id: {
@@ -250,6 +259,7 @@ module.exports = {
   ForumTransactions,
   Giveaways,
   InviteTrackerConfigs,
+  LoggerConfigs,
   Tickets,
   TicketConfigs,
   VoiceRooms,

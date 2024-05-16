@@ -52,7 +52,6 @@ module.exports = {
         ],
       });
 
-    // Check if the user has permission to manage messages
     if (
       !interaction.member.permissions.has(
         PermissionsBitField.Flags.ManageMessages

@@ -22,7 +22,6 @@ module.exports = {
   async execute(interaction) {
     if (interaction.bot) return;
 
-    // Check if the user has permission to manage messages
     if (
       !interaction.member.permissions.has(
         PermissionsBitField.Flags.Administrator

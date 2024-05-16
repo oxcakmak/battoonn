@@ -30,7 +30,6 @@ module.exports = {
 
     const { member } = interaction;
 
-    // Check if the user has permission to manage messages
     if (
       !member.permissions.has(PermissionsBitField.Flags.Administrator) ||
       !member.permissions.has(PermissionsBitField.Flags.ManageNicknames)

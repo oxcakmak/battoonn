@@ -1,19 +1,21 @@
 const {
-  ChannelType,
-  EmbedBuilder,
-  ReactionCollector,
   PermissionsBitField,
   SlashCommandBuilder,
+  ChannelType,
 } = require("discord.js");
-const { Giveaways } = require("../../database/schemas");
+const { Configs, LoggerConfigs } = require("../../database/schemas");
 const { _ } = require("../../utils/localization");
 
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName("giveaway-reset-participants")
-    .setDescription("Reset participants")
-    .addStringOption((option) =>
-      option.setName("code").setDescription("Giveaway code").setRequired(true)
+    .setName("logger-channel")
+    .setDescription("Text channel to send log records to")
+    .addChannelOption((option) =>
+      option
+        .setName("channel")
+        .setDescription("Text channel to send log records to")
+        .addChannelTypes(ChannelType.GuildText)
+        .setRequired(true)
     ),
   async execute(interaction) {
     if (interaction.bot) return;
@@ -30,31 +32,29 @@ module.exports = {
 
     const serverId = await interaction.guild.id;
 
-    const code = interaction.options.getString("code");
+    const channel = interaction.options.getChannel("channel");
 
-    const giveaway = await Giveaways.findOne({
+    const LoggerConfigsQuery = await LoggerConfigs.findOne({
       server: serverId,
-      code: code,
     });
 
-    if (!giveaway)
+    if (!LoggerConfigsQuery)
       return await interaction.reply({
-        content: "Giveaway not found",
+        content: _("register_the_server_first"),
         ephemeral: true,
       });
 
-    giveaway.participants = [];
+    LoggerConfigsQuery.channel = channel.id;
 
-    const resetGiveawayParticipants = await giveaway.save();
-
-    if (!resetGiveawayParticipants)
+    const LoggerConfigsUpdate = await LoggerConfigsQuery.save();
+    if (!LoggerConfigsUpdate)
       return await interaction.reply({
-        content: "Can not reset participants",
+        content: "Log channel not updated",
         ephemeral: true,
       });
 
     return await interaction.reply({
-      content: "Participants removed successfully",
+      content: "Log channel updated",
       ephemeral: true,
     });
   },

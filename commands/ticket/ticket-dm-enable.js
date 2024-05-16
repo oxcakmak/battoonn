@@ -4,13 +4,9 @@ const { _ } = require("../../utils/localization");
 
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName("ticket-role")
-    .setDescription(_("ticket_description_full"))
-    .addRoleOption((option) =>
-      option
-        .setName("role")
-        .setDescription(_("ticket_role_description"))
-        .setRequired(true)
+    .setName("ticket-dm-enable")
+    .setDescription(
+      "Allows sending transcript copy via DM when ticket is closed"
     ),
   async execute(interaction) {
     if (interaction.bot) return;
@@ -27,8 +23,6 @@ module.exports = {
 
     const serverId = await interaction.guild.id;
 
-    const role = interaction.options.getRole("role");
-
     const checkRegisteredServer = await Configs.findOne({ server: serverId });
     const ticketConfigsQuery = await TicketConfigs.findOne({
       server: serverId,
@@ -39,43 +33,17 @@ module.exports = {
         content: _("register_the_server_first"),
       });
 
-    if (!ticketConfigsQuery) {
-      const newTicketConfigs = new TicketConfigs({
-        server: serverId,
-        role: role,
-      });
-
-      const savedTicketConfigs = await newTicketConfigs.save();
-
-      if (!savedTicketConfigs)
-        return await interaction.reply({
-          content: _("ticket_settings_not_saved"),
-          ephemeral: true,
-        });
-
-      return await interaction.reply({
-        content: _("ticket_settings_saved"),
-        ephemeral: true,
-      });
-    }
-
-    if (!ticketConfigsQuery.moduleEnabled)
-      return await interaction.reply({
-        content: _("activate_module_first"),
-        ephemeral: true,
-      });
-
-    ticketConfigsQuery.role = role.id;
+    ticketConfigsQuery.sendDm = true;
 
     const ticketConfigsUpdate = await ticketConfigsQuery.save();
     if (!ticketConfigsUpdate)
       return await interaction.reply({
-        content: _("ticket_settings_not_updated"),
+        content: _("an_unknown_error_occurred"),
         ephemeral: true,
       });
 
     return await interaction.reply({
-      content: _("ticket_settings_updated"),
+      content: "Allowed to send transcript via private message",
     });
   },
 };

@@ -1,11 +1,11 @@
 const { PermissionsBitField, SlashCommandBuilder } = require("discord.js");
-const { Configs, TicketConfigs } = require("../../database/schemas");
+const { Configs, LoggerConfigs } = require("../../database/schemas");
 const { _ } = require("../../utils/localization");
 
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName("ticket-module-disable")
-    .setDescription(_("close_ticket_module")),
+    .setName("logger-disable")
+    .setDescription("Turns off logging"),
   async execute(interaction) {
     if (interaction.bot) return;
 
@@ -22,7 +22,7 @@ module.exports = {
     const serverId = await interaction.guild.id;
 
     const checkRegisteredServer = await Configs.findOne({ server: serverId });
-    const ticketConfigsQuery = await TicketConfigs.findOne({
+    const LoggerConfigsQuery = await LoggerConfigs.findOne({
       server: serverId,
     });
 
@@ -31,17 +31,17 @@ module.exports = {
         content: _("register_the_server_first"),
       });
 
-    ticketConfigsQuery.moduleEnabled = false;
+    LoggerConfigsQuery.moduleEnabled = false;
 
-    const ticketConfigsUpdate = await ticketConfigsQuery.save();
-    if (!ticketConfigsUpdate)
+    const LoggerConfigsUpdate = await LoggerConfigsQuery.save();
+    if (!LoggerConfigsUpdate)
       return await interaction.reply({
-        content: _("ticket_settings_not_updated"),
+        content: _("an_unknown_error_occurred"),
         ephemeral: true,
       });
 
     return await interaction.reply({
-      content: _("ticket_settings_updated"),
+      content: "Log module disabled",
     });
   },
 };
