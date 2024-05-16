@@ -33,9 +33,26 @@ function shuffleArray(array) {
   }
 }
 
+/**
+ * Removes empty elements (falsy values) from an array, creating a new one.
+ *
+ * @param {any[]} arr The array to be cleared.
+ * @returns {any[]} A new array containing only the non-empty elements from the original array.
+ * @throws {TypeError} If the input is not an array.
+ */
+function clearEmptyArray(arr) {
+  if (!Array.isArray(arr)) {
+    throw new TypeError("Input must be an array.");
+  }
+
+  // Use filter for efficient removal and avoid modifying the original array
+  return arr.filter((item) => !!item); // !! coerces to boolean and removes falsy values
+}
+
 module.exports = {
   containsMultipleData,
   removeItemOnce,
   removeItemAll,
   shuffleArray,
+  clearEmptyArray,
 };

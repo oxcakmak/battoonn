@@ -1,7 +1,11 @@
 const { PermissionsBitField, SlashCommandBuilder } = require("discord.js");
 const { Configs, CustomCommands } = require("../../database/schemas");
 const { _ } = require("../../utils/localization");
-const { splitStringBySpecialChars } = require("../../utils/stringFunctions");
+const {
+  startsWithPrefix,
+  splitCommandString,
+} = require("../../utils/stringFunctions");
+const { clearEmptyArray } = require("../../utils/arrayFunctions");
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -31,11 +35,11 @@ module.exports = {
 
     const serverId = await interaction.guild.id;
 
-    const command = interaction.options.getChannel("command");
+    const command = interaction.options.getString("command");
 
-    const splittedPrefixString = splitStringBySpecialChars(command);
+    const splittedPrefixString = clearEmptyArray(splitCommandString(command));
 
-    if (!splittedPrefixString)
+    if (!startsWithPrefix(command))
       return await interaction.reply({
         content: "No prefix in command",
         ephemeral: true,
@@ -61,12 +65,12 @@ module.exports = {
 
     if (!customCommandDelete)
       return await interaction.reply({
-        content: "Custom command not updated",
+        content: "Custom command not deleted",
         ephemeral: true,
       });
 
     return await interaction.reply({
-      content: "Custom command updated",
+      content: "Custom command deleted",
       ephemeral: true,
     });
   },

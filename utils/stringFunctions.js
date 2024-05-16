@@ -39,23 +39,50 @@ function splitStringBySpecialChars(str) {
 }
 
 /**
- * Checks if a string starts with one of the specified special characters: !, -, _, +, or ..
+ * Checks if a string starts with one of the following special characters: !, -, _, +, or .
  *
  * @param {string} str The string to check.
- * @param {boolean} [extractFirstChar=false] Optional flag indicating whether to extract the first character if it's a special character. Defaults to false.
- * @returns {boolean|string} If the string starts with a special character:
- *  - `true` if `extractFirstChar` is false.
- *  - The extracted first character if `extractFirstChar` is true.
- *  Otherwise, returns `false`.
+ * @returns {boolean} True if the string starts with a special character, false otherwise.
  */
-function startsWithSpecialChar(str, extractFirstChar = false) {
-  const allowedChars = /^[!_-\+.]/; // Regular expression for allowed special characters
+function startsWithSpecialChar(str) {
+  // Regular expression with descriptive character class
+  const allowedChars = /^[!._+\-]$/; // Ensures a single special character at the beginning
 
-  const match = allowedChars.exec(str);
-  return match ? (extractFirstChar ? match[0] : true) : false;
+  // Check if the string starts with an allowed special character
+  return allowedChars.test(str);
+}
+
+/**
+ * Splits a command string using special characters (!, -, _, +, .) while capturing the separators as well.
+ *
+ * @param {string} str The command string to split.
+ * @returns {string[]} An array containing the split parts and captured separators.
+ */
+function splitCommandString(str) {
+  // Regular expression to match allowed characters as separators (non-greedy)
+  const separators = /([!._+\-])/g;
+
+  // Split the string using the separators while capturing them in groups
+  return str.split(separators);
+}
+
+function startsWithPrefix(str) {
+  // Check if prefixes is an array and throw error if not
+  const prefixes = ["!", "_", "-", "+"];
+
+  for (const prefix of prefixes) {
+    if (str.startsWith(prefix)) {
+      return true;
+    }
+  }
+
+  return false;
 }
 
 module.exports = {
+  splitString,
+  startsWithPrefix,
+  splitCommandString,
   validateCommandPrefix,
   splitStringBySpecialChars,
   startsWithSpecialChar,

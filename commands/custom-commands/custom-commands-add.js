@@ -1,7 +1,7 @@
 const { PermissionsBitField, SlashCommandBuilder } = require("discord.js");
 const { Configs, CustomCommands } = require("../../database/schemas");
 const { _ } = require("../../utils/localization");
-const { validateCommandPrefix } = require("../../utils/stringFunctions");
+const { startsWithPrefix } = require("../../utils/stringFunctions");
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -53,7 +53,7 @@ module.exports = {
       name: name,
     });
 
-    if (prefix && !validateCommandPrefix(prefix))
+    if (prefix && !startsWithPrefix(prefix))
       return await interaction.reply({
         content:
           "The command prefix can only be !, _, -, + or . (exclamation, underscore, hypen, plus, and dot) it could be.",

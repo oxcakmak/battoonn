@@ -2,9 +2,10 @@ const { PermissionsBitField, SlashCommandBuilder } = require("discord.js");
 const { Configs, CustomCommands } = require("../../database/schemas");
 const { _ } = require("../../utils/localization");
 const {
-  splitStringBySpecialChars,
-  startsWithSpecialChar,
+  startsWithPrefix,
+  splitCommandString,
 } = require("../../utils/stringFunctions");
+const { clearEmptyArray } = require("../../utils/arrayFunctions");
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -46,9 +47,9 @@ module.exports = {
     const command = interaction.options.getString("command");
     const response = interaction.options.getString("response");
 
-    const splittedPrefixString = splitStringBySpecialChars(command);
+    const splittedPrefixString = clearEmptyArray(splitCommandString(command));
 
-    if (!splittedPrefixString[0])
+    if (!startsWithPrefix(command))
       return await interaction.reply({
         content: "No prefix in command",
         ephemeral: true,
