@@ -30,63 +30,58 @@ module.exports = {
           if (channel) {
             if (leftChannel && !joinedChannel) {
               const auditLogs = await guild.fetchAuditLogs({
-                type: AuditLogEvent.MemberKick,
+                type: AuditLogEvent.MemberDisconnect,
                 limit: 1,
               });
               const kickLog = auditLogs.entries.first();
 
-              if (kickLog) {
+              if (kickLog && kickLog.target.id === user.id) {
                 const { executor, target } = kickLog;
-                // Ensure the log corresponds to the member who was kicked
-                console.log(kickLog);
-                if (target.id === user.id) {
-                  await channel.send({
-                    embeds: [
-                      {
-                        title: "User kicked from the voice channel",
-                        description:
-                          "**User:** " +
-                          target.username +
-                          " - " +
-                          target.id +
-                          "\n**By:** " +
-                          executor.username +
-                          " - " +
-                          executor.id +
-                          "\n**Channel**: " +
-                          leftChannel.name +
-                          " -  " +
-                          leftChannel.id +
-                          "\n**Timestamp:** " +
-                          formattedCurrentDateTime(),
-                      },
-                    ],
-                  });
-                } else {
-                  await channel.send({
-                    embeds: [
-                      {
-                        title: "Left the voice channel",
-                        description:
-                          "**User:** " +
-                          user.username +
-                          " - " +
-                          user.id +
-                          "\n**Channel**: " +
-                          leftChannel.name +
-                          " -  " +
-                          leftChannel.id +
-                          "\n**Timestamp:** " +
-                          formattedCurrentDateTime(),
-                      },
-                    ],
-                  });
-                }
-              }
-            }
 
-            // Handle member joining a voice channel
-            if (joinedChannel && !leftChannel)
+                await channel.send({
+                  embeds: [
+                    {
+                      title: "User kicked from the voice channel",
+                      description:
+                        "**User:** " +
+                        target.username +
+                        " - " +
+                        target.id +
+                        "\n**By:** " +
+                        executor.username +
+                        " - " +
+                        executor.id +
+                        "\n**Channel**: " +
+                        leftChannel.name +
+                        " -  " +
+                        leftChannel.id +
+                        "\n**Timestamp:** " +
+                        formattedCurrentDateTime(),
+                    },
+                  ],
+                });
+              } else {
+                await channel.send({
+                  embeds: [
+                    {
+                      title: "Left the voice channel",
+                      description:
+                        "**User:** " +
+                        user.username +
+                        " - " +
+                        user.id +
+                        "\n**Channel**: " +
+                        leftChannel.name +
+                        " -  " +
+                        leftChannel.id +
+                        "\n**Timestamp:** " +
+                        formattedCurrentDateTime(),
+                    },
+                  ],
+                });
+              }
+            } else if (joinedChannel && !leftChannel) {
+              // Handle member joining a voice channel
               await channel.send({
                 embeds: [
                   {
@@ -105,9 +100,9 @@ module.exports = {
                   },
                 ],
               });
-
+            }
             /*
-            // Handle member switching voice channels
+            // Handle member switching voice channels (actually not neccesary)
             if (joinedChannel && leftChannel && joinedChannel !== leftChannel)
               await channel.send({
                 embeds: [
