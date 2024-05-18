@@ -5,6 +5,10 @@ function formattedCurrentDateTime() {
   return DateTime.now().toFormat("D T");
 }
 
+function timestampToFormattedDateTime(str) {
+  return DateTime.fromMillis(str).toFormat("D T");
+}
+
 // Define time unit symbols and their corresponding Luxon duration units
 const units = {
   i: "minutes",
@@ -77,4 +81,9 @@ function formatTimeDuration(timeString) {
     .join(" ")}`;
 }
 
-module.exports = { formattedCurrentDateTime, addTime, formatTimeDuration };
+module.exports = {
+  formattedCurrentDateTime,
+  timestampToFormattedDateTime,
+  addTime,
+  formatTimeDuration,
+};

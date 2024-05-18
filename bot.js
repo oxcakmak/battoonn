@@ -13,6 +13,7 @@ const {
   GuildMessageReactions,
   MessageContent,
   GuildVoiceStates,
+  GuildEmojisAndStickers,
 } = GatewayIntentBits;
 const { User, Message, GuildMember, ThreadMember } = Partials;
 
@@ -33,6 +34,7 @@ const client = new Client({
     GuildMessageReactions,
     MessageContent,
     GuildVoiceStates,
+    GuildEmojisAndStickers,
   ],
   partials: [User, Message, GuildMember, ThreadMember],
 });
