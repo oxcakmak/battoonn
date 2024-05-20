@@ -15,18 +15,18 @@ module.exports = {
       try {
         const channel = await client.channels.fetch(LoggerConfigsQuery.channel);
         if (channel) {
-          await channel.send({
+          return await channel.send({
             embeds: [
               {
                 title: "User kicked from the voice channel",
                 description:
-                  "**User:** <@" +
+                  "**User:** " +
                   target +
-                  "> - " +
+                  " - " +
                   target +
-                  "\n**Channel**: <#" +
+                  "\n**Channel**: " +
                   target +
-                  "> - " +
+                  " - " +
                   target +
                   "\n**Detail**: " +
                   target +

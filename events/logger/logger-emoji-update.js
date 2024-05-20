@@ -15,7 +15,7 @@ module.exports = {
           LoggerConfigsQuery.channel
         );
         if (channel) {
-          await channel.send({
+          return await channel.send({
             embeds: [
               {
                 title: "Emoji Updated",

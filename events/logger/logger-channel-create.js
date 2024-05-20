@@ -1,32 +1,34 @@
 const { LoggerConfigs } = require("../../database/schemas");
 const { _ } = require("../../utils/localization");
 const { formattedCurrentDateTime } = require("../../utils/dateFunctions");
+const { discordChannelTypeDetector } = require("../../utils/discordFunctions");
 
 module.exports = {
-  name: "emojiCreate",
-  async execute(emoji) {
-    console.log(emoji);
+  name: "channelCreate",
+  async execute(channel) {
     const LoggerConfigsQuery = await LoggerConfigs.findOne({
-      server: emoji.guild.id,
+      server: channel.guild.id,
     });
 
     if (LoggerConfigsQuery && LoggerConfigsQuery.moduleEnabled) {
       try {
-        const channel = await emoji.guild.channels.fetch(
+        const logChannel = await channel.guild.channels.fetch(
           LoggerConfigsQuery.channel
         );
-        if (channel) {
-          return await channel.send({
+        if (logChannel) {
+          return await logChannel.send({
             embeds: [
               {
-                title: "Emoji Created",
+                title: "Channel Created",
                 description:
-                  "**Name**: " +
-                  emoji?.name +
+                  "**Name:** " +
+                  channel?.name +
                   "\n**ID**: " +
-                  emoji.id +
-                  "\n**Url**: " +
-                  emoji?.imageURL() +
+                  channel.id +
+                  "\n**Type:** " +
+                  discordChannelTypeDetector(channel.type) +
+                  "\n**Position**: " +
+                  channel?.rawPosition +
                   "\n\n**[WHEN]**\n\n" +
                   "**Date/Time:** " +
                   formattedCurrentDateTime(),

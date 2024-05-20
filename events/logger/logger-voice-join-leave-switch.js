@@ -13,27 +13,27 @@ module.exports = {
       server: serverId,
     });
 
+    if (
+      (!oldState.streaming && newState.streaming) ||
+      (oldState.streaming && !newState.streaming) ||
+      (!oldState.serverDeaf && newState.serverDeaf) ||
+      (oldState.serverDeaf && !newState.serverDeaf) ||
+      (!oldState.serverMute && newState.serverMute) ||
+      (oldState.serverMute && !newState.serverMute) ||
+      (!oldState.selfDeaf && newState.selfDeaf) ||
+      (oldState.selfDeaf && !newState.selfDeaf) ||
+      (!oldState.selfMute && newState.selfMute) ||
+      (oldState.selfMute && !newState.selfMute) ||
+      (!oldState.selfVideo && newState.selfVideo) ||
+      (oldState.selfVideo && !newState.selfVideo)
+    )
+      return;
+
     if (LoggerConfigsQuery && LoggerConfigsQuery.moduleEnabled) {
       try {
         const channel = await guild.channels.fetch(LoggerConfigsQuery.channel);
         if (channel) {
           if (!oldState.channelId && newState.channelId) {
-            if (
-              (!oldState.streaming && newState.streaming) ||
-              (oldState.streaming && !newState.streaming) ||
-              (!oldState.serverDeaf && newState.serverDeaf) ||
-              (oldState.serverDeaf && !newState.serverDeaf) ||
-              (!oldState.serverMute && newState.serverMute) ||
-              (oldState.serverMute && !newState.serverMute) ||
-              (!oldState.selfDeaf && newState.selfDeaf) ||
-              (oldState.selfDeaf && !newState.selfDeaf) ||
-              (!oldState.selfMute && newState.selfMute) ||
-              (oldState.selfMute && !newState.selfMute) ||
-              (!oldState.selfVideo && newState.selfVideo) ||
-              (oldState.selfVideo && !newState.selfVideo)
-            )
-              return;
-
             return await channel.send({
               embeds: [
                 {
@@ -54,21 +54,6 @@ module.exports = {
               ],
             });
           } else if (oldState.channelId && !newState.channelId) {
-            if (
-              (!oldState.streaming && newState.streaming) ||
-              (oldState.streaming && !newState.streaming) ||
-              (!oldState.serverDeaf && newState.serverDeaf) ||
-              (oldState.serverDeaf && !newState.serverDeaf) ||
-              (!oldState.serverMute && newState.serverMute) ||
-              (oldState.serverMute && !newState.serverMute) ||
-              (!oldState.selfDeaf && newState.selfDeaf) ||
-              (oldState.selfDeaf && !newState.selfDeaf) ||
-              (!oldState.selfMute && newState.selfMute) ||
-              (oldState.selfMute && !newState.selfMute) ||
-              (!oldState.selfVideo && newState.selfVideo) ||
-              (oldState.selfVideo && !newState.selfVideo)
-            )
-              return;
             return await channel.send({
               embeds: [
                 {
@@ -89,21 +74,6 @@ module.exports = {
               ],
             });
           } else if (oldState.channelId && newState.channelId) {
-            if (
-              (!oldState.streaming && newState.streaming) ||
-              (oldState.streaming && !newState.streaming) ||
-              (!oldState.serverDeaf && newState.serverDeaf) ||
-              (oldState.serverDeaf && !newState.serverDeaf) ||
-              (!oldState.serverMute && newState.serverMute) ||
-              (oldState.serverMute && !newState.serverMute) ||
-              (!oldState.selfDeaf && newState.selfDeaf) ||
-              (oldState.selfDeaf && !newState.selfDeaf) ||
-              (!oldState.selfMute && newState.selfMute) ||
-              (oldState.selfMute && !newState.selfMute) ||
-              (!oldState.selfVideo && newState.selfVideo) ||
-              (oldState.selfVideo && !newState.selfVideo)
-            )
-              return;
             return await channel.send({
               embeds: [
                 {

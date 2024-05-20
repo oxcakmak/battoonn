@@ -41,7 +41,7 @@ module.exports = {
           const newContent = newMessage.content.trim();
           const newEditedTimestamp = newMessageData.editedTimestamp;
 
-          await channel.send({
+          return await channel.send({
             embeds: [
               {
                 title: "Message Updated",

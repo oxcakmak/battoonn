@@ -29,7 +29,7 @@ module.exports = {
 
         if (deletedBy && deletedBy.user.bot) return; // Ignore bot deletions
 
-        await channel.send({
+        return await channel.send({
           embeds: [
             {
               title: "Message Deleted",
