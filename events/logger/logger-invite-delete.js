@@ -3,29 +3,29 @@ const { _ } = require("../../utils/localization");
 const { formattedCurrentDateTime } = require("../../utils/dateFunctions");
 
 module.exports = {
-  name: "ready",
-  async execute(client) {
-    // console.log(client);
-    /*
+  name: "inviteDelete",
+  async execute(invite) {
     const LoggerConfigsQuery = await LoggerConfigs.findOne({
-      server: client.guild.id,
+      server: invite.guild.id,
     });
 
     if (LoggerConfigsQuery && LoggerConfigsQuery.moduleEnabled) {
       try {
-        const channel = await client.guild.channels.fetch(LoggerConfigsQuery.channel);
+        const channel = await invite.guild.channels.fetch(
+          LoggerConfigsQuery.channel
+        );
         if (channel) {
           return await channel.send({
             embeds: [
               {
-                title: "User kicked from the voice channel",
+                title: "Invite Deleted",
                 description:
-                  "**User:** " +
-                  target +
+                  "**Code:** " +
+                  invite.code +
                   "\n**Channel**: " +
-                  target +
-                  "\n**Detail**: " +
-                  target +
+                  invite.channel?.name +
+                  "\n**Channel ID**: " +
+                  invite.channel?.id +
                   "\n\n**[WHEN]**\n\n" +
                   "**Date/Time:** " +
                   formattedCurrentDateTime(),
@@ -37,6 +37,5 @@ module.exports = {
         console.error("Error fetching channel:", error);
       }
     }
-    */
   },
 };

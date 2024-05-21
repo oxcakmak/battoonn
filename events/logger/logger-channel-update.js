@@ -7,6 +7,8 @@ const { NewsChannel } = require("discord.js");
 module.exports = {
   name: "channelUpdate",
   async execute(oldChannel, newChannel) {
+    console.log(oldChannel);
+    console.log(newChannel);
     let updateType = "";
 
     const LoggerConfigsQuery = await LoggerConfigs.findOne({
@@ -45,6 +47,12 @@ module.exports = {
                   discordChannelTypeDetector(oldChannel.type) +
                   "\n**After Type:** " +
                   discordChannelTypeDetector(newChannel.type) +
+                  (oldChannel?.topic &&
+                    newChannel?.topic &&
+                    "\n\n**Before Topic:** " +
+                      `\`\`\`${oldChannel?.topic}\`\`\`` +
+                      "\n**After Topic:** " +
+                      `\`\`\`${newChannel?.topic}\`\`\``) +
                   "\n**Before Position**: " +
                   oldChannel?.rawPosition +
                   "\n**After Position**: " +
